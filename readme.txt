@@ -123,6 +123,10 @@ If FAQ didn't cover your problem, refer to the following resources:
 
 == Changelog ==
 
+= 1.3.1 =
+* Fixed Bulk and Quick Edit to work with WP >= 3.5 register_taxonomy() 'show_admin_column' columns.
+* Fixed a bug with WP < 3.5 'show_admin_column' setting not tied to actually showing the column.
+
 = 1.3 =
 * Added multisite custom post type manager.
 * Added setting to assign the meta box format, i.e. autocomplete, checklist or dropdown.
