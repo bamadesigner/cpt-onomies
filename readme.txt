@@ -124,6 +124,8 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Changelog ==
 
 = 1.3.1 =
+* Added 'cpt_onomy_created_object_term_relationship' action, allowing users to run code when relationships are created.
+* Added 'cpt_onomy_deleted_object_term_relationship' action, allowing users to run code when relationships are deleted.
 * Fixed Bulk and Quick Edit to work with WP >= 3.5 register_taxonomy() 'show_admin_column' columns.
 * Fixed a bug with WP < 3.5 'show_admin_column' setting not tied to actually showing the column.
 
