@@ -128,6 +128,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 * Added 'cpt_onomy_deleted_object_term_relationship' action, allowing users to run code when relationships are deleted.
 * Fixed Bulk and Quick Edit to work with WP >= 3.5 register_taxonomy() 'show_admin_column' columns.
 * Fixed a bug with WP < 3.5 'show_admin_column' setting not tied to actually showing the column.
+* Tweaked 'supports' setting to prevent default (title and editor) behavior if no 'supports' are selected. Must have WP 3.5 or greater.
 
 = 1.3 =
 * Added multisite custom post type manager.

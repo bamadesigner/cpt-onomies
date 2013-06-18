@@ -925,10 +925,22 @@ class CPT_ONOMIES_MANAGER {
 		// boolean (optional) default = false
 		// this must be defined for use with register_taxonomy()
 		$args[ 'hierarchical' ] = ( isset( $cpt[ 'hierarchical' ] ) && $cpt[ 'hierarchical' ] ) ? true : false;
-									
-		// array (optional) default = array( 'title', 'editor' )
+			
+		/*
+		 * array (optional) default = array( 'title', 'editor' )
+		 *
+		 * As of WordPress 3.5, boolean false can be passed as
+		 * 'supports' value instead of an array to prevent default
+		 * (title and editor) behavior. So if 'supports' array is
+		 * empty in settings, then we will define 'supports' as false
+		 * so the post type will actually support nothing instead
+		 * of applying the default behavior.
+		 */
 		if ( isset( $cpt[ 'supports' ] ) && ! empty( $cpt[ 'supports' ] ) )
 			$args[ 'supports' ] = $cpt[ 'supports' ];
+		else
+			$args[ 'supports' ] = false;
+			
 		// array (optional) no default
 		if ( isset( $cpt[ 'taxonomies' ] ) && ! empty( $cpt[ 'taxonomies' ] ) ) {
 			if ( ! is_array( $cpt[ 'taxonomies' ] ) )
