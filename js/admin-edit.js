@@ -91,7 +91,7 @@ jQuery.noConflict()(function(){
 								// remove from checklists
 								$quick_edit_row.find( 'ul.cpt-onomy-checklist' ).each( function() {
 									
-									$( this ).cpt_onomy_remove_from_quick_edit_checklist( $term_ids );
+									$( this ).cpt_onomy_remove_from_quick_edit_checklist( $term_ids, false );
 									
 								});
 															
@@ -319,7 +319,7 @@ jQuery.noConflict()(function(){
 							// remove from checklists
 							$bulk_edit_row.find( 'ul.cpt-onomy-checklist' ).each( function() {
 								
-								$( this ).cpt_onomy_remove_from_quick_edit_checklist( $term_ids );
+								$( this ).cpt_onomy_remove_from_quick_edit_checklist( $term_ids, false );
 								
 							});
 														
@@ -409,7 +409,7 @@ jQuery.fn.cpt_onomy_bulk_quick_edit_get_taxonomies = function() {
 	return $taxonomies;
 }
 
-jQuery.fn.cpt_onomy_remove_from_quick_edit_checklist = function( $term_ids, $include = false ) {
+jQuery.fn.cpt_onomy_remove_from_quick_edit_checklist = function( $term_ids, $include ) {
 	jQuery( this ).children( 'li' ).each( function() {
 		
 		// retrieve item info

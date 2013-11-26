@@ -142,7 +142,7 @@ jQuery.noConflict()(function(){
 	
 });
 
-jQuery.fn.custom_post_type_onomies_change_header_label = function( $default_header_label = '' ) {
+jQuery.fn.custom_post_type_onomies_change_header_label = function( $default_header_label ) {
 	if ( jQuery( this ).val() != '' )
 		jQuery( '#edit_custom_post_type_header .label' ).html( jQuery( this ).val() );
 	else if ( $default_header_label != '' )

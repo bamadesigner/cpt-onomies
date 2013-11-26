@@ -16,7 +16,6 @@ class CPT_TAXONOMY {
 	 *
 	 * @since 1.0
 	 */
-	public function CPT_TAXONOMY() { $this->__construct(); }
 	public function __construct() {
 		// function filters
 		add_filter( 'get_terms', array( &$this, 'get_terms' ), 1, 3 );
@@ -24,6 +23,7 @@ class CPT_TAXONOMY {
 		// other filters
 		add_filter( 'get_terms_args', array( &$this, 'adjust_get_terms_args' ), 1, 2 );
 	}
+	public function CPT_TAXONOMY() { $this->__construct(); }
 	
 	/**
 	 * This function takes an object's information and creates a term object.
@@ -561,7 +561,7 @@ class CPT_TAXONOMY {
 			return get_edit_term_link( $term_id, $taxonomy, $object_type );
 			
 		$post_type = get_post_type_object( $taxonomy );
-		if ( !current_user_can( $post_type->cap->edit_posts ) )
+		if ( ! current_user_can( $post_type->cap->edit_posts ) )
 			return;
 	
 		$term = $this->get_term( $term_id, $taxonomy );
@@ -1547,17 +1547,22 @@ class CPT_TAXONOMY {
 		 */
 		if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) )
 			return wp_set_object_terms( $object_id, $terms, $taxonomy, $append );
-	
+			
 		if ( ! taxonomy_exists( $taxonomy ) )
 			return new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', CPT_ONOMIES_TEXTDOMAIN ) );
 			
+		/*
+		 * current_user_can() doesn't work when running CRON jobs because
+		 * wp_get_current_user() doesn't appear to work with CRON and therefore
+		 * it cannot detect the current user.
+		 */
 		$tax = get_taxonomy( $taxonomy );
-		if ( ! current_user_can( $tax->cap->assign_terms ) )
+		if ( ! defined( 'DOING_CRON' ) && ! current_user_can( $tax->cap->assign_terms ) )
 			return new WP_Error( $tax->cap->assign_terms, __( 'You are not allowed to assign terms for this taxonomy.', CPT_ONOMIES_TEXTDOMAIN ) );
 			
 		$object_id = (int) $object_id;
 		$object_post_type = get_post_type( $object_id );
-			
+		
 		//make sure these posts are allowed to have a relationship
 		if ( ! is_object_in_taxonomy( $object_post_type, $taxonomy ) )
 			return new WP_Error( 'taxonomy_relationship', __( 'This post type object and taxonomy are not allowed to have a relationship.', CPT_ONOMIES_TEXTDOMAIN ) );

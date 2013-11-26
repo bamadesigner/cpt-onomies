@@ -322,7 +322,7 @@ table.manage_custom_post_type_onomies .add a:hover { background-color: #145f82; 
 	display: block;
 	background: #333;
 	color: #fff;
-	padding: 30px 12px 10px 12px;
+	padding: 30px 15px 10px 12px;
 	margin: 0 0 7px 0;
 	overflow: hidden;
 	position: relative;
@@ -335,16 +335,16 @@ table.manage_custom_post_type_onomies .add a:hover { background-color: #145f82; 
 	font-weight: bold;
 	}
 #edit_custom_post_type_header.information .label {
-	float: left;
 	width: 40%;
+	position: absolute;
+	left: 12px;
+	bottom: 10px;
 	}
 	
 #edit_custom_post_type_header .information {
 	display: block;
 	width: 55%;
-	position: absolute;
-	right: 12px;
-	bottom: 10px;
+	float: right;
 	font-style: italic;
 	opacity: 0.8;
 	text-align: right;

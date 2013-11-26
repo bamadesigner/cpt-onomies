@@ -25,7 +25,6 @@ class CPT_ONOMIES_ADMIN {
 	 *
 	 * @since 1.0
 	 */
-	public function CPT_ONOMIES_ADMIN() { $this->__construct(); }
 	public function __construct() {
 		if ( is_admin() ) {
 		
@@ -76,6 +75,7 @@ class CPT_ONOMIES_ADMIN {
 				
 		}	
 	}
+	public function CPT_ONOMIES_ADMIN() { $this->__construct(); }
 	
 	/**
 	 * The usual admin page for managing terms is edit-tags.php but we do not
@@ -784,7 +784,7 @@ class CPT_ONOMIES_ADMIN {
 		else if ( strpos( $column_name, 'taxonomy-' ) !== false )
 			$taxonomy = strtolower( str_replace( 'taxonomy-', '', $column_name ) );
 			
-		if ( taxonomy_exists( $taxonomy ) && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
+		if ( $taxonomy && taxonomy_exists( $taxonomy ) && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 			$tax = get_taxonomy( $taxonomy );				
 			?><fieldset class="inline-edit-col-center inline-edit-<?php echo $taxonomy; ?>"><div class="inline-edit-col">
 			
@@ -876,6 +876,21 @@ class CPT_ONOMIES_ADMIN {
 	}
 	
 	/**
+	 * As of version 1.3, the admin columns are added via the new WordPress
+	 * register_taxonomy() "show_admin_column" setting. WordPress 3.5
+	 * introduced the "show_admin_column" setting for register_taxonomy(),
+	 * bringing about default WordPress functionality for admin "Edit Posts"
+	 * taxonomy columns so CPT-onomies will now hook into this functionality.
+	 *
+	 * The dropdown filters are tied to this setting, in that that the dropdown
+	 * is only added if the column is added.
+	 * 
+	 * However, this setting was not introduced until 3.5 so I will keep this
+	 * functionality, for a little while, for backwards compatibility. If version
+	 * is less than 3.5, this function will add the dropdown. No matter the method,
+	 * the 'custom_post_type_onomies_add_cpt_onomy_admin_dropdown_filter' filter will
+	 * allow the user the ability to remove the dropdown by CPT-onomy or post type.
+	 *
 	 * Adds dropdown(s) to the "Edit Posts" screen which allow you to filter your posts by
 	 * your CPT-onomies. CPT-onomies "hides" the dropdown if it's matching column is hidden.
 	 *
@@ -895,42 +910,60 @@ class CPT_ONOMIES_ADMIN {
 		list( $columns, $hidden ) = $wp_list_table->get_column_info();
 		foreach ( $columns as $column_name => $column_display_name ) {
 		
-			if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false ) {
+			/*
+			* The filter drop down is added if you have the column added
+			* but you still have the capability to remove the dropdown
+			* via filter, if desired.
+			*/
+			
+			// get taxonomy name
+			$taxonomy = NULL;
+			
+			// if version >= 3.5
+			if ( get_bloginfo( 'version' ) >= 3.5
+				&& preg_match( '/^taxonomy\-(.+)$/i', $column_name, $match )
+				&& isset( $match ) && isset( $match[1] ) )
+				$taxonomy = $match[1];
+			
+			// backwards compatibility
+			else if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false )
 				$taxonomy = strtolower( str_replace( CPT_ONOMIES_UNDERSCORE . '_', '', $column_name ) );
 				
-				// make sure its a registered CPT-onomy
-				if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
+			// make sure its a registered CPT-onomy
+			if ( $taxonomy && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
+			
+				// get taxonomy information
+				$tax = get_taxonomy( $taxonomy );
 				
-					// this filter allows you to remove the dropdown by returning false
-					if ( apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_dropdown_filter', true, $taxonomy, $post_type ) ) {
+				// this filter allows you to remove the dropdown by returning false
+				if ( apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_dropdown_filter', ( isset( $tax->show_admin_column ) && ! $tax->show_admin_column ) ? false : true, $taxonomy, $post_type ) ) {
+				
+					// get post type info
+					$post_type_object = get_post_type_object( $taxonomy );
 					
-						// get post type info
-						$post_type_object = get_post_type_object( $taxonomy );
-						
-						// get selected term
-						$selected = ( isset( $_REQUEST[ $taxonomy ] ) ) ? $_REQUEST[ $taxonomy ] : NULL;
-						
-						// if slug, then get term id					
-						if ( !is_numeric( $selected ) ) {
-							$term = $cpt_onomy->get_term_by( 'slug', $selected, $taxonomy );
-							if ( $term ) $selected = $term->term_id;
-						}
-						
-						$dropdown_options = array(
-							'show_option_all' => __( 'View all ' . $post_type_object->labels->all_items, CPT_ONOMIES_TEXTDOMAIN ),
-							'hierarchical' => true,
-							'show_count' => false,
-							'orderby' => 'name',
-							'selected' => $selected,
-							'name' => $taxonomy,
-							'id' => 'dropdown_' .  CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy,
-							'class' => 'postform ' . ( ( in_array( $column_name, $hidden ) ) ? ' hide-all' : '' ),
-							'taxonomy' => $taxonomy,
-							'hide_if_empty' => true
-						);
-						wp_dropdown_categories( $dropdown_options );
-						
+					// get selected term
+					$selected = ( isset( $_REQUEST[ $taxonomy ] ) ) ? $_REQUEST[ $taxonomy ] : NULL;
+					
+					// if slug, then get term id					
+					if ( !is_numeric( $selected ) ) {
+						$term = $cpt_onomy->get_term_by( 'slug', $selected, $taxonomy );
+						if ( $term ) $selected = $term->term_id;
 					}
+					
+					// print dropdown
+					$dropdown_options = array(
+						'show_option_all' => __( 'View all ' . $post_type_object->labels->all_items, CPT_ONOMIES_TEXTDOMAIN ),
+						'hierarchical' => true,
+						'show_count' => false,
+						'orderby' => 'name',
+						'selected' => $selected,
+						'name' => $taxonomy,
+						'id' => 'dropdown_' .  CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy,
+						'class' => 'postform ' . ( ( in_array( $column_name, $hidden ) ) ? ' hide-all' : '' ),
+						'taxonomy' => $taxonomy,
+						'hide_if_empty' => true
+					);
+					wp_dropdown_categories( $dropdown_options );
 					
 				}
 				
@@ -985,15 +1018,19 @@ class CPT_ONOMIES_ADMIN {
 			// make sure its a registered CPT-onomy
 			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 		
-				// "show_admin_column" works for you but you still have capability
-				// to remove column, via filter, if desired. In this case,
-				// "show_admin_column" must already be set to true, which is similar
-				// to previous setup where the column was added by default and you
-				// just used the filter to remove it.
+				/*
+				 * If version >= 3.5, the 'show_admin_column' setting works for you
+				 * but you still have the capability to remove the column,
+				 * via filter, if desired. 'show_admin_column' is set to true
+				 * by default, which is similar to previous setup where the
+				 * column was added by default and you used the filter to remove it.
+				 */
 				if ( get_bloginfo( 'version' ) >= 3.5 ) {
 				
-					// if the column already exists, this filter allows you
-					// to remove the column by returning false.
+					/*
+					 * If the column already exists, i.e. added by WordPress,
+					 * this filter allows you to remove the column by returning false.
+					 */
 					if ( array_key_exists( 'taxonomy-' . $taxonomy, $columns )
 						&& ! apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_column', true, $taxonomy, $post_type ) ) {
 					
@@ -1007,7 +1044,10 @@ class CPT_ONOMIES_ADMIN {
 				// backwards compatability
 				else {
 				
-					// this filter allows you to remove the column by returning false
+					/*
+					 * The column is added by default. This filter allows you
+					 * to remove the column by returning false.
+					 */
 					if ( apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_column', ( isset( $tax->show_admin_column ) && ! $tax->show_admin_column ) ? false : true, $taxonomy, $post_type ) ) {
 					
 						// want to add before comments and date
@@ -1184,11 +1224,11 @@ class CPTonomy_Walker_Terms_Checklist extends Walker {
 		$output .= "$indent</ul>\n";
 	}
 	
-	function start_el( &$output, $category, $depth, $args, $id = 0 ) {
+	function start_el( &$output, $object, $depth = 0, $args = array(), $current_object_id = 0 ) {
 		extract( $args );
 		if ( !empty( $taxonomy ) ) {
-			$class = in_array( $category->term_id, $popular_cats ) ? ' class="popular-category"' : '';
-			$output .= "\n<li id='{$taxonomy}-{$category->term_id}'$class>" . '<label class="selectit"><input value="' . $category->term_id . '" type="checkbox" name="' . CPT_ONOMIES_POSTMETA_KEY . '[' . $taxonomy . '][]" id="in-'.$taxonomy.'-' . $category->term_id . '"' . checked( in_array( $category->term_id, $selected_cats ), true, false ) . disabled( empty( $args[ 'disabled' ] ), false, false ) . ' /> ' . esc_html( apply_filters( 'the_category', $category->name )) . '</label>';
+			$class = in_array( $object->term_id, $popular_cats ) ? ' class="popular-category"' : '';
+			$output .= "\n<li id='{$taxonomy}-{$object->term_id}'$class>" . '<label class="selectit"><input value="' . $object->term_id . '" type="checkbox" name="' . CPT_ONOMIES_POSTMETA_KEY . '[' . $taxonomy . '][]" id="in-'.$taxonomy.'-' . $object->term_id . '"' . checked( in_array( $object->term_id, $selected_cats ), true, false ) . disabled( empty( $args[ 'disabled' ] ), false, false ) . ' /> ' . esc_html( apply_filters( 'the_category', $object->name )) . '</label>';
 		}
 	}
 

@@ -6,7 +6,8 @@ Plugin URI: http://wordpress.org/plugins/cpt-onomies/
 Description: A CPT-onomy is a taxonomy built from a custom post type, using the post titles as the taxonomy terms. Create custom post types using the CPT-onomies custom post type manager or use post types created by themes or other plugins.
 Version: 1.3.1
 Author: Rachel Carden
-Author URI: http://www.rachelcarden.com
+Author URI: http://wpdreamer.com
+Text Domain: cpt-onomies
 */
 
 /*
@@ -28,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 define( 'CPT_ONOMIES_VERSION', '1.3.1' );
 define( 'CPT_ONOMIES_WORDPRESS_MIN', '3.1' );
 define( 'CPT_ONOMIES_DIR', dirname( __FILE__ ) );
-define( 'CPT_ONOMIES_URL', WP_PLUGIN_URL . '/' . basename( dirname( __FILE__ ) ) . '/' );
+define( 'CPT_ONOMIES_URL', plugin_dir_url( __FILE__ ) );
 define( 'CPT_ONOMIES_PLUGIN_NAME', 'CPT-onomies: Using Custom Post Types as Taxonomies' );
 define( 'CPT_ONOMIES_PLUGIN_SHORT_NAME', 'CPT-onomies' );
 define( 'CPT_ONOMIES_PLUGIN_DIRECTORY_URL', 'http://wordpress.org/extend/plugins/cpt-onomies/' );
@@ -54,7 +55,7 @@ require_once( CPT_ONOMIES_DIR . '/extend/gravity-forms-custom-post-types.php' );
 // for translations
 add_action( 'plugins_loaded', 'custom_post_type_onomies_load_textdomain' );
 function custom_post_type_onomies_load_textdomain() {
-	load_plugin_textdomain( CPT_ONOMIES_TEXTDOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' ); 
+	load_plugin_textdomain( CPT_ONOMIES_TEXTDOMAIN, false, trailingslashit( CPT_ONOMIES_URL . 'languages' ) );
 }
 
 // for the newbies

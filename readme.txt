@@ -3,8 +3,8 @@ Contributors: bamadesigner
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=bamadesigner%40gmail%2ecom&lc=US&item_name=Rachel%20Carden%20%28CPT%2donomies%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: custom post type, custom, post, post type, types, tax, taxonomy, taxonomies, cpt-onomy, cpt-onomies, cptonomies, custom post type taxonomies, custom post type as taxonomy, custom post types as taxonomies, relationships, relate, multisite
 Requires at least: 3.1
-Tested up to: 3.5.1
-Stable tag: 1.3
+Tested up to: 3.7.1
+Stable tag: 1.3.1
 
 Use your custom post types as taxonomies. Create powerful relationships between your posts and, therefore, powerful content.
 
@@ -12,7 +12,7 @@ Use your custom post types as taxonomies. Create powerful relationships between 
 
 *CPT-onomies* is a **multisite compatible** WordPress plugin that allows you to create very powerful taxonomies and, therefore, very powerful relationships between your posts.
 
-CPT-onomies are Custom-Post-Type-powered taxonomies that function just like regular WordPress taxonomies, even allowing you to use core WordPress taxonomy functions, such as [get_terms()](http://codex.wordpress.org/Function_Reference/get_terms "get_terms()") and [wp_get_object_terms()](http://codex.wordpress.org/Function_Reference/wp_get_object_terms "wp_get_object_terms()"). *[Check out the CPT-onomy documentation](http://rachelcarden.com/cpt-onomies/documentation "CPT-onomy documentation") to see which core WordPress taxonomy functions work and when you'll need to access the plugin's CPT-onomy functions.*
+CPT-onomies are Custom-Post-Type-powered taxonomies that function just like regular WordPress taxonomies, even allowing you to use core WordPress taxonomy functions, such as [get_terms()](http://codex.wordpress.org/Function_Reference/get_terms "get_terms()") and [wp_get_object_terms()](http://codex.wordpress.org/Function_Reference/wp_get_object_terms "wp_get_object_terms()"). *[Check out the CPT-onomy documentation](http://wpdreamer.com/plugins/cpt-onomies/documentation "CPT-onomy documentation") to see which core WordPress taxonomy functions work and when you'll need to access the plugin's CPT-onomy functions.*
 
 CPT-onomies includes a custom post type manager, allowing you to create custom post types and register CPT-onomies **without touching one line of code!**
 
@@ -40,11 +40,11 @@ It doesn't take long to figure out that custom post types can be a pretty powerf
 
 = Using CPT-onomies =
 
-What's really great about CPT-onomies is that they function just like any other taxonomy, allowing you to use WordPress taxonomy functions, like [get_terms()](http://codex.wordpress.org/Function_Reference/get_terms "get_terms()"), [get_the_terms()](http://codex.wordpress.org/Function_Reference/get_the_terms "get_the_terms()") and [wp_get_object_terms()](http://codex.wordpress.org/Function_Reference/wp_get_object_terms "wp_get_object_terms()"), to access the CPT-onomy information you need. CPT-onomies will also work with tax queries when using [The Loop](http://rachelcarden.com/cpt-onomies/documentation/The_Loop/ "The WordPress Loop"), help you build [custom CPT-onomy archive pages](http://rachelcarden.com/cpt-onomies/documentation/custom-archive-pages/ "Custom CPT-onomy Archive Pages"), allow you to [programmatically register your CPT-onomies](http://rachelcarden.com/cpt-onomies/documentation/register_cpt_onomy/), and includes a tag cloud widget for your sidebar. [Check out the CPT-onomies documentation](http://rachelcarden.com/cpt-onomies/documentation/ "CPT-onomies Documentation") for more information.
+What's really great about CPT-onomies is that they function just like any other taxonomy, allowing you to use WordPress taxonomy functions, like [get_terms()](http://codex.wordpress.org/Function_Reference/get_terms "get_terms()"), [get_the_terms()](http://codex.wordpress.org/Function_Reference/get_the_terms "get_the_terms()") and [wp_get_object_terms()](http://codex.wordpress.org/Function_Reference/wp_get_object_terms "wp_get_object_terms()"), to access the CPT-onomy information you need. CPT-onomies will also work with tax queries when using [The Loop](http://wpdreamer.com/plugins/cpt-onomies/documentation/The_Loop/ "The WordPress Loop"), help you build [custom CPT-onomy archive pages](http://wpdreamer.com/plugins/cpt-onomies/documentation/custom-archive-pages/ "Custom CPT-onomy Archive Pages"), allow you to [programmatically register your CPT-onomies](http://wpdreamer.com/plugins/cpt-onomies/documentation/register_cpt_onomy/), and includes a tag cloud widget for your sidebar. [Check out the CPT-onomies documentation](http://wpdreamer.com/plugins/cpt-onomies/documentation/ "CPT-onomies Documentation") for more information.
 
 If you're not sure what a taxonomy is, how to use one, or if it's right for your needs, be sure to do some research. [The WordPress Codex page for taxonomies](http://codex.wordpress.org/Taxonomies) is a great place to start!
 
-***Note:** Unfortunately, not every taxonomy function can be used at this time. [Check out the CPT-onomy documentation](http://rachelcarden.com/cpt-onomies/documentation "CPT-onomy documentation") to see which WordPress taxonomy functions work and when you'll need to access the plugin's CPT-onomy functions.*
+***Note:** Unfortunately, not every taxonomy function can be used at this time. [Check out the CPT-onomy documentation](http://wpdreamer.com/plugins/cpt-onomies/documentation "CPT-onomy documentation") to see which WordPress taxonomy functions work and when you'll need to access the plugin's CPT-onomy functions.*
 
 == Installation ==
 
@@ -53,13 +53,13 @@ If you're not sure what a taxonomy is, how to use one, or if it's right for your
 1. Go to *Settings > CPT-onomies*
 1. Create a new custom post type or edit an existing custom post type
 1. Register your custom post type as a CPT-onomy by "attaching" it to a post type, under "Register this Custom Post Type as a CPT-onomy" on the edit screen
-1. Use your CPT-onomy just like any other taxonomy (refer to the [CPT-onomy documentation](http://rachelcarden.com/cpt-onomies/documentation "CPT-onomy documentation") for help)
+1. Use your CPT-onomy just like any other taxonomy (refer to the [CPT-onomy documentation](http://wpdreamer.com/plugins/cpt-onomies/documentation "CPT-onomy documentation") for help)
 
 == Frequently Asked Questions ==
 
 = Why does CPT-onomies not work with all of the WordPress taxonomy functions? =
 
-Good question. While CPT-onomies strives to mimic taxonomy functionality as much as possible, CPT-onomies are not stored in the database in the same manner as taxonomies. The simplest answer to "Why not?" is that I believe my current method of *"not duplicating post information to resave as taxonomy information"* is in the best all-around interest of not only my plugin, but also your web site. With that said, I am constantly searching for new ways to "hook" into WordPress to improve CPT-onomy/taxonomy integration and, when impossible, will [continue to provide workarounds](http://rachelcarden.com/cpt-onomies/documentation/ "CPT-onomies Documentation").
+Good question. While CPT-onomies strives to mimic taxonomy functionality as much as possible, CPT-onomies are not stored in the database in the same manner as taxonomies. The simplest answer to "Why not?" is that I believe my current method of *"not duplicating post information to resave as taxonomy information"* is in the best all-around interest of not only my plugin, but also your web site. With that said, I am constantly searching for new ways to "hook" into WordPress to improve CPT-onomy/taxonomy integration and, when impossible, will [continue to provide workarounds](http://wpdreamer.com/plugins/cpt-onomies/documentation/ "CPT-onomies Documentation").
 
 = How do I associate a CPT-onomy term with it's matching post? =
 
@@ -82,7 +82,7 @@ function my_website_admin_head() {
 
 If you have a hierarchical CPT-onomy, the default selection format is a checklist. But if you would rather use the autocomplete box, or a select dropdown, CPT-onomies allows you to hook into the meta box (via a filter) and overwrite the default selection format.
 
-Here's an example of the filter. More information, check out the "Help" tab in the CPT-onomies settings or [visit the FAQ on my web site](http://rachelcarden.com/cpt-onomies/faq/ "visit the FAQ on my web site").
+Here's an example of the filter. More information, check out the "Help" tab in the CPT-onomies settings or [visit the FAQ ](http://wordpress.org/plugins/cpt-onomies/faq/ "visit the FAQ").
 
 `<?php
 add_filter( 'custom_post_type_onomies_meta_box_format', 'my_website_custom_post_type_onomies_meta_box_format', 1, 3 );
@@ -111,7 +111,7 @@ You also have to add theme support for post thumbnails to your functions.php fil
 If FAQ didn't cover your problem, refer to the following resources:
 
 * [CPT-onomies Support Forums](http://wordpress.org/support/plugin/cpt-onomies "CPT-onomies Support Forums")
-* [CPT-onomies Documentation](http://rachelcarden.com/cpt-onomies/documentation "CPT-onomies Documentation")
+* [CPT-onomies Documentation](http://wpdreamer.com/plugins/cpt-onomies/documentation "CPT-onomies Documentation")
 
 == Screenshots ==
 
@@ -123,12 +123,21 @@ If FAQ didn't cover your problem, refer to the following resources:
 
 == Changelog ==
 
+= 1.3.2 =
+
+* Fixed a bug with admin drop down filters not tied to 'show_admin_column' setting.
+
 = 1.3.1 =
+* Documentation has moved to wpdreamer.com.
+* Fixed a bug with WP < 3.5 'show_admin_column' setting not tied to actually showing the column.
+* Fixed Bulk and Quick Edit to work with WP >= 3.5 register_taxonomy() 'show_admin_column' columns.
 * Added 'cpt_onomy_created_object_term_relationship' action, allowing users to run code when relationships are created.
 * Added 'cpt_onomy_deleted_object_term_relationship' action, allowing users to run code when relationships are deleted.
-* Fixed Bulk and Quick Edit to work with WP >= 3.5 register_taxonomy() 'show_admin_column' columns.
-* Fixed a bug with WP < 3.5 'show_admin_column' setting not tied to actually showing the column.
 * Tweaked 'supports' setting to prevent default (title and editor) behavior if no 'supports' are selected. Must have WP 3.5 or greater.
+* Fixed the "Redefining already defined constructor" issue for PHP5.
+* Edited CPTonomy_Walker_Terms_Checklist::start_el() to match Walker::start_el() and align with strict standards.
+* Removed all instances of default function parameter values in Javascript.
+* Fixed issue with wp_set_object_terms() not working with CRON.
 
 = 1.3 =
 * Added multisite custom post type manager.
@@ -200,6 +209,22 @@ If FAQ didn't cover your problem, refer to the following resources:
 * Plugin launch!
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+
+* Fixed a bug with admin drop down filters not tied to 'show_admin_column' setting.
+
+= 1.3.1 =
+* Documentation has moved to wpdreamer.com.
+* Fixed a bug with WP < 3.5 'show_admin_column' setting not tied to actually showing the column.
+* Fixed Bulk and Quick Edit to work with WP >= 3.5 register_taxonomy() 'show_admin_column' columns.
+* Added 'cpt_onomy_created_object_term_relationship' action, allowing users to run code when relationships are created.
+* Added 'cpt_onomy_deleted_object_term_relationship' action, allowing users to run code when relationships are deleted.
+* Tweaked 'supports' setting to prevent default (title and editor) behavior if no 'supports' are selected. Must have WP 3.5 or greater.
+* Fixed the "Redefining already defined constructor" issue for PHP5.
+* Edited CPTonomy_Walker_Terms_Checklist::start_el() to match Walker::start_el() and align with strict standards.
+* Removed all instances of default function parameter values in Javascript.
+* Fixed issue with wp_set_object_terms() not working with CRON.
 
 = 1.3 =
 * Added multisite custom post type manager.

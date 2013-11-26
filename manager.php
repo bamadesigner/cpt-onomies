@@ -25,7 +25,6 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * @since 1.0
 	 */
-	public function CPT_ONOMIES_MANAGER() { $this->__construct(); }
 	public function __construct() {
 		
 		// get network user settings (only if multisite AND plugin is network activated)
@@ -57,6 +56,7 @@ class CPT_ONOMIES_MANAGER {
 		add_action( 'init', array( &$this, 'register_custom_post_types_and_taxonomies' ), 100 );
 		
 	}
+	public function CPT_ONOMIES_MANAGER() { $this->__construct(); }
 	
 	/**
 	 * Adds the custom query variable 'cpt_onomy_archive' to WordPress's
@@ -317,10 +317,11 @@ class CPT_ONOMIES_MANAGER {
 				
 					$taxonomy = $this_query[ 'taxonomy' ];
 				
-					if ( !taxonomy_exists( $taxonomy )  )
+					if ( ! taxonomy_exists( $taxonomy )  )
 						continue;
 						
-					$is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy );
+					if ( ! ( $is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy ) ) )
+						continue;
 			
 					$this_query[ 'terms' ] = array_unique( (array) $this_query[ 'terms' ] );
 						
@@ -925,7 +926,7 @@ class CPT_ONOMIES_MANAGER {
 		// boolean (optional) default = false
 		// this must be defined for use with register_taxonomy()
 		$args[ 'hierarchical' ] = ( isset( $cpt[ 'hierarchical' ] ) && $cpt[ 'hierarchical' ] ) ? true : false;
-			
+									
 		/*
 		 * array (optional) default = array( 'title', 'editor' )
 		 *
