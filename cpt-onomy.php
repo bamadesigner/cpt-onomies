@@ -1,6 +1,6 @@
 <?php
 
-// Instantiate the class.
+// Instantiate the class
 global $cpt_onomy;
 $cpt_onomy = new CPT_TAXONOMY();
 
@@ -39,35 +39,45 @@ class CPT_TAXONOMY {
 	 * @param boolean $get_count - whether to get the term count
 	 * @return array|object - the information for the term you have created.
 	 */
-	private function convert_object_to_cpt_onomy_term( $object, $get_count=true ) {
+	private function convert_object_to_cpt_onomy_term( $object, $get_count = true ) {
 		global $cpt_onomies_manager;
-		if ( empty( $object ) ) return $object;
-		else {
-			$term = (object) $object;
-			if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $term->post_type ) )
-				return $object;
-			else {
-				/**
-				 * sanitize_term_field() lets you apply the 'term_description'
-				 * or '{$taxonomy}_description' filter to tweak the description,
-				 * if desired. Maybe you want the description to be a custom field?
-				 * or the post content. Just return that info in the filter!
-				 */
-				$term = array(
-					'term_id' => $term->ID,
-					'name' => apply_filters( 'the_title', $term->post_title, $term->ID ),
-					'slug' => $term->post_name,
-					'term_group' => $term->post_parent,
-					'term_taxonomy_id' => 0,
-					'taxonomy' => $term->post_type,
-					'description' => sanitize_term_field( 'description', '', $term->ID, $term->post_type, 'display' ), 
-					'parent' => $term->post_parent
-				);
-				if ( $get_count ) $term[ 'count' ] = $this->get_term_count( $term[ 'term_id' ], $term[ 'taxonomy' ] );
-				if ( is_object( $object ) ) return (object) $term;
-				else return $term;
-			}
-		}
+		
+		// if its empty, then there's no point
+		if ( empty( $object ) )
+			return $object;
+		
+		// make sure the term is an object
+		$term = (object) $object;
+		
+		// make sure its a CPT-onomy
+		if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $term->post_type ) )
+			return $object;
+			
+		/**
+		 * sanitize_term_field() lets you apply the 'term_description'
+		 * or '{$taxonomy}_description' filter to tweak the description,
+		 * if desired. Maybe you want the description to be a custom field?
+		 * or the post content. Just return that info in the filter!
+		 */
+		$term = array(
+			'term_id' => $term->ID,
+			'name' => apply_filters( 'the_title', $term->post_title, $term->ID ),
+			'slug' => $term->post_name,
+			'term_group' => $term->post_parent,
+			'term_taxonomy_id' => 0,
+			'taxonomy' => $term->post_type,
+			'description' => sanitize_term_field( 'description', '', $term->ID, $term->post_type, 'display' ), 
+			'parent' => $term->post_parent
+		);
+		
+		if ( $get_count )
+			$term[ 'count' ] = $this->get_term_count( $term[ 'term_id' ], $term[ 'taxonomy' ] );
+			
+		if ( is_object( $object ) )
+			return (object) $term;
+			
+		return $term;
+		
 	}
 	
 	/**
@@ -138,7 +148,7 @@ class CPT_TAXONOMY {
 		 */
 		if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) )
 			return get_term( $term, $taxonomy, $output, $filter );
-	
+			
 		if ( is_object( $term ) && empty( $term->filter ) ) {
 			wp_cache_add( $term->term_id, $term, $taxonomy );
 			$_term = $term;
@@ -189,7 +199,7 @@ class CPT_TAXONOMY {
 	public function get_term_by( $field, $value, $taxonomy, $output = OBJECT, $filter = 'raw', $parent = 0 ) {
 		global $wpdb, $cpt_onomies_manager;
 	
-		if ( ! taxonomy_exists($taxonomy) )
+		if ( ! taxonomy_exists( $taxonomy ) )
 			return false;
 		
 		/**
@@ -200,45 +210,81 @@ class CPT_TAXONOMY {
 			return get_term_by( $field, $value, $taxonomy, $output, $filter );
 			
 		if ( $parent > 0 )
-			$parent = " AND post_parent = " . $parent;
+			$parent = " AND wpposts.post_parent = " . $parent;
 		else
 			$parent = NULL;
 	
 		if ( 'slug' == $field ) {
-			$value = sanitize_title($value);
-			if ( empty($value) )
-				return false;
-			$query = "SELECT * FROM " . $wpdb->posts . " WHERE post_type = '" . $taxonomy . "' AND post_name = '" . $value . "' and post_status = 'publish'" . $parent;
-		} else if ( 'name' == $field ) {
-			// Assume already escaped
-			$value = stripslashes($value);
-			$query = "SELECT * FROM " . $wpdb->posts . " WHERE post_type = '" . $taxonomy . "' AND post_title = '" . $value . "' and post_status = 'publish'" . $parent;
-		} else {
-			$term = $this->get_term( (int) $value, $taxonomy, $output, $filter);
-			if ( is_wp_error( $term ) )
-				$term = false;
-			return $term;
-		}
 			
-		$term = $this->convert_object_to_cpt_onomy_term( $wpdb->get_row( $wpdb->prepare( $query, NULL ) ) );
+			$value = sanitize_title( $value );
+			
+			if ( empty( $value ) )
+				return false;
+			
+			// get eligible post types
+			$eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array();
+				
+			// find term and term count
+			$query = "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN ('" . implode( "','", $eligible_post_types ) . "') WHERE wpcountmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = '{$taxonomy}' AND wpposts.post_name = '{$value}' and wpposts.post_status = 'publish'" . $parent;
+			
+		} else if ( 'name' == $field ) {
+			
+			// Assume already escaped
+			$value = stripslashes( $value );
+			
+			// get eligible post types
+			$eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array();
+			
+			// find term and term count
+			$query = "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN ('" . implode( "','", $eligible_post_types ) . "') WHERE wpcountmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = '{$taxonomy}' AND wpposts.post_title = '{$value}' and wpposts.post_status = 'publish'" . $parent;
+		
+		} else {
+			
+			$term = $this->get_term( (int) $value, $taxonomy, $output, $filter );
+			
+			if ( is_wp_error( $term ) )
+				return false;
+			
+			return $term;
+		
+		}
+		
+		// get the term
+		$term = $wpdb->get_row( $query );
+		
 		if ( ! $term )
 			return false;
+		
+		// save the term count and remove from $term before conversion
+		$term_count = $term->count;
+		unset( $term->count );
+		
+		// dont get the count, we'll add from before
+		$term = $this->convert_object_to_cpt_onomy_term( $term, false );
+		
+		if ( ! $term )
+			return false;
+		
+		// add count
+		$term->count = $term_count;
 	
-		wp_cache_add($term->term_id, $term, $taxonomy);
+		wp_cache_add( $term->term_id, $term, $taxonomy );
 	
 		$term = apply_filters( 'get_term', $term, $taxonomy );
 		$term = apply_filters( "get_$taxonomy", $term, $taxonomy );
 		$term = sanitize_term( $term, $taxonomy, $filter );
 	
-		if ( $output == OBJECT ) {
+		if ( $output == OBJECT )
 			return $term;
-		} elseif ( $output == ARRAY_A ) {
+			
+		elseif ( $output == ARRAY_A )
 			return get_object_vars($term);
-		} elseif ( $output == ARRAY_N ) {
-			return array_values(get_object_vars($term));
-		} else {
-			return $term;
-		}
+			
+		elseif ( $output == ARRAY_N )
+			return array_values( get_object_vars( $term ) );
+			
+		return $term;
+		
 	}
 	
 	/**
@@ -268,17 +314,21 @@ class CPT_TAXONOMY {
 	 */
 	public function get_term_count( $term_id, $taxonomy ) {
 		global $wpdb, $cpt_onomies_manager;
+		
+		// must have a term ID and be a CPT-onomy
 		if ( is_numeric( $term_id ) && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 			
-			// we're only counting the posts who are supposed to be associated with this taxonomy			
-			$eligible_post_types = array();
-			foreach( get_taxonomy( $taxonomy )->object_type as $index => $object_type ) $eligible_post_types[ $index ] = "'" . $object_type . "'";
-			$eligible_post_types = implode( ',', $eligible_post_types );
+			// we're only counting the posts who are supposed to be associated with this taxonomy
+			if ( ( $eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array() )
+				&& ! empty( $eligible_post_types ) ) {
 			
-			return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM " . $wpdb->postmeta . " INNER JOIN " . $wpdb->posts . " ON " . $wpdb->posts . ".ID = " . $wpdb->postmeta . ".post_id WHERE " . $wpdb->postmeta . ".meta_key = %s AND " . $wpdb->postmeta . ".meta_value = %d AND " . $wpdb->posts . ".post_status = 'publish' AND " . $wpdb->posts . ".post_type IN (" . $eligible_post_types . ")", CPT_ONOMIES_POSTMETA_KEY, $term_id ) );
+				return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpposts_object ON wpposts_object.ID = wpcountmeta.post_id AND wpposts_object.post_status = 'publish' AND wpposts_object.post_type IN ( '" . implode( "','", $eligible_post_types ) . "' ) INNER JOIN {$wpdb->posts} wpposts_term ON wpposts_term.ID = wpcountmeta.meta_value AND wpposts_term.post_status = 'publish' AND wpposts_term.post_type = %s WHERE wpcountmeta.meta_key = %s AND wpcountmeta.meta_value = %d", $taxonomy, CPT_ONOMIES_POSTMETA_KEY, $term_id ) );
+			}
 		
 		}
+		
 		return 0;
+		
 	}
 		
 	/**
@@ -374,25 +424,31 @@ class CPT_TAXONOMY {
 		global $wpdb, $cpt_onomies_manager;
 		
 		if ( is_int( $term ) ) {
+			
 			if ( 0 == $term )
 				return 0;
-			
+				
 			/**
 			 * This function only processes registered CPT-onomies.
 			 * If this is a normal taxonomy, then use the WordPress function.
 			 */
 			if ( ! empty( $taxonomy ) && ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) )
 				return term_exists( $term, $taxonomy, $parent );	
+			
 			else if ( ! empty( $taxonomy ) )
 				return $this->get_term( $term, $taxonomy );
-			else {
-				// make sure this term belongs to a CPT-onomy
-				$term = $this->convert_object_to_cpt_onomy_term( $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->posts . " WHERE ID = %d AND post_status = 'publish'", $term ) ) );
-				if ( $cpt_onomies_manager->is_registered_cpt_onomy( $term->taxonomy ) )
-					return $term;
-				else
-					return 0;
-			}
+			
+			// get term info and convert
+			$term = $this->convert_object_to_cpt_onomy_term( $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->posts . " WHERE ID = %d AND post_status = 'publish'", $term ) ) );
+			
+			if ( ! $term )
+				return 0;
+			
+			// make sure this term belongs to a CPT-onomy
+			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $term->taxonomy ) )
+				return $term;
+			
+			return 0;
 				
 		}
 	
@@ -413,21 +469,43 @@ class CPT_TAXONOMY {
 			// check for parent
 			$parent = (int) $parent;
 			if ( $parent > 0 )
-				$parent = ' AND post_parent = ' . $parent;
+				$parent = ' AND wp_posts.post_parent = ' . $parent;
 			else
 				$parent = NULL;
+			
+			// get CPT-onomy's eligible post types
+			$eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array();
 				
 			// check for name first
-			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->posts . " WHERE post_title = %s" . $parent . " AND post_type = %s AND post_status = 'publish'", $term, $taxonomy ) );
+			// get term info and term count
+			$result = $wpdb->get_row( $wpdb->prepare( "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wp_count_meta INNER JOIN {$wpdb->posts} wp_count_posts ON wp_count_posts.ID = wp_count_meta.post_id AND wp_count_posts.post_type IN ('" . implode( "','", $eligible_post_types ) . "') AND wp_count_posts.post_status = 'publish' WHERE wp_count_meta.meta_value = wp_posts.ID) AS count, wp_posts.* FROM {$wpdb->posts} wp_posts WHERE wp_posts.post_title = %s AND wp_posts.post_status = 'publish'" . $parent . " AND wp_posts.post_type = %s AND wp_posts.post_status = 'publish'", $term, $taxonomy ) );
 			
 			// check for slug
+			// get term info and term count
 			if ( empty( $result ) )
-				$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->posts . " WHERE post_name = %s" . $parent . " AND post_type = %s AND post_status = 'publish'", $term, $taxonomy ) );
+				$result = $wpdb->get_row( $wpdb->prepare( "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wp_count_meta INNER JOIN {$wpdb->posts} wp_count_posts ON wp_count_posts.ID = wp_count_meta.post_id AND wp_count_posts.post_type IN ('" . implode( "','", $eligible_post_types ) . "') AND wp_count_posts.post_status = 'publish' WHERE wp_count_meta.meta_value = wp_posts.ID) AS count, wp_posts.* FROM {$wpdb->posts} wp_posts WHERE wp_posts.post_name = %s" . $parent . " AND wp_posts.post_type = %s AND wp_posts.post_status = 'publish'", $term, $taxonomy ) );
 			
-			if ( ! empty( $result ) && $cpt_onomies_manager->is_registered_cpt_onomy( $result->post_type ) )
-				return $this->convert_object_to_cpt_onomy_term( $result );
-			else
-				return 0;
+			if ( ! empty( $result ) && $cpt_onomies_manager->is_registered_cpt_onomy( $result->post_type ) ) {
+			
+				// save count and remove from term for conversion
+				$term_count = $result->count;
+				unset( $result->count );
+				
+				// convert term
+				// dont get count, we'll add it back
+				$term = $this->convert_object_to_cpt_onomy_term( $result, false );
+				
+				if ( ! $term )
+					return 0;
+				
+				// add count
+				$term->count = $term_count;
+				
+				return $term;
+				
+			}
+			
+			return 0;
 						
 		}
 		
@@ -449,8 +527,8 @@ class CPT_TAXONOMY {
 			
 			if ( ! empty( $result ) && $cpt_onomies_manager->is_registered_cpt_onomy( $result->post_type ) )
 				return $this->convert_object_to_cpt_onomy_term( $result );
-			else
-				return 0;
+		
+			return 0;
 			
 		}
 		
@@ -812,7 +890,7 @@ class CPT_TAXONOMY {
 		
 		if ( $in_same_cpt_onomy || ! empty( $excluded_term_ids ) ) {
 			
-			$join = " INNER JOIN " . $wpdb->postmeta . " AS pm ON p.ID = pm.post_id AND pm.meta_key ='" . CPT_ONOMIES_POSTMETA_KEY . "' INNER JOIN " . $wpdb->posts . " AS p2 ON pm.meta_value = p2.ID AND p2.post_type = '" . $cpt_onomy . "'";
+			$join = " INNER JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id AND pm.meta_key ='" . CPT_ONOMIES_POSTMETA_KEY . "' INNER JOIN {$wpdb->posts} AS p2 ON pm.meta_value = p2.ID AND p2.post_type = '" . $cpt_onomy . "'";
 	
 			if ( $in_same_cpt_onomy )
 				$join .= ' AND pm.meta_value IN (' . implode( ',', wp_get_object_terms( $post->ID, $cpt_onomy, array( 'fields' => 'ids' ) ) ) . ')';
@@ -832,7 +910,7 @@ class CPT_TAXONOMY {
 				$excluded_term_ids = array_map( 'intval', $excluded_term_ids );
 	
 				if ( ! empty( $excluded_term_ids ) ) {
-					$posts_in_ex_terms_sql = " AND ( SELECT COUNT(*) FROM " . $wpdb->postmeta . " pm2 WHERE pm2.post_id = p.ID AND pm2.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND pm2.meta_value NOT IN (" . implode(',', $excluded_term_ids) . ") ) = ( SELECT COUNT(*) FROM " . $wpdb->postmeta . " pm2 WHERE pm2.post_id = p.ID AND pm.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' )";
+					$posts_in_ex_terms_sql = " AND ( SELECT COUNT(*) FROM {$wpdb->postmeta} pm2 WHERE pm2.post_id = p.ID AND pm2.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND pm2.meta_value NOT IN (" . implode(',', $excluded_term_ids) . ") ) = ( SELECT COUNT(*) FROM {$wpdb->postmeta} pm2 WHERE pm2.post_id = p.ID AND pm.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' )";
 				}
 			
 			}
@@ -853,7 +931,7 @@ class CPT_TAXONOMY {
 	  	if ( false !== $result )
 	  		return $result;
 	  
-	  	$result = $wpdb->get_row("SELECT p.* FROM $wpdb->posts AS p $join $where $sort");
+	  	$result = $wpdb->get_row( "SELECT p.* FROM $wpdb->posts AS p $join $where $sort" );
 	  	if ( null === $result )
 	  		$result = '';
 	  
@@ -985,7 +1063,7 @@ class CPT_TAXONOMY {
 	 * @return array - the terms after they have been filtered
 	 */
 	public function get_terms( $terms, $taxonomies, $args ) {
-		global $cpt_onomies_manager, $current_screen, $post;
+		global $cpt_onomies_manager, $current_screen, $post, $wpdb;
 									
 		// if taxonomy name is string, convert to array
 		if ( ! is_array( $taxonomies ) )
@@ -1071,16 +1149,55 @@ class CPT_TAXONOMY {
 				'name' => $slug,
 				's' => $search
 			));
+			
 			if ( ! empty( $cpt_posts ) ) {
+				
 				// we don't want to show the current "term" if on the edit post screen in the admin
-				$current = NULL;
-				if ( is_admin() && $current_screen && $current_screen->base == 'post' && $current_screen->parent_base == 'edit' && $current_screen->post_type == $taxonomy && isset( $post->ID ) )
-					$current = $post->ID;
+				$current = ( is_admin() && $current_screen && $current_screen->base == 'post' && $current_screen->parent_base == 'edit' && $current_screen->post_type == $taxonomy && isset( $post->ID ) ) ? $post->ID : NULL;
+					
+				// get count for all posts
+				// we need the IDs so we can get the count in one query
+				// we can't filter the get_posts() query to get the count
+				// because we have to supress filters to make sure nothing
+				// else interferes
+				$cpt_posts_ids = array_map( function( $p ) { return $p->ID; }, $cpt_posts );
+				$cpt_posts_eligible_taxonomies = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL;
+				
+				// builds array with count for each post ID
+				$cpt_posts_count = ! empty( $cpt_posts_ids ) && ! empty( $cpt_posts_eligible_taxonomies ) ? $wpdb->get_results( $wpdb->prepare( "SELECT wpposts.ID, ( SELECT COUNT(*) FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpmetaposts ON wpmetaposts.ID = wpmeta.post_id AND wpmetaposts.post_type IN ( '" . implode( "','", $cpt_posts_eligible_taxonomies ) . "' ) AND wpmetaposts.post_status = 'publish' WHERE wpmeta.meta_key = %s AND wpmeta.meta_value = wpposts.ID ) AS count FROM {$wpdb->posts} wpposts WHERE wpposts.ID IN ( '" . implode( "','", $cpt_posts_ids ) . "' ) AND wpposts.post_status = 'publish' ORDER BY wpposts.ID ASC", CPT_ONOMIES_POSTMETA_KEY ) ) : array();
+				
 				foreach ( $cpt_posts as $this_post ) {
+					
 					// dont show current "term"
 					if ( empty( $current ) || ( ! empty( $current ) && $current != $this_post->ID ) ) {
-						$this_term = $this->convert_object_to_cpt_onomy_term( $this_post );
-						if ( ! $hide_empty || ( $hide_empty && $this_term->count > 0 ) ) {
+						
+						// dont get count when converting because we'll set it next
+						$this_term = $this->convert_object_to_cpt_onomy_term( $this_post, false );
+						
+						// if no term, then continue to next post
+						if ( ! $this_term )
+							continue;
+						
+						// add count if exists
+						foreach( $cpt_posts_count as $cpt_posts_count_index => $cpt_posts_count_item ) {
+							
+							// we found the count
+							if ( $this_post->ID == $cpt_posts_count_item->ID ) {
+								
+								// assign count
+								$this_term->count = $cpt_posts_count_item->count;
+								
+								// remove from array so future queries go faster
+								unset( $cpt_posts_count[ $cpt_posts_count_index ] );
+								
+								break;
+							
+							}
+							
+						}
+						
+						if ( ! $hide_empty || ( $hide_empty && isset( $this_term->count ) && $this_term->count > 0 ) ) {
+							
 							switch( $fields ) {
 								case 'ids':
 									$this_term = $this_term->term_id;
@@ -1089,14 +1206,19 @@ class CPT_TAXONOMY {
 									$this_term = $this_term->name;
 									break;
 							}
+							
 							// 'id=>parent' is a beast all its own
 							if ( $fields == 'id=>parent' )
 								$terms[ $this_term->term_id ] = $this_term->parent;
 							else
 								$terms[] = $this_term;
+						
 						}
+						
 					}
+				
 				}
+				
 			}
 			
 		}
@@ -1210,12 +1332,9 @@ class CPT_TAXONOMY {
 					
 		$order = ( 'desc' == strtolower( $order ) ) ? 'DESC' : 'ASC';
 	
-		$term_ids = array_map('intval', $term_ids );
-	
-		$taxonomies = "'" . implode( "', '", $taxonomies ) . "'";
-		$term_ids = "'" . implode( "', '", $term_ids ) . "'";
+		$term_ids = array_map( 'intval', $term_ids );
 		
-		$object_ids = $wpdb->get_col( $wpdb->prepare( "SELECT " . $wpdb->postmeta . ".post_id FROM " . $wpdb->postmeta . " INNER JOIN " . $wpdb->posts . " ON " . $wpdb->posts . ".ID = " . $wpdb->postmeta . ".meta_value AND " . $wpdb->posts . ".post_type IN (" . $taxonomies . ") WHERE " . $wpdb->postmeta . ".meta_key = %s AND " . $wpdb->postmeta . ".meta_value IN (" . $term_ids . ") ORDER BY " . $wpdb->postmeta . ".post_id " . $order, CPT_ONOMIES_POSTMETA_KEY ) );
+		$object_ids = $wpdb->get_col( $wpdb->prepare( "SELECT {$wpdb->postmeta}.post_id FROM {$wpdb->postmeta} INNER JOIN {$wpdb->posts} ON {$wpdb->posts}.ID = {$wpdb->postmeta}.meta_value AND {$wpdb->posts}.post_type IN ('" . implode( "','", $taxonomies ) . "') WHERE {$wpdb->postmeta}.meta_key = %s AND {$wpdb->postmeta}.meta_value IN ('" . implode( "','", $term_ids ) . "') ORDER BY {$wpdb->postmeta}.post_id " . $order, CPT_ONOMIES_POSTMETA_KEY ) );
 	
 		if ( ! $object_ids )
 			return array();
@@ -1305,24 +1424,25 @@ class CPT_TAXONOMY {
 			$terms = $new_terms;
 		}
 				
-		if ( count($taxonomies) > 1 ) {
+		if ( count( $taxonomies ) > 1 ) {
+			
 			foreach ( $taxonomies as $index => $taxonomy ) {
-				$t = get_taxonomy($taxonomy);
-				if ( isset($t->args) && is_array($t->args) && $args != array_merge($args, $t->args) ) {
+				$t = get_taxonomy( $taxonomy );
+				if ( isset( $t->args ) && is_array( $t->args ) && $args != array_merge( $args, $t->args ) ) {
 					unset($taxonomies[$index]);
-					$terms = array_merge($terms, wp_get_object_terms($object_ids, $taxonomy, array_merge($args, $t->args)));
+					$terms = array_merge( $terms, wp_get_object_terms( $object_ids, $taxonomy, array_merge( $args, $t->args ) ) );
 				}
 			}
+			
 		} else {
-			$t = get_taxonomy($taxonomies[0]);
-			if ( isset($t->args) && is_array($t->args) )
-				$args = array_merge($args, $t->args);
+			
+			$t = get_taxonomy( $taxonomies[0] );
+			if ( isset( $t->args ) && is_array( $t->args ) )
+				$args = array_merge( $args, $t->args );
+		
 		}
 									
 		extract( $args, EXTR_SKIP );
-		
-		// add quotes around taxonomies
-		foreach( $cpt_taxonomies as $index => $taxonomy ) $cpt_taxonomies[ $index ] = "'" . $taxonomy ."'";
 		
 		// if there are terms to 'exclude', clean up the parameters
 		$exclude = ( isset( $args[ 'exclude' ] ) ) ? wp_parse_id_list( $args[ 'exclude' ] ) : array();
@@ -1332,10 +1452,10 @@ class CPT_TAXONOMY {
 	
 			case 'ids':
 				$cpt_ids = $wpdb->get_col( $wpdb->prepare( "SELECT meta_value 
-					FROM " . $wpdb->postmeta . " wpmeta 
-					INNER JOIN " . $wpdb->posts . " wpposts ON
+					FROM {$wpdb->postmeta} wpmeta 
+					INNER JOIN {$wpdb->posts} wpposts ON
 						wpposts.ID = wpmeta.meta_value AND
-						wpposts.post_type IN (" . implode( ',', $cpt_taxonomies ) . ") AND
+						wpposts.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "') AND
 						wpposts.post_status = 'publish'
 					WHERE wpmeta.post_id IN (" . implode( ',', $object_ids ) . ") AND wpmeta.meta_key = %s", CPT_ONOMIES_POSTMETA_KEY ) );
 				foreach( $cpt_ids as $cpt_id ) {
@@ -1347,12 +1467,12 @@ class CPT_TAXONOMY {
 				
 			case 'names':
 				$cpt_posts = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_title
-					FROM " . $wpdb->posts . " wpposts 
-					INNER JOIN " . $wpdb->postmeta . " wpmeta ON
+					FROM {$wpdb->posts} wpposts 
+					INNER JOIN {$wpdb->postmeta} wpmeta ON
 						wpmeta.meta_value = wpposts.ID AND
 						wpmeta.meta_key = %s AND
 						wpmeta.post_id IN (" . implode( ',', $object_ids ) . ")
-					WHERE wpposts.post_type IN (" . implode( ',', $cpt_taxonomies ) . ") AND wpposts.post_status = 'publish'", CPT_ONOMIES_POSTMETA_KEY ) );
+					WHERE wpposts.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "') AND wpposts.post_status = 'publish'", CPT_ONOMIES_POSTMETA_KEY ) );
 				foreach ( $cpt_posts as $this_post ) {
 					$filtered_name = apply_filters( 'the_title', $this_post->post_title, $this_post->ID );	
 					if ( ! in_array( $filtered_name, $terms ) )
@@ -1362,12 +1482,12 @@ class CPT_TAXONOMY {
 				
 			case 'slugs':
 				$cpt_slugs = $wpdb->get_col( $wpdb->prepare( "SELECT post_name
-					FROM " . $wpdb->posts . " wpposts 
-					INNER JOIN " . $wpdb->postmeta . " wpmeta ON
+					FROM {$wpdb->posts} wpposts 
+					INNER JOIN {$wpdb->postmeta} wpmeta ON
 						wpmeta.meta_value = wpposts.ID AND
 						wpmeta.meta_key = %s AND
 						wpmeta.post_id IN (" . implode( ',', $object_ids ) . ")
-					WHERE wpposts.post_type IN (" . implode( ',', $cpt_taxonomies ) . ") AND wpposts.post_status = 'publish'", CPT_ONOMIES_POSTMETA_KEY ) );
+					WHERE wpposts.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "') AND wpposts.post_status = 'publish'", CPT_ONOMIES_POSTMETA_KEY ) );
 				foreach( $cpt_slugs as $cpt_slug ) {
 					if ( ! in_array( $cpt_slug, $terms ) )
 						$terms[] = $cpt_slug;	
@@ -1375,43 +1495,115 @@ class CPT_TAXONOMY {
 				break;
 				
 			case 'all_with_object_id':
-				$cpt_posts = $wpdb->get_results( $wpdb->prepare( "SELECT post_id AS object_id, meta_value AS post_id FROM " . $wpdb->postmeta . " wpmeta
-					INNER JOIN " . $wpdb->posts . " wpposts ON
+				
+				// build the query
+				// get object ID, term count and post info
+				$cpt_posts_query = "SELECT wpmeta.post_id AS object_id, ( SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountmetaposts ON wpcountmetaposts.ID = wpcountmeta.post_id AND wpcountmetaposts.post_status = 'publish' WHERE wpcountmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND wpcountmeta.meta_value = wpposts2.ID ) AS count, wpposts2.* FROM {$wpdb->postmeta} wpmeta
+					INNER JOIN {$wpdb->posts} wpposts ON
 						wpmeta.post_id = wpposts.ID AND
 						wpposts.ID IN (" . implode( ',', $object_ids ) . ") AND
 						wpposts.post_status = 'publish'
-					INNER JOIN " . $wpdb->posts . " wpposts2 ON
-						wpposts2.ID = wpmeta.meta_value AND
-						wpposts2.post_type in (" . implode( ',', $cpt_taxonomies ) . ")
-					WHERE wpmeta.meta_key = %s", CPT_ONOMIES_POSTMETA_KEY ) );
+					INNER JOIN {$wpdb->posts} wpposts2 ON
+						wpposts2.ID = wpmeta.meta_value";
+						
+						// exclude certain "terms"
+						if ( ! empty( $exclude ) )
+							$cpt_posts_query .= " AND wpposts2.ID NOT IN ( " . implode( ',', $exclude ) . " )";
+						
+						$cpt_posts_query .= " AND wpposts2.post_status = 'publish' AND
+						wpposts2.post_type in ('" . implode( "','", $cpt_taxonomies ) . "')
+					WHERE wpmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'";
+				
+				// get the posts
+				$cpt_posts = $wpdb->get_results( $cpt_posts_query );
+				
 				if ( ! empty( $cpt_posts ) ) {
+					
 					foreach ( $cpt_posts as $this_post ) {
-						// don't add if set in $exclude
-						if ( ! empty( $this_post ) && ! in_array( $this_post->post_id, $exclude ) ) {
+						
+						if ( ! empty( $this_post ) ) {
+						
+							// save count and remove before conversion
+							$term_count = $this_post->count;
+							unset( $this_post->count );
+						
+							// save object ID and remove before conversion
 							$object_id = $this_post->object_id;
-							$this_post = get_post( $this_post->post_id );
-							$term = $this->convert_object_to_cpt_onomy_term( $this_post );
+							unset( $this_post->object_id );
+																												
+							// convert to term
+							// don't need count because we're adding it next
+							$term = $this->convert_object_to_cpt_onomy_term( $this_post, false );
+							
+							// if no term then continue to next post
+							if ( ! $term )
+								continue;
+							
+							// add object ID back to the mix
 							$term->object_id = $object_id;
+							
+							// add term count back to the mix
+							$term->count = $term_count;
+														
+							// add to terms
 							$terms[] = $term;
+						
 						}
+						
 					}
+					
 				}
 				break;
 				
 			case 'all':
 			default:
-				$cpt_posts = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->posts . " wpposts
-					INNER JOIN " . $wpdb->postmeta . " wpmeta ON
+			
+				// build the query
+				// get term count and post info
+				$cpt_posts_query = "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountmetaposts ON wpcountmetaposts.ID = wpcountmeta.post_id AND wpcountmetaposts.post_status = 'publish' WHERE wpcountmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND wpcountmeta.meta_value = wpposts.ID) AS count,
+					wpposts.* FROM {$wpdb->posts} wpposts
+					INNER JOIN {$wpdb->postmeta} wpmeta ON
 						wpmeta.meta_value = wpposts.ID AND
-						wpmeta.meta_key = %s AND
-						wpmeta.post_id IN (" . implode( ',', $object_ids ) . ")
-					WHERE wpposts.post_type IN (" . implode( ',', $cpt_taxonomies ) . ") AND wpposts.post_status = 'publish'", CPT_ONOMIES_POSTMETA_KEY ) );
+						wpmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND
+						wpmeta.post_id IN (" . implode( ',', $object_ids ) . ")";
+						
+						// exclude certain "terms"
+						if ( ! empty( $exclude ) )
+							$cpt_posts_query .= " AND wpposts.ID NOT IN ( " . implode( ',', $exclude ) . " )";
+						
+					$cpt_posts_query .= " WHERE wpposts.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "') AND wpposts.post_status = 'publish'";
+					
+				// get the posts
+				$cpt_posts = $wpdb->get_results( $cpt_posts_query );
+				
 				if ( ! empty( $cpt_posts ) ) {
+					
 					foreach ( $cpt_posts as $this_post ) {
-						// don't add if set in $exclude
-						if ( ! in_array( $this_post->ID, $exclude ) )
-							$terms[] = $this->convert_object_to_cpt_onomy_term( $this_post );
+					
+						if ( ! empty( $this_post ) ) {
+						
+							// save count and remove before conversion
+							$term_count = $this_post->count;
+							unset( $this_post->count );
+							
+							// convert to term
+							// don't need count because we're adding it next
+							$term = $this->convert_object_to_cpt_onomy_term( $this_post, false );
+							
+							// if no term then continue to next post
+							if ( ! $term )
+								continue;
+							
+							// add count back to the mix
+							$term->count = $term_count;
+						
+							// add to terms
+							$terms[] = $term;
+							
+						}
+					
 					}
+				
 				}
 				break;	
 			
@@ -1422,7 +1614,7 @@ class CPT_TAXONOMY {
 		 * If 'ids' or 'names', then we have a simpler sort.
 		 */
 		if ( in_array( $fields, array( 'ids', 'names', 'slugs' ) ) )
-			sort( $terms ); //natcasesort( $terms );	
+			sort( $terms );
 		
 		else {
 			switch( $orderby ) {
@@ -1639,7 +1831,7 @@ class CPT_TAXONOMY {
 			$term_ids[] = $term_info->term_id;
 			
 			// make sure the relationship doesn't already exist
-			if ( $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM " . $wpdb->prefix . "postmeta WHERE post_id = %d AND meta_key = %s AND meta_value = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY, $term_info->term_id ) ) )
+			if ( $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s AND meta_value = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY, $term_info->term_id ) ) )
 				continue;
 			
 			/**
@@ -1698,7 +1890,7 @@ class CPT_TAXONOMY {
 		if ( $object_id && $term_id && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 		
 			// make sure the relationship exists
-			if ( ! $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM " . $wpdb->prefix . "postmeta WHERE post_id = %d AND meta_key = %s AND meta_value = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY, $term_id ) ) )
+			if ( ! $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s AND meta_value = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY, $term_id ) ) )
 				return false;
 			
 			/**
@@ -1763,10 +1955,10 @@ class CPT_TAXONOMY {
 			$taxonomies = implode( ',', $taxonomies );
 			
 			// get IDs of terms being deleted to use for 'cpt_onomy_deleted_object_term_relationship' action
-			if ( $term_ids_being_deleted = $wpdb->get_col( $wpdb->prepare( "SELECT wpmeta.meta_value FROM " . $wpdb->postmeta . " wpmeta INNER JOIN " . $wpdb->posts . " wpp ON wpp.ID = wpmeta.meta_value WHERE wpp.post_type IN (" . $taxonomies . ") AND wpmeta.post_id = %d AND wpmeta.meta_key = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
+			if ( $term_ids_being_deleted = $wpdb->get_col( $wpdb->prepare( "SELECT wpmeta.meta_value FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpp ON wpp.ID = wpmeta.meta_value WHERE wpp.post_type IN (" . $taxonomies . ") AND wpmeta.post_id = %d AND wpmeta.meta_key = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
 			
 				// delete object relationships with specific taxonomies
-				if ( $wpdb->query( $wpdb->prepare( "DELETE wpmeta.* FROM " . $wpdb->postmeta . " wpmeta INNER JOIN " . $wpdb->posts . " wpp ON wpp.ID = wpmeta.meta_value WHERE wpp.post_type IN (" . $taxonomies . ") AND wpmeta.post_id = %d AND wpmeta.meta_key = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
+				if ( $wpdb->query( $wpdb->prepare( "DELETE wpmeta.* FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpp ON wpp.ID = wpmeta.meta_value WHERE wpp.post_type IN (" . $taxonomies . ") AND wpmeta.post_id = %d AND wpmeta.meta_key = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
 				
 					// action allows user to run code when relationships are deleted
 					foreach( $term_ids_being_deleted as $deleted_term_id ) {
