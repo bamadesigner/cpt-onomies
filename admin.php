@@ -153,8 +153,8 @@ class CPT_ONOMIES_ADMIN {
 					$cpt_onomies_admin_post_translation[ 'no_terms_selected' ][ $taxonomy ] = sprintf( __( 'There are no %s selected.', CPT_ONOMIES_TEXTDOMAIN ), strtolower( $tax->labels->name ) );
 				}
 				
+				// add our info to the scripts
 				wp_localize_script( CPT_ONOMIES_DASH . '-admin-post', 'cpt_onomies_admin_post_data', $cpt_onomies_admin_post_data );
-				
 				wp_localize_script( CPT_ONOMIES_DASH . '-admin-post', 'cpt_onomies_admin_post_L10n', $cpt_onomies_admin_post_translation );
 				
 				break;
@@ -1017,7 +1017,7 @@ class CPT_ONOMIES_ADMIN {
 			// make sure its a registered CPT-onomy
 			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 		
-				/*
+				/**
 				 * If version >= 3.5, the 'show_admin_column' setting works for you
 				 * but you still have the capability to remove the column,
 				 * via filter, if desired. 'show_admin_column' is set to true
@@ -1026,7 +1026,7 @@ class CPT_ONOMIES_ADMIN {
 				 */
 				if ( get_bloginfo( 'version' ) >= 3.5 ) {
 				
-					/*
+					/**
 					 * If the column already exists, i.e. added by WordPress,
 					 * this filter allows you to remove the column by returning false.
 					 */
@@ -1043,7 +1043,7 @@ class CPT_ONOMIES_ADMIN {
 				// backwards compatability
 				else {
 				
-					/*
+					/**
 					 * The column is added by default. This filter allows you
 					 * to remove the column by returning false.
 					 */
