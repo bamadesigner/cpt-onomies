@@ -1,6 +1,6 @@
 <?php
 
-/* Instantiate the class. */
+// Instantiate the class
 global $cpt_onomies_admin;
 $cpt_onomies_admin = new CPT_ONOMIES_ADMIN();
 
@@ -69,6 +69,9 @@ class CPT_ONOMIES_ADMIN {
 			add_filter( 'manage_pages_columns', array( &$this, 'add_cpt_onomy_admin_column' ), 100, 1 );
 			add_filter( 'manage_posts_columns', array( &$this, 'add_cpt_onomy_admin_column' ), 100, 2 );
 			
+			// define sortable columns
+			add_action( 'load-edit.php', array( &$this, 'add_cpt_onomy_admin_sortable_columns_filter' ) );
+			
 			// edit custom admin columns for version < 3.5 - backwards compatibility for a little while
 			add_action( 'manage_pages_custom_column', array( &$this, 'edit_cpt_onomy_admin_column' ), 10, 2 );
 			add_action( 'manage_posts_custom_column', array( &$this, 'edit_cpt_onomy_admin_column' ), 10, 2 );
@@ -116,25 +119,26 @@ class CPT_ONOMIES_ADMIN {
 		global $current_screen;
 			
 		// several pages in the admin need this script
-		wp_register_script( 'jquery-form-validation', CPT_ONOMIES_URL . 'js/jquery.validate.min.js', array( 'jquery' ), '', true );
+		wp_register_script( 'jquery-form-validation', plugins_url( 'js/jquery.validate.min.js', __FILE__ ), array( 'jquery' ), NULL, true );
 		
 		// enqueue scripts depending on page
 		switch( $page ) {
 		
 			case 'edit.php':
-				wp_enqueue_script( CPT_ONOMIES_DASH . '-admin-edit', CPT_ONOMIES_URL . 'js/admin-edit.js', array( 'jquery', 'inline-edit-post' ), '', true );
+				wp_enqueue_script( CPT_ONOMIES_DASH . '-admin-edit', plugins_url( 'js/admin-edit.js', __FILE__ ), array( 'jquery', 'inline-edit-post' ), NULL, true );
 				break;
 				
 			case 'post.php':
 			case 'post-new.php':
-				wp_enqueue_style( CPT_ONOMIES_DASH . '-admin-post', CPT_ONOMIES_URL . 'css/admin-post.css' );
-				wp_enqueue_script( CPT_ONOMIES_DASH . '-admin-post', CPT_ONOMIES_URL . 'js/admin-post.js', array( 'jquery', 'post', 'jquery-ui-autocomplete' ), '', true );
+				wp_enqueue_style( CPT_ONOMIES_DASH . '-admin-post', plugins_url( 'css/admin-post.css', __FILE__ ), false, NULL );
+				wp_enqueue_script( CPT_ONOMIES_DASH . '-admin-post', plugins_url( 'js/admin-post.js', __FILE__ ), array( 'jquery', 'post', 'jquery-ui-autocomplete' ), NULL, true );
 				
 				// our localized info
 				$cpt_onomies_admin_post_data = array();
 				$cpt_onomies_admin_post_translation = array(
 					'term_does_not_exist' => sprintf( __( 'The term you are trying to add does not exist. %s terms, a.k.a posts, must already exist to be available for selection.', CPT_ONOMIES_TEXTDOMAIN ), 'CPT-onomy' ),
 					'add_a_term' => __( 'Add a term', CPT_ONOMIES_TEXTDOMAIN ),
+					'add_the_term' => __( 'Add the term', CPT_ONOMIES_TEXTDOMAIN ),
 					'no_self_relationship' => __( 'Kind of silly to create a relationship between a post and itself, eh?', CPT_ONOMIES_TEXTDOMAIN ),
 					'relationship_already_exists' => __( 'This relationship already exists.', CPT_ONOMIES_TEXTDOMAIN ),
 					'close' => __( 'Close', CPT_ONOMIES_TEXTDOMAIN ),
@@ -582,7 +586,7 @@ class CPT_ONOMIES_ADMIN {
 			switch( $format ) {
 			
 				case 'autocomplete':
-												
+					
 					?><div id="taxonomy-<?php echo $taxonomy; ?>" class="cpt_onomies_tags_div">
 						<div class="jaxtag">
 							<div class="nojs-tags hide-if-js">
@@ -600,7 +604,7 @@ class CPT_ONOMIES_ADMIN {
 								</div>
 							<?php endif; ?>
 						</div>
-						<div class="cpt_onomies_tag_checklist<?php if ( !current_user_can( $tax->cap->assign_terms ) ) { echo ' alone'; } ?>"></div>
+						<div class="cpt_onomies_tag_checklist<?php if ( ! current_user_can( $tax->cap->assign_terms ) ) { echo ' alone'; } ?>"></div>
 					</div>
 					<?php if ( current_user_can( $tax->cap->assign_terms ) ) : ?>
 						<p class="hide-if-no-js"><a href="#titlediv" class="cpt_onomies_tag_cloud" id="link-<?php echo $taxonomy; ?>"><?php _e( $tax->labels->choose_from_most_used, CPT_ONOMIES_TEXTDOMAIN ); ?></a></p>
@@ -723,7 +727,7 @@ class CPT_ONOMIES_ADMIN {
 			if ( isset( $_POST[ 'assign_cpt_onomies_' . $taxonomy . '_rel' ] ) && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 			
 				// check permissions
-				if ( !current_user_can( $tax->cap->assign_terms ) )
+				if ( ! current_user_can( $tax->cap->assign_terms ) )
 					continue;
 										
 				// set object terms				
@@ -910,11 +914,11 @@ class CPT_ONOMIES_ADMIN {
 		list( $columns, $hidden ) = $wp_list_table->get_column_info();
 		foreach ( $columns as $column_name => $column_display_name ) {
 		
-			/*
-			* The filter drop down is added if you have the column added
-			* but you still have the capability to remove the dropdown
-			* via filter, if desired.
-			*/
+			/**
+			 * The filter drop down is added if you have the column added
+			 * but you still have the capability to remove the dropdown
+			 * via filter, if desired.
+			 */
 			
 			// get taxonomy name
 			$taxonomy = NULL;
@@ -980,16 +984,11 @@ class CPT_ONOMIES_ADMIN {
 	 * bringing about default WordPress functionality for admin "Edit Posts"
 	 * taxonomy columns so CPT-onomies will now hook into this functionality.
 	 *
-	 * However, this  setting was not introduced until 3.5 so I will keep this
+	 * However, this setting was not introduced until 3.5 so I will keep this
 	 * functionality, for a little while, for backwards compatibility. If version
 	 * is less than 3.5, this function will add the column. No matter the method,
 	 * the 'custom_post_type_onomies_add_cpt_onomy_admin_column' filter will
 	 * allow the user the ability to remove the column by CPT-onomy or post type.
-	 *
-	 * Version 1.3 also deprecated column sortability to align with new
-	 * default WordPress taxonomy column functionality. I will keep CPT-onomy
-	 * functions for simply adding a column, for a little while, for backwards
-	 * compatibility but am going ahead and removing sortability.
 	 *
 	 * If a CPT-onomy is attached to a post type, the plugin adds a column
 	 * to the post type's edit screen which lists each post's assigned terms.
@@ -1089,6 +1088,78 @@ class CPT_ONOMIES_ADMIN {
 			}
 		}
 		return $columns;
+	}
+	
+	/**
+	 * Adds the filter for adding/managing sortable
+	 * CPT-onomy admin columns.
+	 *
+	 * I deprecated the ability to make the CPT-onomy admin
+	 * columns sortable in version 1.3 to align with new,
+	 * default WP taxonomy admin column functionality.
+	 * Re-instated the sortable columns in version 1.3.2
+	 * due to its popularity.
+	 *
+	 * This function is invoked by the action 'load-edit.php'.
+	 *
+	 * @reinstated in 1.3.2, first introduced in 1.0.3, deprecated in 1.3
+	 * @uses $current_screen
+	 */
+	public function add_cpt_onomy_admin_sortable_columns_filter() {
+		global $current_screen;
+		if ( $current_screen && isset( $current_screen->id ) )
+			add_filter( "manage_{$current_screen->id}_sortable_columns", array( &$this, 'add_cpt_onomy_admin_sortable_columns' ) );
+	}
+	
+	/**
+	 * Tells Wordpress to make our CPT-onomy admin columns sortable.
+	 * 
+	 * You can disable the columns from being sortable by returning false to the
+	 * 'custom_post_type_onomies_add_cpt_onomy_admin_sortable_column' filter, which
+	 * passes two parameters: the $taxonomy and the $post_type.
+	 *
+	 * If you want to remove the column altogether, set "Show Admin Column"
+	 * to false in your CPT-onomy settings, or return false to the
+	 * 'custom_post_type_onomies_add_cpt_onomy_admin_column' filter, which
+	 * passes the same two parameters: $taxonomy and $post_type.
+	 *
+	 * This function is invoked by the filter "manage_{$current_screen->id}_sortable_columns".
+	 *
+	 * @reinstated in 1.3.2, first introduced in 1.0.3, deprecated in 1.3
+	 * @uses $cpt_onomies_manager, $current_screen
+	 * @param array $sortable_columns - the sortable columns info already created by WordPress
+	 * @return array - the sortable columns info after it has been filtered
+	 * @filters 'custom_post_type_onomies_add_cpt_onomy_admin_sortable_column' - $taxonomy, $post_type
+	 */
+	public function add_cpt_onomy_admin_sortable_columns( $sortable_columns ) {
+		global $cpt_onomies_manager, $current_screen;
+		if ( $post_type = isset( $current_screen->post_type ) ? $current_screen->post_type : NULL ) {
+			foreach( get_object_taxonomies( $post_type, 'objects' ) as $taxonomy => $tax ) {
+			
+				// make sure its a registered CPT-onomy
+				// get the taxonomy's query variable
+				if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy )
+					&& ( $query_var = isset( $tax->query_var ) ? $tax->query_var : NULL ) ) {
+					
+					// this filter allows you to remove the column by returning false
+					// all CPT-onomy admin columns are default-ly added as sortable
+					if ( apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_sortable_column', true, $taxonomy, $post_type ) ) {
+					
+						// if version >= 3.5
+						if ( get_bloginfo( 'version' ) >= 3.5 )
+							$sortable_columns[ 'taxonomy-' . $taxonomy ] = $query_var;
+						
+						// backwards compatibility
+						else if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false )
+							$sortable_columns[ CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy ] = $query_var;
+						
+					}
+					
+				}
+			
+			}			
+		}
+		return $sortable_columns;
 	}
 		
 	/**
