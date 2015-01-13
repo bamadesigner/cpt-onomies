@@ -330,19 +330,27 @@ class CPT_ONOMIES_MANAGER {
 			$clauses[ 'where' ] .= " AND 0=1";
 			return $clauses;
 		}
-			
+		
 		// If ordering by a CPT-onomy
-		if ( ( $taxonomy = isset( $query->query[ 'orderby' ] ) && ! empty( $query->query[ 'orderby' ] ) ? $query->query[ 'orderby' ] : NULL )
-			&& ( $post_type = isset( $query->query[ 'post_type' ] ) && ! empty( $query->query[ 'post_type' ] ) && post_type_exists( $query->query[ 'post_type' ] ) ? $query->query[ 'post_type' ] : NULL )
-			&& $this->is_registered_cpt_onomy( $taxonomy, $post_type ) ) {
-			
-			$clauses[ 'join' ] .= " LEFT OUTER JOIN {$wpdb->postmeta} cpt_onomy_order_pm ON cpt_onomy_order_pm.post_id = {$wpdb->posts}.ID
-				AND cpt_onomy_order_pm.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
-				LEFT OUTER JOIN {$wpdb->posts} cpt_onomy_order_posts ON cpt_onomy_order_posts.ID = cpt_onomy_order_pm.meta_value
-				AND cpt_onomy_order_posts.post_type = '{$taxonomy}'";
+		if ( ( $taxonomy = $query->get( 'orderby' ) )
+			&& ( $post_type = $query->get( 'post_type' ) ) ) {
 				
-			$clauses[ 'groupby' ] = "{$wpdb->posts}.ID";
-			$clauses[ 'orderby' ] = ' GROUP_CONCAT( cpt_onomy_order_posts.post_title ORDER BY cpt_onomy_order_posts.post_title ASC )' . ( ( isset( $query->query[ 'order' ] ) && strcasecmp( $query->query[ 'order' ], 'desc' ) == 0 ) ? ' DESC' : ' ASC' ) . ( ! empty( $clauses[ 'orderby' ] ) ? ', ' : ' ' ) . $clauses[ 'orderby' ];
+			// If multiple post types, then go for it
+			// Otherwise, check that the post type is registered
+			if ( is_array( $post_type ) ||
+				( is_string( $post_type )
+				&& post_type_exists( $post_type )
+				&& $this->is_registered_cpt_onomy( $taxonomy, $post_type ) ) ) {
+				
+				$clauses[ 'join' ] .= " LEFT OUTER JOIN {$wpdb->postmeta} cpt_onomy_order_pm ON cpt_onomy_order_pm.post_id = {$wpdb->posts}.ID
+					AND cpt_onomy_order_pm.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
+					LEFT OUTER JOIN {$wpdb->posts} cpt_onomy_order_posts ON cpt_onomy_order_posts.ID = cpt_onomy_order_pm.meta_value
+					AND cpt_onomy_order_posts.post_type = '{$taxonomy}'";
+					
+				$clauses[ 'groupby' ] = "{$wpdb->posts}.ID";
+				$clauses[ 'orderby' ] = ' GROUP_CONCAT( cpt_onomy_order_posts.post_title ORDER BY cpt_onomy_order_posts.post_title ASC )' . ( ( isset( $query->query[ 'order' ] ) && strcasecmp( $query->query[ 'order' ], 'desc' ) == 0 ) ? ' DESC' : ' ASC' ) . ( ! empty( $clauses[ 'orderby' ] ) ? ', ' : ' ' ) . $clauses[ 'orderby' ];
+				
+			}
 			
 		}
 		
@@ -353,8 +361,9 @@ class CPT_ONOMIES_MANAGER {
 			$taxonomies = array( 'join' => '', 'where' => array() );
 			$new_where = array();
 			$c = $t = 1;
-			foreach ( $query->tax_query->queries as $this_query ) {
-			
+				
+			foreach ( $query->tax_query->queries as $this_query_key => $this_query ) {
+				
 				// Get the taxonomy
 				$taxonomy = isset( $this_query[ 'taxonomy' ] ) ? $this_query[ 'taxonomy' ] : NULL;
 			
@@ -380,7 +389,7 @@ class CPT_ONOMIES_MANAGER {
 						break;
 					}
 				}
-			
+				
 				// CPT-onomies
 				if ( $is_registered_cpt_onomy ) {
 					switch ( $this_query[ 'field' ] ) {
@@ -422,7 +431,7 @@ class CPT_ONOMIES_MANAGER {
 					return;
 									
 				$this_query[ 'terms' ] = $terms;
-						
+					
 				if ( is_taxonomy_hierarchical( $taxonomy ) && $this_query[ 'include_children' ] ) {
 					
 					$children = array();
@@ -447,7 +456,7 @@ class CPT_ONOMIES_MANAGER {
 				$primary_id_column = 'ID';
 				
 				sort( $terms );
-	
+				
 				if ( 'IN' == $operator ) {
 					
 					if ( empty( $terms ) )
@@ -574,9 +583,34 @@ class CPT_ONOMIES_MANAGER {
 				// remove the post_name (WP adds this if the post type is hierarhical. I'm not sure why)
 				$clauses[ 'where' ] = preg_replace( '/wp\_posts\.post\_name\s=\s\'([^\']*)\'\sAND\s/i', '', $clauses[ 'where' ] );
 				
-				// remove 0 = 1
-				$clauses[ 'where' ] = preg_replace( '/\([\s]*0\s\=\s1[\s]*\)\sAND\s/i', '', $clauses[ 'where' ] );
-											
+				// Remove 0 = 1
+				// Build replace string
+				$preg_replace_str = NULL;
+				
+				// Get tax queries count
+				$tax_queries_count = count( $query->tax_query->queries );
+				
+				// Don't count the relation setting
+				if ( array_key_exists( 'relation', $query->tax_query->queries ) )
+					$tax_queries_count--;
+				
+				// We have to set it up for each tax query
+				for ( $p = 0; $p < $tax_queries_count; $p++ ) {
+					
+					// Add relation separator
+					if ( $p > 0 )
+						$preg_replace_str .= '[\s]+' . $query->tax_query->relation;
+						
+					$preg_replace_str .= '[\s]+0[\s]+\=[\s]+1';
+					
+				}
+				
+				// Wrap them all in an AND
+				$preg_replace_str = 'AND[\s]+\(' . $preg_replace_str . '[\s]+\)';
+				
+				// Replace the 0 = 1 in the 'where' clause
+				$clauses[ 'where' ] = preg_replace( '/' . $preg_replace_str . '/i', '', $clauses[ 'where' ] );
+				
 				$clauses[ 'where' ] .= " AND ( ";
 					foreach ( $new_where as $where_index => $add_where ) {
 						if ( $where_index > 0 )
