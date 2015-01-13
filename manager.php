@@ -361,6 +361,9 @@ class CPT_ONOMIES_MANAGER {
 			$taxonomies = array( 'join' => '', 'where' => array() );
 			$new_where = array();
 			$c = $t = 1;
+			
+			// Get tax queries count for replacing 0 = 1 - do not include 'NOT IN' relationships
+			$tax_queries_count = 0;
 				
 			foreach ( $query->tax_query->queries as $this_query_key => $this_query ) {
 				
@@ -370,7 +373,7 @@ class CPT_ONOMIES_MANAGER {
 				// Make sure the taxonomy exists
 				if ( ! $taxonomy || ! taxonomy_exists( $taxonomy ) )
 					continue;
-				
+					
 				// @TODO This used to skip for non-CPT-onomies but that caused a bug
 				// Now we let them through. Does this need to be fixed?
 				//if ( ! ( $is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy ) ) )
@@ -431,7 +434,7 @@ class CPT_ONOMIES_MANAGER {
 					return;
 									
 				$this_query[ 'terms' ] = $terms;
-					
+				
 				if ( is_taxonomy_hierarchical( $taxonomy ) && $this_query[ 'include_children' ] ) {
 					
 					$children = array();
@@ -492,6 +495,9 @@ class CPT_ONOMIES_MANAGER {
 						$t++;
 						
 					}
+					
+					// Add to tax queries count for replacing 0 = 1 - do not include 'NOT IN' relationships
+					$tax_queries_count++;
 					
 				} elseif ( 'NOT IN' == $operator ) {
 	
@@ -555,6 +561,9 @@ class CPT_ONOMIES_MANAGER {
 				
 					}
 					
+					// Add to tax queries count for replacing 0 = 1 - do not include 'NOT IN' relationships
+					$tax_queries_count++;
+					
 				}
 				
 			}
@@ -586,13 +595,6 @@ class CPT_ONOMIES_MANAGER {
 				// Remove 0 = 1
 				// Build replace string
 				$preg_replace_str = NULL;
-				
-				// Get tax queries count
-				$tax_queries_count = count( $query->tax_query->queries );
-				
-				// Don't count the relation setting
-				if ( array_key_exists( 'relation', $query->tax_query->queries ) )
-					$tax_queries_count--;
 				
 				// We have to set it up for each tax query
 				for ( $p = 0; $p < $tax_queries_count; $p++ ) {
