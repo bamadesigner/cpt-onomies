@@ -1190,22 +1190,30 @@ class CPT_TAXONOMY {
 					}
 				}
 				
-				$cpt_posts_eligible_taxonomies = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL;
+				// Get the post types attached to this taxonomy
+				$cpt_onomy_eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL;
 				
-				// Builds array with count for each post ID
-				if ( $cpt_posts_count = ! empty( $cpt_posts_ids ) && ! empty( $cpt_posts_eligible_taxonomies ) ? $wpdb->get_results( $wpdb->prepare( "SELECT wpposts.ID, ( SELECT COUNT(*) FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpmetaposts ON wpmetaposts.ID = wpmeta.post_id AND wpmetaposts.post_type IN ( '" . implode( "','", $cpt_posts_eligible_taxonomies ) . "' ) AND wpmetaposts.post_status = 'publish' WHERE wpmeta.meta_key = %s AND wpmeta.meta_value = wpposts.ID ) AS count FROM {$wpdb->posts} wpposts WHERE wpposts.ID IN ( '" . implode( "','", $cpt_posts_ids ) . "' ) AND wpposts.post_status = 'publish' ORDER BY wpposts.ID ASC", CPT_ONOMIES_POSTMETA_KEY ) ) : array() ) {
+				// Store the count for the CPT-onomy's terms
+				$cpt_posts_count = array();
+				
+				// Get CPT-onomies count for this taxonomy
+				if ( ! empty( $cpt_posts_ids ) && ! empty( $cpt_onomy_eligible_post_types ) ) {
 					
-					// Hold new posts count arrangement
-					$new_cpt_posts_count = array();
-					foreach( $cpt_posts_count as $cpt_posts_count_index => $cpt_posts_count_item ) {
+					// Get CPT-onomies count from the database
+					$cpt_posts_count_from_db = $wpdb->get_results( $wpdb->prepare( "SELECT wpposts.ID, ( SELECT COUNT(*) FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpmetaposts ON wpmetaposts.ID = wpmeta.post_id AND wpmetaposts.post_type IN ( '" . implode( "','", $cpt_onomy_eligible_post_types ) . "' ) AND wpmetaposts.post_status = 'publish' WHERE wpmeta.meta_key = %s AND wpmeta.meta_value = wpposts.ID ) AS count FROM {$wpdb->posts} wpposts WHERE wpposts.ID IN ( '" . implode( "','", $cpt_posts_ids ) . "' ) AND wpposts.post_status = 'publish' ORDER BY wpposts.ID ASC", CPT_ONOMIES_POSTMETA_KEY ) );
+				
+					// If we have a posts count, we need to rearrange the array
+					if ( $cpt_posts_count_from_db ) {
 						
-						// Store count with ID
-						$new_cpt_posts_count[ $cpt_posts_count_item->ID ] = $cpt_posts_count_item->count;
-						
+						// Loop through each count
+						foreach( $cpt_posts_count_from_db as $cpt_posts_count_index => $cpt_posts_count_item ) {
+							
+							// Store count with ID
+							$cpt_posts_count[ $cpt_posts_count_item->ID ] = $cpt_posts_count_item->count;
+							
+						}
+												
 					}
-					
-					// Reassign the posts count array
-					$cpt_posts_count = $new_cpt_posts_count;
 					
 				}
 				
