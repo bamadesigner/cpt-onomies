@@ -1160,7 +1160,14 @@ class CPT_TAXONOMY {
 				// we can't filter the get_posts() query to get the count
 				// because we have to supress filters to make sure nothing
 				// else interferes
-				$cpt_posts_ids = array_map( function( $p ) { return $p->ID; }, $cpt_posts );
+				$cpt_posts_ids = array();
+				
+				foreach( $cpt_posts as $cpt_post ) {
+					if ( isset( $cpt_post->ID ) ) {
+						$cpt_posts_ids[] = $cpt_post->ID;
+					}
+				}
+				
 				$cpt_posts_eligible_taxonomies = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL;
 				
 				// builds array with count for each post ID
