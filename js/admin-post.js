@@ -56,7 +56,7 @@ jQuery.noConflict()(function(){
 	jQuery( 'select.category.cpt_onomies' ).each( function() {
 		var $taxonomy = jQuery( this ).attr( 'id' ).replace( /^taxonomy-/i, '' );
 		// if user cannot assign terms
-		if ( !cpt_onomies_admin_post_data.can_assign_terms[ $taxonomy ] )
+		if ( ! cpt_onomies_admin_post_data.can_assign_terms[ $taxonomy ] )
 			jQuery( this ).attr( 'disabled', 'disabled' );	
 	});
 			
@@ -199,7 +199,7 @@ jQuery.noConflict()(function(){
        		
        		// check to see if term exists if they typed in a term on their own
         	// this will retrieve term id AND also get term name if they typed in a slug
-        	if ( $term == '' || ( !$term_id || $term_id == 0 || $term_id == '' ) ) {
+        	if ( $term == '' || ( ! $term_id || $term_id == 0 || $term_id == '' ) ) {
         		jQuery.ajax({
 					url: ajaxurl,
 					type: 'POST',
@@ -249,7 +249,7 @@ jQuery.noConflict()(function(){
 	        else {
 	        	
 	        	// set error message
-	        	$cpt_onomies_add_tag_error_message = cpt_onomies_admin_post_L10n.term_does_not_exist + ' <a href="post-new.php?post_type=' + $taxonomy + '" target="_blank">' + cpt_onomies_admin_post_L10n.add_a_term + '</a>';
+	        	$cpt_onomies_add_tag_error_message = cpt_onomies_admin_post_L10n.term_does_not_exist + ' <a href="post-new.php?post_type=' + $taxonomy + '&post_title=' + $term.replace( /\s/i, '+' ) + '" target="_blank">' + cpt_onomies_admin_post_L10n.add_the_term + '</a>';
 	        	
 	        }
 	        
@@ -314,7 +314,7 @@ jQuery.noConflict()(function(){
 					});
 				}
 				// there are no terms and the user cant assign terms so let's put some text here so it isn't just blank
-				else if ( !cpt_onomies_admin_post_data.can_assign_terms[ $taxonomy ] ) {
+				else if ( ! cpt_onomies_admin_post_data.can_assign_terms[ $taxonomy ] ) {
 					if ( cpt_onomies_admin_post_L10n.no_terms_selected[ $taxonomy ] != '' )
 						$no_terms_selected = cpt_onomies_admin_post_L10n.no_terms_selected[ $taxonomy ];
 					else

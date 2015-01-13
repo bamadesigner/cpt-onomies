@@ -558,14 +558,14 @@ class CPT_TAXONOMY {
 		if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) )
 			return get_term_link( $term, $taxonomy );
 			
-		if ( !is_object( $term ) ) {
+		if ( ! is_object( $term ) ) {
 			if ( is_int( $term ) )
 				$term = $this->get_term( $term, $taxonomy );
 			else
 				$term = $this->get_term_by( 'slug', $term, $taxonomy );
 		}
 	
-		if ( !is_object( $term ) )
+		if ( ! is_object( $term ) )
 			$term = new WP_Error( 'invalid_term', __( 'Empty Term', CPT_ONOMIES_TEXTDOMAIN ) );
 	
 		if ( is_wp_error( $term ) )
@@ -1806,7 +1806,7 @@ class CPT_TAXONOMY {
 				
 		foreach ( (array) $terms as $term ) {
 			
-			if ( !strlen( trim( $term ) ) )
+			if ( ! strlen( trim( $term ) ) )
 				continue;
 				
 			if ( is_numeric( $term ) ) $term = (int) $term;
@@ -2053,5 +2053,3 @@ function cpt_onomies_sort_cpt_onomy_term_by_slug( $a, $b ) {
        	return 0;
 	return ( strtolower( $a->slug ) < strtolower( $b->slug ) ) ? -1 : 1;
 }
-
-?>

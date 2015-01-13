@@ -14,8 +14,8 @@ jQuery.noConflict()(function(){
 		$invalid_post_type_name = 'Your post type name is invalid.';
 	
 	// validate custom post type name to make sure it contains valid characters
-	jQuery.validator.addMethod( 'custom_post_type_onomies_validate_name_characters', function( value, element ) {
-		return this.optional( element ) || ( value.length <= 20 && !value.match( /([^a-z0-9\_])/ ) );
+	jQuery.validator.addMethod( 'custom_post_type_onomies_validate_post_type_name_characters', function( value, element ) {
+		return this.optional( element ) || ( value.length <= 20 && ! value.match( /([^a-z0-9\_\-])/ ) );
 	}, $invalid_post_type_name );
 	
 	// create post type name exists message
@@ -26,7 +26,7 @@ jQuery.noConflict()(function(){
 		$post_type_name_exists = 'That post type name already exists. Please choose another name.';
 		
 	// validate custom post type name to make sure post type doesnt already exist
-	jQuery.validator.addMethod( 'custom_post_type_onomies_validate_name', function( value, element ) {
+	jQuery.validator.addMethod( 'custom_post_type_onomies_validate_post_type_name', function( value, element ) {
 		var validator = this, response;
 		jQuery.ajax({
 			url: ajaxurl,

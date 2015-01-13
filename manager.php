@@ -1,8 +1,21 @@
 <?php
 
-/* Instantiate the class. */
+// Instantiate the class
 global $cpt_onomies_manager;
 $cpt_onomies_manager = new CPT_ONOMIES_MANAGER();
+
+/**
+ * Bring this function outside the class
+ * for easier use.
+ *
+ * Just invokes root class inside function.
+ *
+ * @since 1.3.2
+ */
+function register_cpt_onomy( $taxonomy, $object_type, $args = array() ) {
+	global $cpt_onomies_manager;
+	$cpt_onomies_manager->register_cpt_onomy( $taxonomy, $object_type, $args );
+}
 
 /**
  * Holds the functions needed for managing the custom post types and taxonomies.
@@ -27,11 +40,19 @@ class CPT_ONOMIES_MANAGER {
 	 */
 	public function __construct() {
 		
-		// get network user settings (only if multisite AND plugin is network activated)
-		// had to take code from is_plugin_active_for_network() because the function is not loaded in time
-		$this->user_settings[ 'network_custom_post_types' ] = ( is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ CPT_ONOMIES_PLUGIN_FILE ] ) && ( $network_custom_post_types = get_site_option( CPT_ONOMIES_UNDERSCORE . '_custom_post_types' ) ) ) ? $network_custom_post_types : array();
+		// Get network user settings (only if multisite AND plugin is network activated)
+		// Had to take code from is_plugin_active_for_network() because the function is not loaded in time
+		if ( is_multisite()
+			&& ( $plugins = get_site_option( 'active_sitewide_plugins' ) )
+			&& isset( $plugins[ CPT_ONOMIES_PLUGIN_FILE ] ) ) {
 		
-		// get site user settings
+			// Store network custom post types
+			if ( $network_custom_post_types = get_site_option( CPT_ONOMIES_UNDERSCORE . '_custom_post_types' ) )
+				$this->user_settings[ 'network_custom_post_types' ] = $network_custom_post_types;
+				
+		}
+		
+		// Get site user settings
 		$this->user_settings[ 'custom_post_types' ] = ( $custom_post_types = get_option( CPT_ONOMIES_UNDERSCORE . '_custom_post_types' ) ) ? $custom_post_types : array();
 		$this->user_settings[ 'other_custom_post_types' ] = ( $other_custom_post_types = get_option( CPT_ONOMIES_UNDERSCORE . '_other_custom_post_types' ) ) ? $other_custom_post_types : array();
 				
@@ -97,7 +118,7 @@ class CPT_ONOMIES_MANAGER {
 			// make sure CPT-onomy AND term exists, otherwise, why bother
 			$change_query_vars = false;
 			foreach( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
-				if ( isset( $query[ $taxonomy ] ) && !empty( $query[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
+				if ( isset( $query[ $taxonomy ] ) && ! empty( $query[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
 				
 					// make sure the term exists
 					$cpt_onomy_term_var = explode( "/", $query[ $taxonomy ] );
@@ -148,7 +169,7 @@ class CPT_ONOMIES_MANAGER {
 		// for filtering by CPT-onomy on admin edit posts screen
 		else if ( is_admin()  && $pagenow == 'edit.php' && isset( $post_type ) ) {
 			foreach( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
-				if ( isset( $_REQUEST[ $taxonomy ] ) && !empty( $_REQUEST[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) )  {
+				if ( isset( $_REQUEST[ $taxonomy ] ) && ! empty( $_REQUEST[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) )  {
 									
 					if ( is_numeric( $_REQUEST[ $taxonomy ] ) )
 						$cpt_onomy_term = $cpt_onomy->get_term( (int) $_REQUEST[ $taxonomy ], $taxonomy );
@@ -156,7 +177,7 @@ class CPT_ONOMIES_MANAGER {
 						$cpt_onomy_term = $cpt_onomy->get_term_by( 'slug', $_REQUEST[ $taxonomy ], $taxonomy );
 					
 					// the 'name' variable makes WordPress think we are looking for a post with that 'name'
-					if ( !empty( $cpt_onomy_term ) )
+					if ( ! empty( $cpt_onomy_term ) )
 						unset( $query[ 'name' ] );
 
 				}
@@ -207,7 +228,7 @@ class CPT_ONOMIES_MANAGER {
 					$custom_post_type = $queried_cpt_onomies[0]->object_type;
 				// otherwise, we'll use the ones our multiple CPT-onomies have in common
 				else
-					$custom_post_type = !empty( $cpt_onomy_objects ) ? $cpt_onomy_objects : NULL;
+					$custom_post_type = ! empty( $cpt_onomy_objects ) ? $cpt_onomy_objects : NULL;
 				// if our custom query/rewrite defines a 'post_type', it overwrites the rest
 				foreach( explode( '&', $matched_query ) as $parameter ) {
 					$parameter = explode( '=', $parameter );
@@ -220,17 +241,17 @@ class CPT_ONOMIES_MANAGER {
 				}
 				// convert to array for testing
 				// want to remove any post types who are not publicy queryable
-				if ( !is_array( $custom_post_type ) ) $custom_post_type = array( $custom_post_type );
+				if ( ! is_array( $custom_post_type ) ) $custom_post_type = array( $custom_post_type );
 				foreach( $custom_post_type as $post_type_index => $post_type ) {
 					$post_type_exists = post_type_exists( $post_type );
-					if ( !$post_type_exists || ( $post_type_exists && get_post_type_object( $post_type )->exclude_from_search ) )
+					if ( ! $post_type_exists || ( $post_type_exists && get_post_type_object( $post_type )->exclude_from_search ) )
 						unset( $custom_post_type[ $post_type_index ] );
 				}
 				// if just one custom post type, then convert to string
 				if ( is_array( $custom_post_type ) && count( $custom_post_type ) == 1 )
 					$custom_post_type = array_shift( $custom_post_type );
 				// re-assign the 'post_type' query variable
-				if ( isset( $custom_post_type ) && !empty( $custom_post_type ) )
+				if ( isset( $custom_post_type ) && ! empty( $custom_post_type ) )
 					$query->query_vars[ 'post_type' ] = $custom_post_type;
 				// there are no post types that are searchable and attached so kill the query
 				else
@@ -260,10 +281,10 @@ class CPT_ONOMIES_MANAGER {
 	public function add_cpt_onomy_term_queried_object( $query ) {
 		global $cpt_onomy;
 		// for CPT-onomy archive page on front-end
-		if ( isset( $query->query[ 'cpt_onomy_archive' ] ) && !empty( $query->query[ 'cpt_onomy_archive' ] ) ) {		
+		if ( isset( $query->query[ 'cpt_onomy_archive' ] ) && ! empty( $query->query[ 'cpt_onomy_archive' ] ) ) {		
 			// make sure CPT-onomy AND term exists, otherwise, why bother
 			foreach( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
-				if ( isset( $query->query[ $taxonomy ] ) && !empty( $query->query[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
+				if ( isset( $query->query[ $taxonomy ] ) && ! empty( $query->query[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
 									
 					// make sure the term exists
 					if ( is_numeric( $query->query[ $taxonomy ] ) )
@@ -271,7 +292,7 @@ class CPT_ONOMIES_MANAGER {
 					else
 						$cpt_onomy_term = $cpt_onomy->get_term_by( 'slug', $query->query[ $taxonomy ], $taxonomy );
 						
-					if ( !empty( $cpt_onomy_term ) ) {
+					if ( ! empty( $cpt_onomy_term ) ) {
 					
 						// make sure WordPress knows this is not a post type archive
 						$query->is_post_type_archive = false;
@@ -303,248 +324,273 @@ class CPT_ONOMIES_MANAGER {
 	 */
 	public function posts_clauses( $clauses, $query ) {
 		global $wpdb, $cpt_onomy;
+		
+		// Then kill the query and return the clauses
 		if ( isset( $query->query[ 'cpt_onomies_kill_query' ] ) && $query->query[ 'cpt_onomies_kill_query' ] ) {
 			$clauses[ 'where' ] .= " AND 0=1";
+			return $clauses;
 		}
-		else {
-			if ( isset( $query->tax_query ) ) {	
-				
-				$is_registered_cpt_onomy = false;
-				$taxonomies = array( 'join' => '', 'where' => array() );
-				$new_where = array();
-				$c = $t = 1;
-				foreach ( $query->tax_query->queries as $this_query ) {
-				
-					$taxonomy = $this_query[ 'taxonomy' ];
-				
-					if ( ! taxonomy_exists( $taxonomy )  )
-						continue;
-						
-					if ( ! ( $is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy ) ) )
-						continue;
 			
-					$this_query[ 'terms' ] = array_unique( (array) $this_query[ 'terms' ] );
+		// If ordering by a CPT-onomy
+		if ( ( $taxonomy = isset( $query->query[ 'orderby' ] ) && ! empty( $query->query[ 'orderby' ] ) ? $query->query[ 'orderby' ] : NULL )
+			&& ( $post_type = isset( $query->query[ 'post_type' ] ) && ! empty( $query->query[ 'post_type' ] ) && post_type_exists( $query->query[ 'post_type' ] ) ? $query->query[ 'post_type' ] : NULL )
+			&& $this->is_registered_cpt_onomy( $taxonomy, $post_type ) ) {
+			
+			$clauses[ 'join' ] .= " LEFT OUTER JOIN {$wpdb->postmeta} cpt_onomy_order_pm ON cpt_onomy_order_pm.post_id = {$wpdb->posts}.ID
+				AND cpt_onomy_order_pm.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
+				LEFT OUTER JOIN {$wpdb->posts} cpt_onomy_order_posts ON cpt_onomy_order_posts.ID = cpt_onomy_order_pm.meta_value
+				AND cpt_onomy_order_posts.post_type = '{$taxonomy}'";
+				
+			$clauses[ 'groupby' ] = "{$wpdb->posts}.ID";
+			$clauses[ 'orderby' ] = ' GROUP_CONCAT( cpt_onomy_order_posts.post_title ORDER BY cpt_onomy_order_posts.post_title ASC )' . ( ( isset( $query->query[ 'order' ] ) && strcasecmp( $query->query[ 'order' ], 'desc' ) == 0 ) ? ' DESC' : ' ASC' ) . ( ! empty( $clauses[ 'orderby' ] ) ? ', ' : ' ' ) . $clauses[ 'orderby' ];
+			
+		}
+		
+		// If running a tax query
+		if ( isset( $query->tax_query ) ) {	
+			
+			$is_registered_cpt_onomy = false;
+			$taxonomies = array( 'join' => '', 'where' => array() );
+			$new_where = array();
+			$c = $t = 1;
+			foreach ( $query->tax_query->queries as $this_query ) {
+			
+				// Get the taxonomy
+				$taxonomy = isset( $this_query[ 'taxonomy' ] ) ? $this_query[ 'taxonomy' ] : NULL;
+			
+				// Make sure the taxonomy exists
+				if ( ! $taxonomy || ! taxonomy_exists( $taxonomy ) )
+					continue;
+				
+				// @TODO This used to skip for non-CPT-onomies but that caused a bug
+				// Now we let them through. Does this need to be fixed?
+				//if ( ! ( $is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy ) ) )
+				//	continue;
+				$is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy );
+		
+				$this_query[ 'terms' ] = array_unique( (array) $this_query[ 'terms' ] );
+					
+				if ( empty( $this_query[ 'terms' ] ) )
+					continue;
+					
+				// if terms are ID, change field
+				foreach ( $this_query[ 'terms' ] as $term ) {
+					if ( is_numeric( $term ) ) {
+						$this_query[ 'field' ] = 'id';
+						break;
+					}
+				}
+			
+				// CPT-onomies
+				if ( $is_registered_cpt_onomy ) {
+					switch ( $this_query[ 'field' ] ) {
+						case 'slug':
+						case 'name':						
+							$terms = "'" . implode( "','", array_map( 'sanitize_title_for_query', $this_query[ 'terms' ] ) ) . "'";
+							$terms = $wpdb->get_col( "SELECT ID FROM $wpdb->posts WHERE " . ( ( strtolower( $this_query[ 'field' ] ) == 'slug' ) ? 'post_name' : 'post_title' ) . " IN ($terms) AND post_type = '{$this_query[ 'taxonomy' ]}'" );
+							break;		
+						default:
+							$terms = array_map( 'intval', $this_query[ 'terms' ] );						
+					}
+				}
+				// taxonomies
+				else {
+					switch ( $this_query[ 'field' ] ) {
+						case 'slug':
+						case 'name':
+							$terms = "'" . implode( "','", array_map( 'sanitize_title_for_query', $this_query[ 'terms' ] ) ) . "'";
+							$terms = $wpdb->get_col( "
+								SELECT $wpdb->term_taxonomy.term_taxonomy_id
+								FROM $wpdb->term_taxonomy
+								INNER JOIN $wpdb->terms USING (term_id)
+								WHERE taxonomy = '{$taxonomy}'
+								AND $wpdb->terms.{$this_query[ 'field' ]} IN ($terms)
+							" );
+							break;
+						default:
+							$terms = implode( ',', array_map( 'intval', $this_query[ 'terms' ] ) );
+							$terms = $wpdb->get_col( "
+								SELECT term_taxonomy_id
+								FROM $wpdb->term_taxonomy
+								WHERE taxonomy = '{$taxonomy}'
+								AND term_id IN ($terms)
+							" );
+					}					
+				}
+				
+				if ( 'AND' == $this_query[ 'operator' ] && count( $terms ) < count( $this_query[ 'terms' ] ) )
+					return;
+									
+				$this_query[ 'terms' ] = $terms;
 						
-					if ( empty( $this_query[ 'terms' ] ) )
+				if ( is_taxonomy_hierarchical( $taxonomy ) && $this_query[ 'include_children' ] ) {
+					
+					$children = array();
+					foreach ( $this_query[ 'terms' ] as $term ) {
+						
+						// for hierarchical CPT-onomies	
+						if ( $is_registered_cpt_onomy )
+							$children = array_merge( $children, $cpt_onomy->get_term_children( $term, $taxonomy ) );
+						// taxonomies
+						else
+							$children = array_merge( $children, get_term_children( $term, $this_query[ 'taxonomy' ] ) );
+							
+						$children[] = $term;
+					}
+					$this_query[ 'terms' ] = $children;
+					
+				}
+				
+				extract( $this_query );
+				
+				$primary_table = $wpdb->posts;
+				$primary_id_column = 'ID';
+				
+				sort( $terms );
+	
+				if ( 'IN' == $operator ) {
+					
+					if ( empty( $terms ) )
 						continue;
 						
-					// if terms are ID, change field
-					foreach ( $this_query[ 'terms' ] as $term ) {
-						if ( is_numeric( $term ) ) {
-							$this_query[ 'field' ] = 'id';
-							break;
-						}
-					}
-				
+					$terms = implode( ',', $terms );
+					
 					// CPT-onomies
 					if ( $is_registered_cpt_onomy ) {
-						switch ( $this_query[ 'field' ] ) {
-							case 'slug':
-							case 'name':						
-								$terms = "'" . implode( "','", array_map( 'sanitize_title_for_query', $this_query[ 'terms' ] ) ) . "'";
-								$terms = $wpdb->get_col( "SELECT ID FROM $wpdb->posts WHERE " . ( ( strtolower( $this_query[ 'field' ] ) == 'slug' ) ? 'post_name' : 'post_title' ) . " IN ($terms) AND post_type = '{$this_query[ 'taxonomy' ]}'" );
-								break;		
-							default:
-								$terms = array_map( 'intval', $this_query[ 'terms' ] );						
-						}
+	
+						$alias = $c ? 'cpt_onomy_pm' . $c : $wpdb->postmeta;
+		
+						$clauses[ 'join' ] .= " INNER JOIN $wpdb->postmeta";
+						$clauses[ 'join' ] .= $c ? " AS $alias" : '';
+						$clauses[ 'join' ] .= " ON ($wpdb->posts.ID = $alias.post_id AND $alias.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "')";
+								
+						$new_where[] = "$alias.meta_value $operator ($terms)";
+						
+						$c++;
+						
 					}
 					// taxonomies
 					else {
-						switch ( $this_query[ 'field' ] ) {
-							case 'slug':
-							case 'name':
-								$terms = "'" . implode( "','", array_map( 'sanitize_title_for_query', $this_query[ 'terms' ] ) ) . "'";
-								$terms = $wpdb->get_col( "
-									SELECT $wpdb->term_taxonomy.term_taxonomy_id
-									FROM $wpdb->term_taxonomy
-									INNER JOIN $wpdb->terms USING (term_id)
-									WHERE taxonomy = '{$taxonomy}'
-									AND $wpdb->terms.{$this_query[ 'field' ]} IN ($terms)
-								" );
-								break;
-							default:
-								$terms = implode( ',', array_map( 'intval', $this_query[ 'terms' ] ) );
-								$terms = $wpdb->get_col( "
-									SELECT term_taxonomy_id
-									FROM $wpdb->term_taxonomy
-									WHERE taxonomy = '{$taxonomy}'
-									AND term_id IN ($terms)
-								" );
-						}					
-					}
 					
-					if ( 'AND' == $this_query[ 'operator' ] && count( $terms ) < count( $this_query[ 'terms' ] ) )
-						return;
-										
-					$this_query[ 'terms' ] = $terms;
-							
-					if ( is_taxonomy_hierarchical( $taxonomy ) && $this_query[ 'include_children' ] ) {
+						$alias = $t ? 'cpt_onomy_tt' . $t : $wpdb->term_relationships;
+
+						$taxonomies[ 'join' ] .= " INNER JOIN $wpdb->term_relationships";
+						$taxonomies[ 'join' ] .= $t ? " AS $alias" : '';
+						$taxonomies[ 'join' ] .= " ON ($primary_table.$primary_id_column = $alias.object_id)";
 						
-						$children = array();
-						foreach ( $this_query[ 'terms' ] as $term ) {
-							
-							// for hierarchical CPT-onomies	
-							if ( $is_registered_cpt_onomy )
-								$children = array_merge( $children, $cpt_onomy->get_term_children( $term, $taxonomy ) );
-							// taxonomies
-							else
-								$children = array_merge( $children, get_term_children( $term, $this_query[ 'taxonomy' ] ) );
-								
-							$children[] = $term;
-						}
-						$this_query[ 'terms' ] = $children;
+						$new_where[] = $taxonomies[ 'where' ][] = "$alias.term_taxonomy_id $operator ($terms)";
+						
+						$t++;
 						
 					}
 					
-					extract( $this_query );
-					
-					$primary_table = $wpdb->posts;
-					$primary_id_column = 'ID';
-					
-					sort( $terms );
-		
-					if ( 'IN' == $operator ) {
-						
-						if ( empty( $terms ) )
-							continue;
-							
-						$terms = implode( ',', $terms );
-						
-						// CPT-onomies
-						if ( $is_registered_cpt_onomy ) {
-		
-							$alias = $c ? 'cpt_onomy_pm' . $c : $wpdb->postmeta;
-			
-							$clauses[ 'join' ] .= " INNER JOIN $wpdb->postmeta";
-							$clauses[ 'join' ] .= $c ? " AS $alias" : '';
-							$clauses[ 'join' ] .= " ON ($wpdb->posts.ID = $alias.post_id AND $alias.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "')";
-									
-							$new_where[] = "$alias.meta_value $operator ($terms)";
-							
-							$c++;
-							
-						}
-						// taxonomies
-						else {
-						
-							$alias = $t ? 'cpt_onomy_tt' . $t : $wpdb->term_relationships;
+				} elseif ( 'NOT IN' == $operator ) {
 	
-							$taxonomies[ 'join' ] .= " INNER JOIN $wpdb->term_relationships";
-							$taxonomies[ 'join' ] .= $t ? " AS $alias" : '';
-							$taxonomies[ 'join' ] .= " ON ($primary_table.$primary_id_column = $alias.object_id)";
-							
-							$new_where[] = $taxonomies[ 'where' ][] = "$alias.term_taxonomy_id $operator ($terms)";
-							
-							$t++;
-							
-						}
-						
-					} elseif ( 'NOT IN' == $operator ) {
-		
-						if ( empty( $terms ) )
-							continue;
-		
-						$terms = implode( ',', $terms );
-						
-						// CPT-onomies
-						if ( $is_registered_cpt_onomy ) {
-		
-							$new_where[] = "$wpdb->posts.ID NOT IN (
-								SELECT post_id
-								FROM $wpdb->postmeta
-								WHERE meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
-								AND meta_value IN ($terms)
-							)";
-							
-						}
-						// taxonomies
-						else {
-							
-							$new_where[] = $taxonomies[ 'where' ][] = "$primary_table.$primary_id_column NOT IN (
-								SELECT object_id
-								FROM $wpdb->term_relationships
-								WHERE term_taxonomy_id IN ($terms)
-							)";
+					if ( empty( $terms ) )
+						continue;
+	
+					$terms = implode( ',', $terms );
 					
-						}
+					// CPT-onomies
+					if ( $is_registered_cpt_onomy ) {
+	
+						$new_where[] = "$wpdb->posts.ID NOT IN (
+							SELECT post_id
+							FROM $wpdb->postmeta
+							WHERE meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
+							AND meta_value IN ($terms)
+						)";
 						
-					} elseif ( 'AND' == $operator ) {
-		
-						if ( empty( $terms ) )
-							continue;
-		
-						$num_terms = count( $terms );
-		
-						$terms = implode( ',', $terms );
+					}
+					// taxonomies
+					else {
 						
-						// CPT-onomies
-						if ( $is_registered_cpt_onomy ) {
-		
-							$new_where[] = "(
-								SELECT COUNT(1)
-								FROM $wpdb->postmeta
-								WHERE meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
-								AND meta_value IN ($terms)
-								AND post_id = $wpdb->posts.ID
-							) = $num_terms";
-							
-						}
-						// taxonomies
-						else {
-							
-							$new_where[] = $taxonomies[ 'where' ][] = "(
-								SELECT COUNT(1)
-								FROM $wpdb->term_relationships
-								WHERE term_taxonomy_id IN ($terms)
-								AND object_id = $primary_table.$primary_id_column
-							) = $num_terms";
+						$new_where[] = $taxonomies[ 'where' ][] = "$primary_table.$primary_id_column NOT IN (
+							SELECT object_id
+							FROM $wpdb->term_relationships
+							WHERE term_taxonomy_id IN ($terms)
+						)";
+				
+					}
 					
-						}
+				} elseif ( 'AND' == $operator ) {
+	
+					if ( empty( $terms ) )
+						continue;
+	
+					$num_terms = count( $terms );
+	
+					$terms = implode( ',', $terms );
+					
+					// CPT-onomies
+					if ( $is_registered_cpt_onomy ) {
+	
+						$new_where[] = "(
+							SELECT COUNT(1)
+							FROM $wpdb->postmeta
+							WHERE meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
+							AND meta_value IN ($terms)
+							AND post_id = $wpdb->posts.ID
+						) = $num_terms";
 						
+					}
+					// taxonomies
+					else {
+						
+						$new_where[] = $taxonomies[ 'where' ][] = "(
+							SELECT COUNT(1)
+							FROM $wpdb->term_relationships
+							WHERE term_taxonomy_id IN ($terms)
+							AND object_id = $primary_table.$primary_id_column
+						) = $num_terms";
+				
 					}
 					
 				}
 				
-				// only add taxonomies 'join' if it doesn't already exist
-				if ( $clauses[ 'join' ] && $taxonomies[ 'join' ] && strpos( $clauses[ 'join' ], $taxonomies[ 'join' ] ) === false )
-					$clauses[ 'join' ] .= $taxonomies[ 'join' ];
-				
-				// remove old taxonomies 'where' so we can add new 'where'
-				if ( $taxonomies[ 'where' ] ) {
-					
-					$tax_where = " AND ( ";
-						foreach ( $taxonomies[ 'where' ] as $where_index => $add_where ) {
-							if ( $where_index > 0 )
-								$tax_where .= " " . $query->tax_query->relation . " ";
-							$tax_where .= $add_where;
-						}
-					$tax_where .= " )";
-					
-					$clauses[ 'where' ] = str_replace( $tax_where, '', $clauses[ 'where' ] );
-					
-				}
-				
-				if ( !empty( $new_where ) )  {
-					
-					// remove the post_name (WP adds this if the post type is hierarhical. I'm not sure why)
-					$clauses[ 'where' ] = preg_replace( '/wp\_posts\.post\_name\s=\s\'([^\']*)\'\sAND\s/i', '', $clauses[ 'where' ] );
-					
-					// remove 0 = 1
-					$clauses[ 'where' ] = preg_replace( '/0\s\=\s1\sAND\s/i', '', $clauses[ 'where' ] );
-												
-					$clauses[ 'where' ] .= " AND ( ";
-						foreach ( $new_where as $where_index => $add_where ) {
-							if ( $where_index > 0 )
-								$clauses[ 'where' ] .= " " . $query->tax_query->relation . " ";
-							$clauses[ 'where' ] .= $add_where;
-						}
-					$clauses[ 'where' ] .= " )";
-						
-				}
-								
 			}
+			
+			// only add taxonomies 'join' if it doesn't already exist
+			if ( $clauses[ 'join' ] && $taxonomies[ 'join' ] && strpos( $clauses[ 'join' ], $taxonomies[ 'join' ] ) === false )
+				$clauses[ 'join' ] .= $taxonomies[ 'join' ];
+			
+			// remove old taxonomies 'where' so we can add new 'where'
+			if ( $taxonomies[ 'where' ] ) {
+				
+				$tax_where = " AND ( ";
+					foreach ( $taxonomies[ 'where' ] as $where_index => $add_where ) {
+						if ( $where_index > 0 )
+							$tax_where .= " " . $query->tax_query->relation . " ";
+						$tax_where .= $add_where;
+					}
+				$tax_where .= " )";
+				
+				$clauses[ 'where' ] = str_replace( $tax_where, '', $clauses[ 'where' ] );
+				
+			}
+			
+			if ( ! empty( $new_where ) )  {
+				
+				// remove the post_name (WP adds this if the post type is hierarhical. I'm not sure why)
+				$clauses[ 'where' ] = preg_replace( '/wp\_posts\.post\_name\s=\s\'([^\']*)\'\sAND\s/i', '', $clauses[ 'where' ] );
+				
+				// remove 0 = 1
+				$clauses[ 'where' ] = preg_replace( '/\([\s]*0\s\=\s1[\s]*\)\sAND\s/i', '', $clauses[ 'where' ] );
+											
+				$clauses[ 'where' ] .= " AND ( ";
+					foreach ( $new_where as $where_index => $add_where ) {
+						if ( $where_index > 0 )
+							$clauses[ 'where' ] .= " " . $query->tax_query->relation . " ";
+						$clauses[ 'where' ] .= $add_where;
+					}
+				$clauses[ 'where' ] .= " )";
+					
+			}
+							
 		}
+		
 		return $clauses;
+	
 	}
 	
 	/**
@@ -607,7 +653,7 @@ class CPT_ONOMIES_MANAGER {
 			
 			// if user has capability manually assigned, then allow
 			// otherwise, check user settings
-			if ( preg_match( '/assign\_([a-z\_]+)\_terms/i', $this_cap ) && !isset( $allcaps[ $this_cap ] ) ) {
+			if ( preg_match( '/assign\_(.+)\_terms/i', $this_cap ) && ! isset( $allcaps[ $this_cap ] ) ) {
 				
 				// get taxonomy
 				$taxonomy = preg_replace( '/(assign_|_terms)/i', '', $this_cap );
@@ -622,7 +668,7 @@ class CPT_ONOMIES_MANAGER {
 					$allow = false;
 					
 					// no capabilities are assigned so everyone has permission
-					if ( !isset( $tax->restrict_user_capabilities ) || empty( $tax->restrict_user_capabilities ) )
+					if ( ! isset( $tax->restrict_user_capabilities ) || empty( $tax->restrict_user_capabilities ) )
 						$allow = true;
 					
 					// the capability is restricted to specific roles
@@ -670,8 +716,8 @@ class CPT_ONOMIES_MANAGER {
 	}
 	
 	/**
-	 * Detects if a custom post is overwriting a network-registered post type
-	 * registered by this plugin.
+	 * Detects if a custom post type is overwriting a
+	 * network-registered post type registered by this plugin.
 	 * 
 	 * @since 1.3
 	 * @uses $blog_id
@@ -680,10 +726,20 @@ class CPT_ONOMIES_MANAGER {
 	 */
 	public function overwrote_network_cpt( $cpt_key ) {
 		global $blog_id;
-		if ( isset( $this->user_settings[ 'network_custom_post_types' ] ) && isset( $this->user_settings[ 'network_custom_post_types' ][ $cpt_key ] )
-			&& ( ( ! isset( $this->user_settings[ 'network_custom_post_types' ][ $cpt_key ][ 'site_registration' ] ) || ( isset( $this->user_settings[ 'network_custom_post_types' ][ $cpt_key ][ 'site_registration' ] ) && empty( $this->user_settings[ 'network_custom_post_types' ][ $cpt_key ][ 'site_registration' ] ) ) )
-				|| ( isset( $this->user_settings[ 'network_custom_post_types' ][ $cpt_key ][ 'site_registration' ] ) && in_array( $blog_id, $this->user_settings[ 'network_custom_post_types' ][ $cpt_key ][ 'site_registration' ] ) ) ) && $this->is_registered_cpt( $cpt_key ) && ! $this->is_registered_network_cpt( $cpt_key ) )
-			return true;		
+		if ( isset( $this->user_settings[ 'network_custom_post_types' ] ) ) {
+		
+			$network_cpts = $this->user_settings[ 'network_custom_post_types' ];
+		
+			if ( isset( $network_cpts[ $cpt_key ] )
+				&& ( ( ! isset( $network_cpts[ $cpt_key ][ 'site_registration' ] ) || ( isset( $network_cpts[ $cpt_key ][ 'site_registration' ] ) && empty( $network_cpts[ $cpt_key ][ 'site_registration' ] ) ) )
+					|| ( isset( $network_cpts[ $cpt_key ][ 'site_registration' ] ) && in_array( $blog_id, $network_cpts[ $cpt_key ][ 'site_registration' ] ) ) ) ) {
+					
+				if ( $this->is_registered_cpt( $cpt_key ) && ! $this->is_registered_network_cpt( $cpt_key ) )
+					return true;
+				
+			}
+			
+		}
 		return false;
 	}
 	
@@ -722,19 +778,31 @@ class CPT_ONOMIES_MANAGER {
 	}
 	
 	/**
-	 * This functions checks to see if a taxonomy is a taxonomy
-	 * registered by this plugin. When this plugin registers a taxonomy,
+	 * This functions checks to see if a taxonomy is a CPT-onomy
+	 * registered by this plugin. When this plugin registers a CPT-onomy,
 	 * it adds the argument 'cpt_onomy' for testing purposes.
+	 *
+	 * As of version 1.3.2, the function also allows you to test
+	 * if the CPT-onomy is registered to a specific post type.
 	 * 
 	 * @since 1.0
 	 * @param string $tax - the key, or alias, for the taxonomy you are checking
-	 * @return boolean - whether this taxonomy is a taxonomy registered by this plugin
+	 * @param string $post_type - if set, checks to see is CPT-onomy AND is registered to set post type
+	 * @return boolean - whether this taxonomy is a CPT-onomy registered by this plugin (and, if post type set, registered to a specific post type)
 	 */
-	public function is_registered_cpt_onomy( $taxonomy ) {
-		if ( !empty( $taxonomy ) && taxonomy_exists( $taxonomy ) ) {
+	public function is_registered_cpt_onomy( $taxonomy, $post_type = NULL ) {
+		if ( ! empty( $taxonomy ) && taxonomy_exists( $taxonomy ) ) {
 			$tax = get_taxonomy( $taxonomy );
-			if ( isset( $tax->cpt_onomy ) && $tax->cpt_onomy == true )
+			
+			/**
+			 * If post type is set, then checks to see if it's a
+			 * CPT-onomy AND is registered to a specific post type.
+			 * Otherwise, simply checks if it's a CPT-onomy.
+			 */
+			if ( ( empty( $post_type ) || ( ! empty( $post_type ) && post_type_exists( $post_type ) && in_array( $taxonomy, get_object_taxonomies( $post_type, 'names' ) ) ) )
+				&& isset( $tax->cpt_onomy ) && $tax->cpt_onomy == true )
 				return true;
+				
 		}
 		return false;
 	}
@@ -779,17 +847,17 @@ class CPT_ONOMIES_MANAGER {
 	
 		// if taxonomy already exists (and is not a CPT-onomy) OR matching post type doesn't exist
 		// this allows you to overwrite your CPT-onomy registered by the plugin, if desired
-		if ( ( taxonomy_exists( $taxonomy ) && !$this->is_registered_cpt_onomy( $taxonomy ) ) || !post_type_exists( $taxonomy ) )
+		if ( ( taxonomy_exists( $taxonomy ) && ! $this->is_registered_cpt_onomy( $taxonomy ) ) || ! post_type_exists( $taxonomy ) )
 			return;
 			
 		// make sure $object_type is an array
-		if ( !is_array( $object_type ) )
+		if ( ! is_array( $object_type ) )
 			$object_type = array_unique( array( $object_type ) );
 			
 		// check to make sure the object types exist
-		if ( !empty( $object_type ) ) {
+		if ( ! empty( $object_type ) ) {
 			foreach( $object_type as $object_type_index => $type ) {
-				if ( !post_type_exists( $type ) )
+				if ( ! post_type_exists( $type ) )
 					unset( $object_type[ $object_type_index ] );
 			}
 		}
@@ -807,6 +875,7 @@ class CPT_ONOMIES_MANAGER {
 	 		'labels'					=> '', // if no labels are provided, WordPress uses their own
 	 		'public'					=> $custom_post_type->public,
 	 		'meta_box_format'			=> NULL,
+	 		'meta_box_title'			=> NULL,
 	 		'show_admin_column'			=> true,
 	 		'has_cpt_onomy_archive'		=> true,
 	 		'cpt_onomy_archive_slug'	=> '$post_type/tax/$term_slug',
@@ -834,6 +903,7 @@ class CPT_ONOMIES_MANAGER {
 			'show_admin_column'			=> $show_admin_column,
 			'rewrite'					=> false,
 			'meta_box_format'			=> $meta_box_format,
+			'meta_box_title'			=> $meta_box_title,
 			'restrict_user_capabilities'=> $restrict_user_capabilities,
 			'capabilities'				=> array(
 				'manage_terms' => 'manage_' . $taxonomy . '_terms',
@@ -847,10 +917,10 @@ class CPT_ONOMIES_MANAGER {
 		// we must add our own rewrite rule instead of defining the 'rewrite' property because
 		// post types and taxonomies with the same name share the same $wp_rewrite permastruct
 		// and post types must win the rewrite war.
-		if ( !( isset( $has_cpt_onomy_archive ) && !$has_cpt_onomy_archive ) ) {
+		if ( ! ( isset( $has_cpt_onomy_archive ) && ! $has_cpt_onomy_archive ) ) {
 		
 			// make sure we have a slug
-			if ( !isset( $cpt_onomy_archive_slug ) || empty( $cpt_onomy_archive_slug ) )
+			if ( ! isset( $cpt_onomy_archive_slug ) || empty( $cpt_onomy_archive_slug ) )
 				$cpt_onomy_archive_slug = $cpt_onomy_defaults[ 'cpt_onomy_archive_slug' ];
 												
 			// add the slug to the CPT-onomy arguments so it will be added to $wp_taxonomies
@@ -858,14 +928,21 @@ class CPT_ONOMIES_MANAGER {
 			$cpt_onomy_args[ 'cpt_onomy_archive_slug' ] = $cpt_onomy_archive_slug;
 								
 			// replace the variables ($post_type and $term)
-			$cpt_onomy_archive_slug = str_replace( array( '$post_type', '$term_slug', '$term_id' ), array( $taxonomy, '([^\s]*)', '([^\s]*)' ), $cpt_onomy_archive_slug );
+			$cpt_onomy_archive_slug = str_replace( array( '$post_type', '$term_slug', '$term_id' ), array( $taxonomy, '([^/]+)', '([^/]+)' ), $cpt_onomy_archive_slug );
 								
 			// get rid of any slashes at the beginning AND end
 			$cpt_onomy_archive_slug = preg_replace( '/^([\/]+)/', '', $cpt_onomy_archive_slug );
 			$cpt_onomy_archive_slug = preg_replace( '/([\/]+)$/', '', $cpt_onomy_archive_slug );
 			
-			// add rewrite rule
-			add_rewrite_rule( '^' . $cpt_onomy_archive_slug . '/?', 'index.php?'.$taxonomy . '=$matches[1]&cpt_onomy_archive=1', 'top' );
+			// add feeds rewrite
+			add_rewrite_rule( $cpt_onomy_archive_slug . '/feed/(feed|rdf|rss|rss2|atom)/?$', 'index.php?'.$taxonomy . '=$matches[1]&feed=$matches[2]&cpt_onomy_archive=1', 'top' );
+			add_rewrite_rule( $cpt_onomy_archive_slug . '/(feed|rdf|rss|rss2|atom)/?$', 'index.php?'.$taxonomy . '=$matches[1]&feed=$matches[2]&cpt_onomy_archive=1', 'top' );
+			
+			// adding pagination rewrite
+			add_rewrite_rule( $cpt_onomy_archive_slug . '/page/?([0-9]{1,})/?$', 'index.php?'.$taxonomy . '=$matches[1]&paged=$matches[2]&cpt_onomy_archive=1', 'top' );
+			
+			// add base URL rewrite
+			add_rewrite_rule( $cpt_onomy_archive_slug . '/?$', 'index.php?'.$taxonomy . '=$matches[1]&cpt_onomy_archive=1', 'top' );			
 					
 		}
 							 				
@@ -921,7 +998,7 @@ class CPT_ONOMIES_MANAGER {
 		$args[ 'labels' ] = $labels;
 		
 		// WP default = false, plugin default = true
-		$args[ 'public' ] = ( isset( $cpt[ 'public' ] ) && !$cpt[ 'public' ] ) ? false : true;
+		$args[ 'public' ] = ( isset( $cpt[ 'public' ] ) && ! $cpt[ 'public' ] ) ? false : true;
 		
 		// boolean (optional) default = false
 		// this must be defined for use with register_taxonomy()
@@ -951,22 +1028,31 @@ class CPT_ONOMIES_MANAGER {
 		
 		// boolean (optional) default = public
 		if ( isset( $cpt[ 'show_ui' ] ) )
-			$args[ 'show_ui' ] = ( !$cpt[ 'show_ui' ] ) ? false : true;
+			$args[ 'show_ui' ] = ( ! $cpt[ 'show_ui' ] ) ? false : true;
+		
 		// boolean (optional) default = public
 		if ( isset( $cpt[ 'show_in_nav_menus' ] ) )
-			$args[ 'show_in_nav_menus' ] = ( !$cpt[ 'show_in_nav_menus' ] ) ? false : true;
+			$args[ 'show_in_nav_menus' ] = ( ! $cpt[ 'show_in_nav_menus' ] ) ? false : true;
+		
+		// boolean (optional) default = show_in_menu
+		if ( isset( $cpt[ 'show_in_admin_bar' ] ) )
+			$args[ 'show_in_admin_bar' ] = ( ! $cpt[ 'show_in_admin_bar' ] ) ? false : true;
+		
 		// boolean (optional) default = public
 		if ( isset( $cpt[ 'publicly_queryable' ] ) )
-			$args[ 'publicly_queryable' ] = ( !$cpt[ 'publicly_queryable' ] ) ? false : true;
+			$args[ 'publicly_queryable' ] = ( ! $cpt[ 'publicly_queryable' ] ) ? false : true;
+		
 		// boolean (optional) default = opposite of public
 		if ( isset( $cpt[ 'exclude_from_search' ] ) )
 			$args[ 'exclude_from_search' ] = ( $cpt[ 'exclude_from_search' ] ) ? true : false;
+		
 		// boolean (optional) default = false
 		if ( isset( $cpt[ 'map_meta_cap' ] ) )
 			$args[ 'map_meta_cap' ] = ( $cpt[ 'map_meta_cap' ] ) ? true : false;
+		
 		// boolean (optional) default = true
 		if ( isset( $cpt[ 'can_export' ] ) )
-			$args[ 'can_export' ] = ( !$cpt[ 'can_export' ] ) ? false : true;
+			$args[ 'can_export' ] = ( ! $cpt[ 'can_export' ] ) ? false : true;
 										
 		// integer (optional) default = NULL
 		if ( isset( $cpt[ 'menu_position' ] ) && ! empty( $cpt[ 'menu_position' ] ) && is_numeric( $cpt[ 'menu_position' ] ) )
@@ -1028,7 +1114,7 @@ class CPT_ONOMIES_MANAGER {
 		
 		// boolean or array (optional) default = true and use post type as slug 
 		if ( isset( $cpt[ 'rewrite' ] ) && ! empty( $cpt[ 'rewrite' ] ) ) {
-			if ( isset( $cpt[ 'rewrite' ][ 'enable_rewrite' ] ) && !$cpt[ 'rewrite' ][ 'enable_rewrite' ] )
+			if ( isset( $cpt[ 'rewrite' ][ 'enable_rewrite' ] ) && ! $cpt[ 'rewrite' ][ 'enable_rewrite' ] )
 				$args[ 'rewrite' ] = false;
 			else {
 				// remove "enable rewrite" and include the rest
@@ -1137,7 +1223,7 @@ class CPT_ONOMIES_MANAGER {
 		// all the CPT-onomies at the same time, after the CPTs are registered
 		$register_cpt_onomies = array();
 		
-		// register the network CPTs
+		//! Register Network CPTs
 		if ( isset( $this->user_settings[ 'network_custom_post_types' ] ) ) {
 		
 			// take this one CPT at a time
@@ -1165,7 +1251,7 @@ class CPT_ONOMIES_MANAGER {
 							register_post_type( $cpt_key, $args );
 							
 							// If designated, register CPT-onomy
-							if ( isset( $cpt[ 'attach_to_post_type' ] ) && !empty( $cpt[ 'attach_to_post_type' ] ) ) {
+							if ( isset( $cpt[ 'attach_to_post_type' ] ) && ! empty( $cpt[ 'attach_to_post_type' ] ) ) {
 							
 								// unserialize 'restrict_user_capabilities' for network settings, since they are a text input
 								// site property is an array of checkboxes and doesn't need to be tampered with
@@ -1179,6 +1265,7 @@ class CPT_ONOMIES_MANAGER {
 										'label' => isset( $args[ 'labels' ][ 'name' ] ) ? strip_tags( $args[ 'labels' ][ 'name' ] ) : 'Posts',
 										'public' => isset( $args[ 'public' ] ) ? $args[ 'public' ] : true,
 										'meta_box_format' => ( isset( $cpt[ 'meta_box_format' ] ) && ! empty( $cpt[ 'meta_box_format' ] ) ) ? $cpt[ 'meta_box_format' ] : NULL,
+										'meta_box_title' => ( isset( $cpt[ 'meta_box_title' ] ) && ! empty( $cpt[ 'meta_box_title' ] ) ) ? $cpt[ 'meta_box_title' ] : NULL,
 										'show_admin_column' => ( isset( $cpt[ 'show_admin_column' ] ) && ! $cpt[ 'show_admin_column' ] ) ? false : true,
 										'has_cpt_onomy_archive' => ( isset( $cpt[ 'has_cpt_onomy_archive' ] ) && ! $cpt[ 'has_cpt_onomy_archive' ] ) ? false : true,
 										'cpt_onomy_archive_slug' => ( isset( $cpt[ 'cpt_onomy_archive_slug' ] ) && ! empty( $cpt[ 'cpt_onomy_archive_slug' ] ) ) ? $cpt[ 'cpt_onomy_archive_slug' ] : NULL,
@@ -1198,15 +1285,16 @@ class CPT_ONOMIES_MANAGER {
 			
 		}
 		
-		// register site CPTs
+		//! Register Site CPTs
 		if ( isset( $this->user_settings[ 'custom_post_types' ] ) ) {
 		
 			// take this one CPT at a time
 			foreach( $this->user_settings[ 'custom_post_types' ] as $cpt_key => $cpt ) {
 			
-				// In previous versions, we had to register the post type last in order for it to win the rewrite war
-				// As of 1.1, the post type must be registered first in order to register the CPT-onomy and the
-				// post type will still win the rewrite war
+				// In previous versions, we had to register the post type last
+				// in order for it to win the rewrite war/
+				// As of 1.1, the post type must be registered first in order to
+				// register the CPT-onomy and the post type will still win the rewrite war.
 						
 				// make sure post type is not deactivated
 				if ( ! isset( $cpt[ 'deactivate' ] ) ) {
@@ -1231,6 +1319,7 @@ class CPT_ONOMIES_MANAGER {
 										'label' => isset( $args[ 'labels' ][ 'name' ] ) ? strip_tags( $args[ 'labels' ][ 'name' ] ) : 'Posts',
 										'public' => isset( $args[ 'public' ] ) ? $args[ 'public' ] : true,
 										'meta_box_format' => ( isset( $cpt[ 'meta_box_format' ] ) && ! empty( $cpt[ 'meta_box_format' ] ) ) ? $cpt[ 'meta_box_format' ] : NULL,
+										'meta_box_title' => ( isset( $cpt[ 'meta_box_title' ] ) && ! empty( $cpt[ 'meta_box_title' ] ) ) ? $cpt[ 'meta_box_title' ] : NULL,
 										'show_admin_column' => ( isset( $cpt[ 'show_admin_column' ] ) && ! $cpt[ 'show_admin_column' ] ) ? false : true,
 										'has_cpt_onomy_archive' => ( isset( $cpt[ 'has_cpt_onomy_archive' ] ) && ! $cpt[ 'has_cpt_onomy_archive' ] ) ? false : true,
 										'cpt_onomy_archive_slug' => ( isset( $cpt[ 'cpt_onomy_archive_slug' ] ) && ! empty( $cpt[ 'cpt_onomy_archive_slug' ] ) ) ? $cpt[ 'cpt_onomy_archive_slug' ] : NULL,
@@ -1254,7 +1343,7 @@ class CPT_ONOMIES_MANAGER {
 			
 		}
 		
-		// register the CPT-onomies AFTER all the CPTs are registered
+		//! Register CPT-onomies AFTER all CPTs are registered
 		foreach( $register_cpt_onomies as $cpt_key => $cpt_onomy_info ) {
 			
 			// let's get this sucker registered!							
@@ -1262,7 +1351,7 @@ class CPT_ONOMIES_MANAGER {
 			
 		}
 					
-		// register OTHER custom post types as taxonomies
+		//! Register OTHER CPTs as CPT-onomies
 		if ( ! empty( $this->user_settings[ 'other_custom_post_types' ] ) ) {	
 			foreach( $this->user_settings[ 'other_custom_post_types' ] as $cpt_key => $cpt_settings ) {
 			
@@ -1279,6 +1368,7 @@ class CPT_ONOMIES_MANAGER {
 						'label' => strip_tags( $custom_post_type->label ),
 						'public' => $custom_post_type->public,
 						'meta_box_format' => ( isset( $cpt_settings[ 'meta_box_format' ] ) && ! empty( $cpt_settings[ 'meta_box_format' ] ) ) ? $cpt_settings[ 'meta_box_format' ] : NULL,
+						'meta_box_title' => ( isset( $cpt_settings[ 'meta_box_title' ] ) && ! empty( $cpt_settings[ 'meta_box_title' ] ) ) ? $cpt_settings[ 'meta_box_title' ] : NULL,
 						'show_admin_column' => ( isset( $cpt_settings[ 'show_admin_column' ] ) && ! $cpt_settings[ 'show_admin_column' ] ) ? false : true,
 						'has_cpt_onomy_archive' => ( isset( $cpt_settings[ 'has_cpt_onomy_archive' ] ) && ! $cpt_settings[ 'has_cpt_onomy_archive' ] ) ? false : true,
 						'cpt_onomy_archive_slug' => ( isset( $cpt_settings[ 'cpt_onomy_archive_slug' ] ) && ! empty( $cpt_settings[ 'cpt_onomy_archive_slug' ] ) ) ? $cpt_settings[ 'cpt_onomy_archive_slug' ] : NULL,
@@ -1294,7 +1384,6 @@ class CPT_ONOMIES_MANAGER {
 			}
 		}
 		
-	}	
+	}
+	
 }
-
-?>

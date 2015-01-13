@@ -3,8 +3,10 @@ Contributors: bamadesigner
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=bamadesigner%40gmail%2ecom&lc=US&item_name=Rachel%20Carden%20%28CPT%2donomies%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: custom post type, custom, post, post type, types, tax, taxonomy, taxonomies, cpt-onomy, cpt-onomies, cptonomies, custom post type taxonomies, custom post type as taxonomy, custom post types as taxonomies, relationships, relate, multisite
 Requires at least: 3.1
-Tested up to: 3.7.1
-Stable tag: 1.3.1
+Tested up to: 4.1
+Stable tag: 1.3.2
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Use your custom post types as taxonomies. Create powerful relationships between your posts and, therefore, powerful content.
 
@@ -124,8 +126,22 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Changelog ==
 
 = 1.3.2 =
-
+* Fixed a few WordPress 4.1 bugs.
+* Brought register_cpt_onomy() outside the manager class for ease of use.
+* You can now attach CPT-onomies to media.
+* Added hook to flush rewrite rules whenever settings are changed and an upgrade is run.
+* Added 'Show In Admin Bar' setting to custom post type registration.
+* Added 'Meta Box Title' property to CPT-onomy settings, to allow you to customize the title of your CPT-onomy meta boxes.
+* Added 'custom_post_type_onomies_meta_box_title' filter which allows users to change the meta box title.
 * Fixed a bug with admin drop down filters not tied to 'show_admin_column' setting.
+* Removed CPT_ONOMIES_URL constant and replaced with plugins_url().
+* Updated jQuery Validate script to version 1.13.1.
+* Added functionality so when using autocomplete to assign CPT-onomies and term doesn't exist, clicking "Add the term" auto-populates the post title for the new term.
+* Reinstated the ability to make the CPT-onomy admin columns sortable. Disable the columns from being sortable by returning false to the 'custom_post_type_onomies_add_cpt_onomy_admin_sortable_column' filter.
+* Added ability to order posts queries by a CPT-onomy.
+* Changed enqueueing of scripts and styles to use plugins_url() and made sure no versions were used.
+* Fixed bug that was causing memory problems for those with a lot of posts.
+* Added/fixed rewrite rules for pagination and feeds.
 
 = 1.3.1 =
 * Documentation has moved to wpdreamer.com.
@@ -211,8 +227,22 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Upgrade Notice ==
 
 = 1.3.2 =
-
+* Fixed a few WordPress 4.1 bugs.
+* Brought register_cpt_onomy() outside the manager class for ease of use.
+* You can now attach CPT-onomies to media.
+* Added hook to flush rewrite rules whenever settings are changed and an upgrade is run.
+* Added 'Show In Admin Bar' setting to custom post type registration.
+* Added 'Meta Box Title' property to CPT-onomy settings, to allow you to customize the title of your CPT-onomy meta boxes.
+* Added 'custom_post_type_onomies_meta_box_title' filter which allows users to change the meta box title.
 * Fixed a bug with admin drop down filters not tied to 'show_admin_column' setting.
+* Removed CPT_ONOMIES_URL constant and replaced with plugins_url().
+* Updated jQuery Validate script to version 1.13.1.
+* Added functionality so when using autocomplete to assign CPT-onomies and term doesn't exist, clicking "Add the term" auto-populates the post title for the new term.
+* Reinstated the ability to make the CPT-onomy admin columns sortable. Disable the columns from being sortable by returning false to the 'custom_post_type_onomies_add_cpt_onomy_admin_sortable_column' filter.
+* Added ability to order posts queries by a CPT-onomy.
+* Changed enqueueing of scripts and styles to use plugins_url() and made sure no versions were used.
+* Fixed bug that was causing memory problems for those with a lot of posts.
+* Added/fixed rewrite rules for pagination and feeds.
 
 = 1.3.1 =
 * Documentation has moved to wpdreamer.com.

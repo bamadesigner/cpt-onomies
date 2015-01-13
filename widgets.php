@@ -54,9 +54,9 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 				));
 				
 				// if empty, and they dont' want to show if empty, then don't show
-				if ( $instance[ 'show_if_empty' ] || ( !$instance[ 'show_if_empty' ] && !empty( $tag_cloud ) ) ) {
+				if ( $instance[ 'show_if_empty' ] || ( ! $instance[ 'show_if_empty' ] && ! empty( $tag_cloud ) ) ) {
 				
-					if ( !empty( $instance[ 'title' ] ) )
+					if ( ! empty( $instance[ 'title' ] ) )
 						$title = $instance[ 'title' ];
 					else {
 						$tax = get_taxonomy( $current_taxonomy );
@@ -106,14 +106,14 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 		global $cpt_onomies_manager;
 		$defaults = array( 'show_if_empty' => 1, 'term_link' => 'view' );
 		$instance = wp_parse_args( $instance, $defaults );
-		$current_taxonomy = ( !empty( $instance[ 'taxonomy' ] ) && $cpt_onomies_manager->is_registered_cpt_onomy( $instance[ 'taxonomy' ] ) ) ? $instance[ 'taxonomy' ] : NULL;
+		$current_taxonomy = ( ! empty( $instance[ 'taxonomy' ] ) && $cpt_onomies_manager->is_registered_cpt_onomy( $instance[ 'taxonomy' ] ) ) ? $instance[ 'taxonomy' ] : NULL;
 		?>
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', CPT_ONOMIES_TEXTDOMAIN ) ?></label>
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php if ( isset( $instance[ 'title' ] ) ) { echo esc_attr( $instance[ 'title' ] ); } ?>" /></p>
 		<p><label for="<?php echo $this->get_field_id( 'taxonomy' ); ?>"><?php _e( 'Taxonomy:', CPT_ONOMIES_TEXTDOMAIN ) ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'taxonomy' ); ?>" name="<?php echo $this->get_field_name( 'taxonomy' ); ?>">
         <?php foreach ( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
-        	if ( !$cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) || empty( $tax->labels->name ) )
+        	if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) || empty( $tax->labels->name ) )
         		continue;
         	?><option value="<?php echo esc_attr( $taxonomy ); ?>" <?php selected( $taxonomy, $current_taxonomy ); ?>><?php _e( $tax->labels->name, CPT_ONOMIES_TEXTDOMAIN ); ?></option><?php
 		} ?>
@@ -132,5 +132,3 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 	}
 	
 }
-
-?>

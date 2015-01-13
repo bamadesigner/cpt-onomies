@@ -27,5 +27,3 @@ delete_site_option( 'custom_post_type_onomies_custom_post_types' );
 
 // delete user options
 $wpdb->query( $wpdb->prepare( "DELETE FROM " . $wpdb->usermeta . " WHERE meta_key IN ( 'custom_post_type_onomies_dismiss', 'wp_custom_post_type_onomies_show_edit_tables', 'custom_post_type_onomies_show_edit_tables' )", NULL ) );
-	
-?>

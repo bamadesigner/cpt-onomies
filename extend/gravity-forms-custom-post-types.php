@@ -55,5 +55,3 @@ function custom_post_type_onomies_gform_post_submission_save_taxonomy_field( &$f
         }
 	}
 }
-
-?>

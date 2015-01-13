@@ -1,10 +1,10 @@
 select.category.cpt_onomies {
 	width: 100%;
+	margin-top: 7px;
 	}
 	
 .cpt_onomies_tags_div input.cpt_onomies_new_tag {
-	margin-right: 5px;
-	width: 16em;
+	width: 71%;
 }
 
 .cpt_onomies_tags_div .cpt_onomies_add_tag_error_message {
@@ -116,7 +116,7 @@ select.category.cpt_onomies {
 	
 .ui-autocomplete.cpt_onomies .ui-menu-item a {
 	display: block!important;
-	background: #21759b!important;
+	background: #0074a2!important;
 	padding: 7px 5px!important;
 	margin: 0!important;
 	border: 0!important;

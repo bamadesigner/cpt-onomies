@@ -152,7 +152,7 @@ jQuery.noConflict()(function(){
 				$id = parseInt( this.getId( id ) );
 				
 			// we don't have to do this stuff for 'post' or 'page'
-			if ( !( $post_type == 'post' || $post_type == 'page' ) && $id > 0 ) {
+			if ( ! ( $post_type == 'post' || $post_type == 'page' ) && $id > 0 ) {
 								
 				// get the table's column info
 				var $table_columns = new Array();
