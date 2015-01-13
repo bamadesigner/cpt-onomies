@@ -1193,7 +1193,21 @@ class CPT_TAXONOMY {
 				$cpt_posts_eligible_taxonomies = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL;
 				
 				// Builds array with count for each post ID
-				$cpt_posts_count = ! empty( $cpt_posts_ids ) && ! empty( $cpt_posts_eligible_taxonomies ) ? $wpdb->get_results( $wpdb->prepare( "SELECT wpposts.ID, ( SELECT COUNT(*) FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpmetaposts ON wpmetaposts.ID = wpmeta.post_id AND wpmetaposts.post_type IN ( '" . implode( "','", $cpt_posts_eligible_taxonomies ) . "' ) AND wpmetaposts.post_status = 'publish' WHERE wpmeta.meta_key = %s AND wpmeta.meta_value = wpposts.ID ) AS count FROM {$wpdb->posts} wpposts WHERE wpposts.ID IN ( '" . implode( "','", $cpt_posts_ids ) . "' ) AND wpposts.post_status = 'publish' ORDER BY wpposts.ID ASC", CPT_ONOMIES_POSTMETA_KEY ) ) : array();
+				if ( $cpt_posts_count = ! empty( $cpt_posts_ids ) && ! empty( $cpt_posts_eligible_taxonomies ) ? $wpdb->get_results( $wpdb->prepare( "SELECT wpposts.ID, ( SELECT COUNT(*) FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpmetaposts ON wpmetaposts.ID = wpmeta.post_id AND wpmetaposts.post_type IN ( '" . implode( "','", $cpt_posts_eligible_taxonomies ) . "' ) AND wpmetaposts.post_status = 'publish' WHERE wpmeta.meta_key = %s AND wpmeta.meta_value = wpposts.ID ) AS count FROM {$wpdb->posts} wpposts WHERE wpposts.ID IN ( '" . implode( "','", $cpt_posts_ids ) . "' ) AND wpposts.post_status = 'publish' ORDER BY wpposts.ID ASC", CPT_ONOMIES_POSTMETA_KEY ) ) : array() ) {
+					
+					// Hold new posts count arrangement
+					$new_cpt_posts_count = array();
+					foreach( $cpt_posts_count as $cpt_posts_count_index => $cpt_posts_count_item ) {
+						
+						// Store count with ID
+						$new_cpt_posts_count[ $cpt_posts_count_item->ID ] = $cpt_posts_count_item->count;
+						
+					}
+					
+					// Reassign the posts count array
+					$cpt_posts_count = $new_cpt_posts_count;
+					
+				}
 				
 				foreach ( $cpt_posts as $this_post ) {
 					
@@ -1208,21 +1222,11 @@ class CPT_TAXONOMY {
 							continue;
 						
 						// Add count if exists
-						foreach( $cpt_posts_count as $cpt_posts_count_index => $cpt_posts_count_item ) {
+						if ( array_key_exists( $this_post->ID, $cpt_posts_count ) ) {
 							
-							// We found the count
-							if ( $this_post->ID == $cpt_posts_count_item->ID ) {
+							// Assign count
+							$this_term->count = $cpt_posts_count[ $this_post->ID ];
 								
-								// Assign count
-								$this_term->count = $cpt_posts_count_item->count;
-								
-								// Remove from array so future queries go faster
-								unset( $cpt_posts_count[ $cpt_posts_count_index ] );
-								
-								break;
-							
-							}
-							
 						}
 						
 						if ( ! $hide_empty || ( $hide_empty && isset( $this_term->count ) && $this_term->count > 0 ) ) {
