@@ -613,6 +613,9 @@ class CPT_ONOMIES_MANAGER {
 				// Replace the 0 = 1 in the 'where' clause
 				$clauses[ 'where' ] = preg_replace( '/' . $preg_replace_str . '/i', '', $clauses[ 'where' ] );
 				
+				// Find singular 0 = 1 to replace
+				$clauses[ 'where' ] = preg_replace( '/0[\s]+\=[\s]+1[\s]+AND/i', '', $clauses[ 'where' ] );
+				
 				$clauses[ 'where' ] .= " AND ( ";
 					foreach ( $new_where as $where_index => $add_where ) {
 						if ( $where_index > 0 )
