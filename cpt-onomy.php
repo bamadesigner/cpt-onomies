@@ -1200,7 +1200,16 @@ class CPT_TAXONOMY {
 				if ( ! empty( $cpt_posts_ids ) && ! empty( $cpt_onomy_eligible_post_types ) ) {
 					
 					// Get CPT-onomies count from the database
-					$cpt_posts_count_from_db = $wpdb->get_results( $wpdb->prepare( "SELECT wpposts.ID, ( SELECT COUNT(*) FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpmetaposts ON wpmetaposts.ID = wpmeta.post_id AND wpmetaposts.post_type IN ( '" . implode( "','", $cpt_onomy_eligible_post_types ) . "' ) AND wpmetaposts.post_status = 'publish' WHERE wpmeta.meta_key = %s AND wpmeta.meta_value = wpposts.ID ) AS count FROM {$wpdb->posts} wpposts WHERE wpposts.ID IN ( '" . implode( "','", $cpt_posts_ids ) . "' ) AND wpposts.post_status = 'publish' ORDER BY wpposts.ID ASC", CPT_ONOMIES_POSTMETA_KEY ) );
+					$cpt_posts_count_from_db = $wpdb->get_results( $wpdb->prepare( "SELECT wpposts.ID, COUNT(wpmeta.meta_value) AS count FROM wp_posts wpposts
+						
+						LEFT JOIN wp_postmeta wpmeta 
+							ON wpmeta.meta_value = wpposts.ID
+							AND wpmeta.meta_key = %s
+							AND ( SELECT cpt_posts_count.ID FROM wp_posts cpt_posts_count WHERE cpt_posts_count.ID = wpmeta.post_id AND cpt_posts_count.post_type IN ( '" . implode( "','", $cpt_onomy_eligible_post_types ) . "' ) AND cpt_posts_count.post_status = 'publish' )	
+						
+					WHERE wpposts.ID IN ( '" . implode( "','", $cpt_posts_ids ) . "' ) AND wpposts.post_status = 'publish'
+					GROUP BY wpposts.ID
+					ORDER BY wpposts.post_title ASC", CPT_ONOMIES_POSTMETA_KEY ) );
 				
 					// If we have a posts count, we need to rearrange the array
 					if ( $cpt_posts_count_from_db ) {
