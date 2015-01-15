@@ -313,6 +313,99 @@ class CPT_TAXONOMY {
 	}
 	
 	/**
+	 * Returns an array of term counts for a specific
+	 * CPT-onomy indexed by the term ID.
+	 *
+	 * Stores the term counts in the WP cache to help
+	 * with query load.
+	 *
+	 * @since 1.3.3
+	 * @param string - $taxonomy - CPT-onomy name
+	 * @param csv|array - $term_ids - you can pass specific term IDs instead of all terms (will not use cache though)
+	 * @return array|false - array of term counts indexed by term ID or false if error
+	 */
+	private function get_terms_count( $taxonomy, $term_ids = NULL ) {
+		global $cpt_onomies_manager, $wpdb;
+		
+		// First up, make sure its a CPT-onomy
+		if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) )
+			return false;
+			
+		// Then get the post types attached to this taxonomy
+		if ( ! ( $eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL ) )
+			return false;
+			
+		// We're gonna store the term counts in an array indexed by term ID
+		$terms_count = array();
+		
+		// Make sure term IDs is an array
+		if ( ! empty( $term_ids ) && ! is_array( $term_ids ) )
+			$term_ids = explode( ',', $term_ids );
+		
+		// First, see if we can get from the cache
+		if ( empty( $term_ids ) &&
+			( $terms_count_from_cache = wp_cache_get( $taxonomy, 'cpt_onomies_count' ) )
+			&& $terms_count_from_cache !== false
+			&& is_array( $terms_count_from_cache ) ) {
+				
+			// Set the count from the cache
+			return $terms_count_from_cache;
+		
+		// Otherwise, update terms count from the database
+		} else {
+			
+			// Build the terms count query
+			$terms_count_query = "SELECT meta.meta_value AS ID, COUNT(meta.meta_value) AS count
+
+				FROM {$wpdb->postmeta} meta 
+				
+					INNER JOIN {$wpdb->posts} objects
+						ON objects.ID = meta.post_id
+						AND objects.post_type IN ( '" . implode( "','", $eligible_post_types ) . "' )
+						AND objects.post_status = 'publish'";
+						
+					// If we have no specific term IDs then we have to join the posts table to match taxonomy/post type
+					if ( empty( $term_ids ) ) {
+						
+						$terms_count_query .= " INNER JOIN {$wpdb->posts} terms 
+							ON terms.ID = meta.meta_value
+							AND terms.post_type = '{$taxonomy}'
+							AND objects.post_status = 'publish'";
+							
+					}
+						
+				$terms_count_query .= " WHERE meta.meta_key = %s";
+				
+					// If we have term IDs
+					if ( ! empty( $term_ids ) )
+						$terms_count_query .= " AND meta.meta_value IN ( '" . implode( "','", $term_ids ) . "' )";
+					
+				$terms_count_query .= " GROUP BY meta.meta_value";
+			
+			// Get term count from the database
+			if ( $terms_count_from_db = $wpdb->get_results( $wpdb->prepare( $terms_count_query, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
+				
+				// If we have a posts count, we need to rearrange the array
+				foreach( $terms_count_from_db as $terms_count_index => $terms_count_item ) {
+					
+					// Store count with ID
+					$terms_count[ $terms_count_item->ID ] = isset( $terms_count_item->count ) && $terms_count_item->count > 0 ? $terms_count_item->count : 0;
+					
+				}
+				
+				// If no specific term IDs, set the cache
+				if ( empty( $term_ids ) )
+					wp_cache_set( $taxonomy, $terms_count, 'cpt_onomies_count' );
+				
+			}
+			
+		}
+		
+		return $terms_count;	
+		
+	}
+	
+	/**
 	 * This function determines how many times a term has been assigned to an object.
 	 *
 	 * @since 1.0
@@ -1586,11 +1679,11 @@ class CPT_TAXONOMY {
 						if ( ! empty( $exclude ) )
 							$cpt_posts_query .= " AND terms.ID NOT IN ( " . implode( ',', $exclude ) . " )";
 							
-					$cpt_posts_query .= " WHERE meta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' 
+					$cpt_posts_query .= " WHERE meta.meta_key = %s
 						AND meta.post_id IN (" . implode( ',', $object_ids ) . ")";
 				
 				// Get the posts
-				if ( $cpt_posts = $wpdb->get_results( $cpt_posts_query ) ) {
+				if ( $cpt_posts = $wpdb->get_results( $wpdb->prepare( $cpt_posts_query, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
 					
 					foreach ( $cpt_posts as $this_post ) {
 						
