@@ -1213,9 +1213,9 @@ class CPT_TAXONOMY {
 						// Get term count from the database
 						$cpt_posts_count_from_db = $wpdb->get_results( $wpdb->prepare( "SELECT meta.meta_value AS ID, COUNT(meta.meta_value) AS count
 	
-							FROM wp_postmeta meta 
+							FROM {$wpdb->postmeta} meta 
 							
-								INNER JOIN wp_posts objects
+								INNER JOIN {$wpdb->posts} objects
 									ON objects.ID = meta.post_id
 									AND objects.post_type IN ( '" . implode( "','", $cpt_onomy_eligible_post_types ) . "' )
 									AND objects.post_status = 'publish' 
@@ -1571,13 +1571,13 @@ class CPT_TAXONOMY {
 				// Get object ID, term count and post info
 				$cpt_posts_query = "SELECT meta.post_id AS object_id, ( 
 				
-						SELECT COUNT(*) FROM wp_postmeta terms_count WHERE terms_count.meta_key = '_custom_post_type_onomies_relationship' AND terms_count.meta_value = terms.ID
+						SELECT COUNT(*) FROM {$wpdb->postmeta} terms_count WHERE terms_count.meta_key = '_custom_post_type_onomies_relationship' AND terms_count.meta_value = terms.ID
 					
 					) AS count, terms.*
 					
-					FROM wp_postmeta meta 
+					FROM {$wpdb->postmeta} meta 
 	
-						INNER JOIN wp_posts terms 
+						INNER JOIN {$wpdb->posts} terms 
 							ON terms.ID = meta.meta_value 
 							AND terms.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "')
 							AND terms.post_status = 'publish'";
