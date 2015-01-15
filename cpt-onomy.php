@@ -1199,29 +1199,47 @@ class CPT_TAXONOMY {
 				// Get CPT-onomies count for this taxonomy
 				if ( ! empty( $cpt_posts_ids ) && ! empty( $cpt_onomy_eligible_post_types ) ) {
 					
-					// Get CPT-onomies count from the database
-					$cpt_posts_count_from_db = $wpdb->get_results( $wpdb->prepare( "SELECT wpposts.ID, COUNT(wpmeta.meta_value) AS count FROM wp_posts wpposts
-						
-						LEFT JOIN wp_postmeta wpmeta 
-							ON wpmeta.meta_value = wpposts.ID
-							AND wpmeta.meta_key = %s
-							AND ( SELECT cpt_posts_count.ID FROM wp_posts cpt_posts_count WHERE cpt_posts_count.ID = wpmeta.post_id AND cpt_posts_count.post_type IN ( '" . implode( "','", $cpt_onomy_eligible_post_types ) . "' ) AND cpt_posts_count.post_status = 'publish' )	
-						
-					WHERE wpposts.ID IN ( '" . implode( "','", $cpt_posts_ids ) . "' ) AND wpposts.post_status = 'publish'
-					GROUP BY wpposts.ID
-					ORDER BY wpposts.post_title ASC", CPT_ONOMIES_POSTMETA_KEY ) );
-				
-					// If we have a posts count, we need to rearrange the array
-					if ( $cpt_posts_count_from_db ) {
-						
-						// Loop through each count
-						foreach( $cpt_posts_count_from_db as $cpt_posts_count_index => $cpt_posts_count_item ) {
+					// See if we can get from cache
+					if ( ( $cpt_posts_count_from_cache = wp_cache_get( $taxonomy, 'cpt_onomies_count' ) )
+						&& $cpt_posts_count_from_cache !== false
+						&& is_array( $cpt_posts_count_from_cache ) ) {
 							
-							// Store count with ID
-							$cpt_posts_count[ $cpt_posts_count_item->ID ] = $cpt_posts_count_item->count;
+						// Set the count from the cache
+						$cpt_posts_count = $cpt_posts_count_from_cache;
+					
+					// Otherwise, update CPT-onomies count from the database
+					} else { 
+						
+						// Get count from the database
+						$cpt_posts_count_from_db = $wpdb->get_results( $wpdb->prepare( "SELECT meta.meta_value AS ID, COUNT(meta.meta_value) AS count
+	
+							FROM wp_postmeta meta 
 							
+								INNER JOIN wp_posts objects
+									ON objects.ID = meta.post_id
+									AND objects.post_type IN ( '" . implode( "','", $cpt_onomy_eligible_post_types ) . "' )
+									AND objects.post_status = 'publish' 
+							
+							WHERE meta.meta_key = %s AND meta.meta_value IN ( '" . implode( "','", $cpt_posts_ids ) . "' )
+							
+							GROUP BY meta.meta_value", CPT_ONOMIES_POSTMETA_KEY ) );
+							
+						// If we have a posts count, we need to rearrange the array
+						if ( $cpt_posts_count_from_db ) {
+							
+							// Loop through each count
+							foreach( $cpt_posts_count_from_db as $cpt_posts_count_index => $cpt_posts_count_item ) {
+								
+								// Store count with ID
+								$cpt_posts_count[ $cpt_posts_count_item->ID ] = isset( $cpt_posts_count_item->count ) && $cpt_posts_count_item->count > 0 ? $cpt_posts_count_item->count : 0;
+								
+							}
+							
+							// Set the cache
+							wp_cache_set( $taxonomy, $cpt_posts_count, 'cpt_onomies_count' );
+													
 						}
-												
+						
 					}
 					
 				}
@@ -1238,13 +1256,8 @@ class CPT_TAXONOMY {
 						if ( ! $this_term )
 							continue;
 						
-						// Add count if exists
-						if ( array_key_exists( $this_post->ID, $cpt_posts_count ) ) {
-							
-							// Assign count
-							$this_term->count = $cpt_posts_count[ $this_post->ID ];
-								
-						}
+						// Assign count
+						$this_term->count = isset( $cpt_posts_count[ $this_post->ID ] ) && $cpt_posts_count[ $this_post->ID ] > 0 ? $cpt_posts_count[ $this_post->ID ] : 0;
 						
 						if ( ! $hide_empty || ( $hide_empty && isset( $this_term->count ) && $this_term->count > 0 ) ) {
 							
