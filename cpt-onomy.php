@@ -1210,7 +1210,7 @@ class CPT_TAXONOMY {
 					// Otherwise, update CPT-onomies count from the database
 					} else { 
 						
-						// Get count from the database
+						// Get term count from the database
 						$cpt_posts_count_from_db = $wpdb->get_results( $wpdb->prepare( "SELECT meta.meta_value AS ID, COUNT(meta.meta_value) AS count
 	
 							FROM wp_postmeta meta 
@@ -1566,29 +1566,31 @@ class CPT_TAXONOMY {
 				break;
 				
 			case 'all_with_object_id':
-				
+			
 				// Build the query
 				// Get object ID, term count and post info
-				$cpt_posts_query = "SELECT wpmeta.post_id AS object_id, ( SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountmetaposts ON wpcountmetaposts.ID = wpcountmeta.post_id AND wpcountmetaposts.post_status = 'publish' WHERE wpcountmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND wpcountmeta.meta_value = wpposts2.ID ) AS count, wpposts2.* FROM {$wpdb->postmeta} wpmeta
-					INNER JOIN {$wpdb->posts} wpposts ON
-						wpmeta.post_id = wpposts.ID AND
-						wpposts.ID IN (" . implode( ',', $object_ids ) . ") AND
-						wpposts.post_status = 'publish'
-					INNER JOIN {$wpdb->posts} wpposts2 ON
-						wpposts2.ID = wpmeta.meta_value";
-						
+				$cpt_posts_query = "SELECT meta.post_id AS object_id, ( 
+				
+						SELECT COUNT(*) FROM wp_postmeta terms_count WHERE terms_count.meta_key = '_custom_post_type_onomies_relationship' AND terms_count.meta_value = terms.ID
+					
+					) AS count, terms.*
+					
+					FROM wp_postmeta meta 
+	
+						INNER JOIN wp_posts terms 
+							ON terms.ID = meta.meta_value 
+							AND terms.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "')
+							AND terms.post_status = 'publish'";
+							
 						// Exclude certain "terms"
 						if ( ! empty( $exclude ) )
-							$cpt_posts_query .= " AND wpposts2.ID NOT IN ( " . implode( ',', $exclude ) . " )";
-						
-						$cpt_posts_query .= " AND wpposts2.post_status = 'publish' AND
-						wpposts2.post_type in ('" . implode( "','", $cpt_taxonomies ) . "')
-					WHERE wpmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'";
+							$cpt_posts_query .= " AND terms.ID NOT IN ( " . implode( ',', $exclude ) . " )";
+							
+					$cpt_posts_query .= " WHERE meta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' 
+						AND meta.post_id IN (" . implode( ',', $object_ids ) . ")";
 				
 				// Get the posts
-				$cpt_posts = $wpdb->get_results( $cpt_posts_query );
-				
-				if ( ! empty( $cpt_posts ) ) {
+				if ( $cpt_posts = $wpdb->get_results( $cpt_posts_query ) ) {
 					
 					foreach ( $cpt_posts as $this_post ) {
 						
@@ -1624,6 +1626,7 @@ class CPT_TAXONOMY {
 					}
 					
 				}
+				
 				break;
 				
 			case 'all':
