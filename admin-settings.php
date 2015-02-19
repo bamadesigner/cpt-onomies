@@ -2461,18 +2461,27 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 							
 							// other post type
 							else {
+								
+								// Get the post type object
 								$CPT = get_post_type_object( $edit );
+								
+								// Define as other
 								$CPT->other = true;
+								
+								// Get other settings
 								if ( is_array( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) && array_key_exists( $edit, $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) ) {
-									if ( isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'attach_to_post_type' ] ) && ! empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'attach_to_post_type' ] ) )
-										$CPT->attach_to_post_type = $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'attach_to_post_type' ];
-									if ( isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'has_cpt_onomy_archive' ] ) && ! empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'has_cpt_onomy_archive' ] ) )
-										$CPT->has_cpt_onomy_archive = $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'has_cpt_onomy_archive' ];
-									if ( isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'cpt_onomy_archive_slug' ] ) && ! empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'cpt_onomy_archive_slug' ] ) )
-										$CPT->cpt_onomy_archive_slug = $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'cpt_onomy_archive_slug' ];								
-									if ( isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'restrict_user_capabilities' ] ) && ! empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'restrict_user_capabilities' ] ) )
-										$CPT->restrict_user_capabilities = $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ][ 'restrict_user_capabilities' ];
+									
+									// Convert CPT to array
+									$CPT = (array) $CPT;
+									
+									// Merge with settings
+									$CPT = array_merge( $CPT, $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $edit ] );
+									
+									// Convert back to an object
+									$CPT = (object) $CPT;
+									
 								}
+							
 							}
 							
 						}
@@ -2831,29 +2840,45 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 									
 								$is_set = false;
 								if ( ! $new ) {
+									
 									if ( isset( $property_parent_key ) && isset( $CPT->$property_parent_key ) ) {
+										
 										$property_parent = $CPT->$property_parent_key;
-										if ( isset( $property_parent[ $property_key ] ) && is_array( $property_parent[ $property_key ] ) && in_array( $data_name, $property_parent[ $property_key ] ) )
+										
+										if ( isset( $property_parent[ $property_key ] ) && is_array( $property_parent[ $property_key ] ) && in_array( $data_name, $property_parent[ $property_key ] ) ) {
+											
 											$is_set = true;
-										else if ( isset( $property_parent[ $property_key ] ) && $data_name == $property_parent[ $property_key ] )
+										
+										} else if ( isset( $property_parent[ $property_key ] ) && $data_name == $property_parent[ $property_key ] ) {
+											
 											$is_set = true;
-									}
-									else if ( isset( $CPT->$property_key ) && is_array( $CPT->$property_key ) && in_array( $data_name, $CPT->$property_key ) )
+											
+										}
+										
+									} else if ( isset( $CPT->$property_key ) && is_array( $CPT->$property_key ) && in_array( $data_name, $CPT->$property_key ) ) {
+										
 										$is_set = true;
-									else if ( isset( $CPT->$property_key ) && $data_name == $CPT->$property_key )
+									
+									} else if ( isset( $CPT->$property_key ) && $data_name == $CPT->$property_key ) {
+										
 										$is_set = true;
-									// if property is not set, then set to default
-									else if ( ! isset( $CPT->other ) && ! isset( $CPT->$property_key ) && $is_default )
+									
+									// If property is not set, then set to default
+									} else if ( ! isset( $CPT->other ) && ! isset( $CPT->$property_key ) && $is_default ) {
+										
 										$is_set = true;
+									
 									// If "other", check to make sure this particular post type has NO settings in the database before using the defaults
 									// If "other" custom post type has no settings in the database, then its settings have not been "saved" and should therefore show the defaults
-									else if ( isset( $CPT->other ) && ! isset( $CPT->$property_key ) && $is_default ) {
+									} else if ( isset( $CPT->other ) && ! isset( $CPT->$property_key ) && $is_default ) {
+										
 										if ( empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) || empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $cpt_key ] ) )
 											$is_set = true;
+									
 									}
-								}
+									
 								// set the defaults
-								else if ( $is_default )
+								} else if ( $is_default )
 									$is_set = true;
 									
 								?><td<?php if ( $index == count( $property->data ) && $td == 1 ) echo ' colspan="2"'; ?>><label><input<?php if ( isset( $property->validation ) ) echo ' class="' . $property->validation . '"'; ?> type="<?php echo $property->type; ?>" name="<?php echo $field_name; if ( $property->type == 'checkbox' ) { ?><?php if ( count( $property->data ) > 1 ) echo '[]'; ?><?php } ?>" value="<?php echo $data_name; ?>"<?php checked( $is_set, true ); ?> /><?php if ( $is_default ) { ?><strong><?php } echo $data->label; if ( $is_default ) { ?></strong><?php } ?></label></td><?php
