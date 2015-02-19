@@ -332,23 +332,78 @@ class CPT_ONOMIES_MANAGER {
 		}
 		
 		// If ordering by a CPT-onomy
-		if ( ( $taxonomy = $query->get( 'orderby' ) )
+		if ( ( $taxonomies = $query->get( 'orderby' ) )
 			&& ( $post_type = $query->get( 'post_type' ) ) ) {
 				
-			// If multiple post types, then go for it
-			// Otherwise, check that the post type is registered
-			if ( is_array( $post_type ) ||
-				( is_string( $post_type )
-				&& post_type_exists( $post_type )
-				&& $this->is_registered_cpt_onomy( $taxonomy, $post_type ) ) ) {
+			// First, validate the CPT-onomy - could be multiple as array
+			// Make sure everyone is an array
+			if ( ! is_array( $taxonomies ) )
+				$taxonomies = explode( ',', $taxonomies );
 				
-				$clauses[ 'join' ] .= " LEFT OUTER JOIN {$wpdb->postmeta} cpt_onomy_order_pm ON cpt_onomy_order_pm.post_id = {$wpdb->posts}.ID
-					AND cpt_onomy_order_pm.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
-					LEFT OUTER JOIN {$wpdb->posts} cpt_onomy_order_posts ON cpt_onomy_order_posts.ID = cpt_onomy_order_pm.meta_value
-					AND cpt_onomy_order_posts.post_type = '{$taxonomy}'";
+			// Holds valid CPT-onomies
+			$valid_cpt_onomies = array();
+			
+			// Validate each taxonomy
+			foreach( $taxonomies as $taxonomy ) {
+				
+				// If just one post type...
+				if ( ! is_array( $post_type ) ) {
 					
+					// Check against post type
+					if ( $this->is_registered_cpt_onomy( $taxonomy, $post_type ) ) {
+					
+						$valid_cpt_onomies[] = $taxonomy;
+						continue;
+						
+					}
+					
+				} else {
+					
+					// Check against each post type
+					// Let it through if it passes at least one test
+					foreach( $post_type as $pt ) {
+					
+						// Check against post type
+						if ( $this->is_registered_cpt_onomy( $taxonomy, $pt ) ) {
+						
+							$valid_cpt_onomies[] = $taxonomy;
+							break;
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+				
+			// If we have valid CPT-onomies, then go for it
+			if ( $valid_cpt_onomies ) {
+				
+				// Build our new orderby
+				$new_orderby = NULL;
+				
+				// Loop through each taxonomy
+				foreach( $valid_cpt_onomies as $tax_index => $taxonomy ) {
+					
+					// Join each CPT-onomy's meta
+					$clauses[ 'join' ] .= " LEFT OUTER JOIN {$wpdb->postmeta} cpt_onomy_order_{$tax_index}_pm ON cpt_onomy_order_{$tax_index}_pm.post_id = {$wpdb->posts}.ID
+						AND cpt_onomy_order_{$tax_index}_pm.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "'
+						LEFT OUTER JOIN {$wpdb->posts} cpt_onomy_order_{$tax_index}_posts ON cpt_onomy_order_{$tax_index}_posts.ID = cpt_onomy_order_{$tax_index}_pm.meta_value
+						AND cpt_onomy_order_{$tax_index}_posts.post_type = '{$taxonomy}'";
+					
+					// Orderby each CPT-onomy
+					if ( $new_orderby ) $new_orderby .= ', ';
+					$new_orderby .= "GROUP_CONCAT( cpt_onomy_order_{$tax_index}_posts.post_title ORDER BY cpt_onomy_order_{$tax_index}_posts.post_title ASC )" . ( ( isset( $query->query[ 'order' ] ) && strcasecmp( $query->query[ 'order' ], 'desc' ) == 0 ) ? ' DESC' : ' ASC' ) . ( ! empty( $clauses[ 'orderby' ] ) ? ', ' : ' ' ) . $clauses[ 'orderby' ];
+						
+				}
+				
+				// If defined, set the orderby
+				if ( $new_orderby )
+					$clauses[ 'orderby' ] = $new_orderby;
+				
+				// Group by the post's ID
 				$clauses[ 'groupby' ] = "{$wpdb->posts}.ID";
-				$clauses[ 'orderby' ] = ' GROUP_CONCAT( cpt_onomy_order_posts.post_title ORDER BY cpt_onomy_order_posts.post_title ASC )' . ( ( isset( $query->query[ 'order' ] ) && strcasecmp( $query->query[ 'order' ], 'desc' ) == 0 ) ? ' DESC' : ' ASC' ) . ( ! empty( $clauses[ 'orderby' ] ) ? ', ' : ' ' ) . $clauses[ 'orderby' ];
 				
 			}
 			

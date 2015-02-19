@@ -127,6 +127,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 
 = 1.3.4 =
 * Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
+* Fixed issue when using an array as your query orderby.
 * Added 'admin_column_title' CPT-onomy setting.
 * Added 'custom_post_type_onomies_cpt_onomy_admin_column_title' filter which allows users to change the CPT-onomy admin column title.
 * Added 'name_admin_bar' custom post type label setting.
@@ -240,6 +241,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 
 = 1.3.4 =
 * Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
+* Fixed issue when using an array as your query orderby.
 * Added 'admin_column_title' CPT-onomy setting.
 * Added 'custom_post_type_onomies_cpt_onomy_admin_column_title' filter which allows users to change the CPT-onomy admin column title.
 * Added 'name_admin_bar' custom post type label setting.
