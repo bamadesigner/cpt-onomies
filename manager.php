@@ -672,8 +672,8 @@ class CPT_ONOMIES_MANAGER {
 	
 	/**
 	 * This function hooks into WordPress current_user_can() whenever WordPress
-	 * is checking that the user can 'assign_$taxonomy_terms', 'manage_$taxonomy_terms', 
-	 * 'edit_$taxonomy_terms' or 'delete_$taxonomy_terms'.
+	 * is checking that the user can 'assign_cpt_onomy_$taxonomy_terms', 'manage_cpt_onomy_$taxonomy_terms', 
+	 * 'edit_cpt_onomy_$taxonomy_terms' or 'delete_cpt_onomy_$taxonomy_terms'.
 	 *
 	 * If assign, it checks user settings to see if user role has permission to assign.
 	 * If 'manage', 'edit' or 'delete, it tells WordPress NO!
@@ -693,10 +693,10 @@ class CPT_ONOMIES_MANAGER {
 			
 			// If user has capability manually assigned, then allow
 			// Otherwise, check user settings
-			if ( preg_match( '/assign\_(.+)\_terms/i', $this_cap ) && ! isset( $allcaps[ $this_cap ] ) ) {
+			if ( preg_match( '/assign\_cpt\_onomy\_([a-z\_]+)\_terms/i', $this_cap ) && ! isset( $allcaps[ $this_cap ] ) ) {
 				
 				// Get taxonomy
-				$taxonomy = preg_replace( '/(assign_|_terms)/i', '', $this_cap );
+				$taxonomy = preg_replace( '/assign\_cpt\_onomy\_([a-z\_]+)\_terms/i', '\1', $this_cap );
 				
 				// If registered CPT-onomy
 				if ( taxonomy_exists( $taxonomy ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
@@ -720,7 +720,7 @@ class CPT_ONOMIES_MANAGER {
 						$user = new WP_User( $args[1] );
 						foreach ( $user->roles as $role ) {
 														
-							// test to see if role is selected
+							// Test to see if role is selected
 							if ( in_array( $role, $tax->restrict_user_capabilities ) ) {
 								$allow = true;
 								break;
@@ -744,10 +744,10 @@ class CPT_ONOMIES_MANAGER {
 				}
 					
 			// NO ONE is allowed to manage, edit or delete
-			} else if ( preg_match( '/(manage|edit|delete)\_([a-z\_]+)\_terms/i', $this_cap ) ) {
+			} else if ( preg_match( '/(manage|edit|delete)\_cpt\_onomy\_([a-z\_]+)\_terms/i', $this_cap ) ) {
 				
 				// Get taxonomy
-				$taxonomy = preg_replace( '/(manage_|edit_|delete_|_terms)/i', '', $this_cap );
+				$taxonomy = preg_replace( '/(manage|edit|delete)\_cpt\_onomy\_([a-z\_]+)\_terms/i', '\2', $this_cap );
 								
 				// If registered CPT-onomy
 				if ( taxonomy_exists( $taxonomy ) && $this->is_registered_cpt_onomy( $taxonomy ) )
@@ -952,10 +952,10 @@ class CPT_ONOMIES_MANAGER {
 			'meta_box_title'			=> $meta_box_title,
 			'restrict_user_capabilities'=> $restrict_user_capabilities,
 			'capabilities'				=> array(
-				'manage_terms' => 'manage_' . $taxonomy . '_terms',
-				'edit_terms' => 'edit_' . $taxonomy . '_terms',
-				'delete_terms' => 'delete_' . $taxonomy . '_terms',
-				'assign_terms' => 'assign_' . $taxonomy . '_terms'
+				'manage_terms'	=> 'manage_cpt_onomy_' . $taxonomy . '_terms',
+				'edit_terms' 	=> 'edit_cpt_onomy_' . $taxonomy . '_terms',
+				'delete_terms'	=> 'delete_cpt_onomy_' . $taxonomy . '_terms',
+				'assign_terms'	=> 'assign_cpt_onomy_' . $taxonomy . '_terms',
 			)
 		);
 		

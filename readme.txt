@@ -126,6 +126,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Changelog ==
 
 = 1.3.4 =
+* Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
 * Added 'admin_column_title' CPT-onomy setting.
 * Added 'name_admin_bar' custom post type label setting.
 * Added 'delete_with_user' custom post type setting.
@@ -237,6 +238,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Upgrade Notice ==
 
 = 1.3.4 =
+* Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
 * Added 'admin_column_title' CPT-onomy setting.
 * Added 'name_admin_bar' custom post type label setting.
 * Added 'delete_with_user' custom post type setting.
