@@ -1002,11 +1002,10 @@ class CPT_ONOMIES_MANAGER {
 	 */
 	public function create_custom_post_type_arguments_for_registration( $cpt_key, $cpt = array(), $args = array() ) {
 		
-		// create label
-		// if no label, set to 'Posts'
+		// Create main label. If no label, set to 'Posts'.
 		$args[ 'label' ] = isset( $cpt[ 'label' ] ) ? strip_tags( $cpt[ 'label' ] ) : 'Posts';
 					
-		// create labels
+		// Create all labels
 		$labels = array( 'name' => $args[ 'label' ] );
 		if ( isset( $cpt[ 'singular_name' ] ) && ! empty( $cpt[ 'singular_name' ] ) )
 			$labels[ 'singular_name' ] = strip_tags( $cpt[ 'singular_name' ] );
@@ -1032,6 +1031,8 @@ class CPT_ONOMIES_MANAGER {
 			$labels[ 'parent_item_colon' ] = strip_tags( $cpt[ 'parent_item_colon' ] );
 		if ( isset( $cpt[ 'menu_name' ] ) && ! empty( $cpt[ 'menu_name' ] ) )
 			$labels[ 'menu_name' ] = strip_tags( $cpt[ 'menu_name' ] );
+		if ( isset( $cpt[ 'name_admin_bar' ] ) && ! empty( $cpt[ 'name_admin_bar' ] ) )
+			$labels[ 'name_admin_bar' ] = strip_tags( $cpt[ 'name_admin_bar' ] );
 		
 		// define the labels
 		$args[ 'labels' ] = $labels;

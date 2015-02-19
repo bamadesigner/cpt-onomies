@@ -125,6 +125,9 @@ If FAQ didn't cover your problem, refer to the following resources:
 
 == Changelog ==
 
+= 1.3.4 =
+* Added 'name_admin_bar' custom post type label setting.
+
 = 1.3.3 = 
 * Fixed bug that was causing issues for multiple tax queries.
 * Optimized queries to help with memory problems.
@@ -230,6 +233,9 @@ If FAQ didn't cover your problem, refer to the following resources:
 * Plugin launch!
 
 == Upgrade Notice ==
+
+= 1.3.4 =
+* Added 'name_admin_bar' custom post type label setting.
 
 = 1.3.3 = 
 * Fixed bug that was causing issues for multiple tax queries.

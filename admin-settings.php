@@ -1034,6 +1034,11 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 							'label' => __( 'Menu Name', CPT_ONOMIES_TEXTDOMAIN ),
 							'type' => 'text',
 							'description' => __( 'This label is used as the text for the menu item. If not set, defaults to the value of the "Label" property.', CPT_ONOMIES_TEXTDOMAIN )
+						),
+						'name_admin_bar' => (object) array(
+							'label' => __( 'Name for Admin Bar', CPT_ONOMIES_TEXTDOMAIN ),
+							'type' => 'text',
+							'description' => __( 'This label is used for the "Add New" dropdown on the admin bar. If not set, uses the "Singular Name" label, if it exists. Otherwise, it defaults to the value of the "Label" property.', CPT_ONOMIES_TEXTDOMAIN )
 						)
 					)
 				),
