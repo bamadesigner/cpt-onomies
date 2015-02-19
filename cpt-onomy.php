@@ -320,19 +320,32 @@ class CPT_TAXONOMY {
 	 * with query load.
 	 *
 	 * @since 1.3.3
-	 * @param string - $taxonomy - CPT-onomy name
+	 * @param csv|string - $taxonomies - CPT-onomy names
 	 * @param csv|array - $term_ids - you can pass specific term IDs instead of all terms (will not use cache though)
 	 * @return array|false - array of term counts indexed by term ID or false if error
 	 */
-	private function get_terms_count( $taxonomy, $term_ids = NULL ) {
+	private function get_terms_count( $taxonomies, $term_ids = NULL ) {
 		global $cpt_onomies_manager, $wpdb;
 		
-		// First up, make sure its a CPT-onomy
-		if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) )
-			return false;
+		// Make sure the taxonomies is an array
+		if ( ! empty( $taxonomies ) && ! is_array( $taxonomies ) )
+			$taxonomies = explode( ',', $taxonomies );
+		
+		// Make sure they are valid CPT-onomies
+		foreach( $taxonomies as $index => $taxonomy ) {
 			
-		// Then get the post types attached to this taxonomy
-		if ( ! ( $eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL ) )
+			// If it's not a valid CPT-onomy...
+			if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
+				
+				// Remove this taxonomy
+				unset( $taxonomies[ $index ] );
+				
+			}
+			
+		}
+		
+		// If we have no valid taxonomies then there's no point in continuing
+		if ( ! $taxonomies )
 			return false;
 			
 		// We're gonna store the term counts in an array indexed by term ID
@@ -342,66 +355,131 @@ class CPT_TAXONOMY {
 		if ( ! empty( $term_ids ) && ! is_array( $term_ids ) )
 			$term_ids = explode( ',', $term_ids );
 		
+		// This will hold taxonomies that need to be queried
+		$taxonomies_to_query = array();
+			
 		// First, see if we can get from the cache
-		if ( empty( $term_ids ) &&
-			( $terms_count_from_cache = wp_cache_get( $taxonomy, 'cpt_onomies_count' ) )
-			&& $terms_count_from_cache !== false
-			&& is_array( $terms_count_from_cache ) ) {
-				
-			// Set the count from the cache
-			return $terms_count_from_cache;
-		
-		// Otherwise, update terms count from the database
-		} else {
+		foreach( $taxonomies as $taxonomy ) {
 			
-			// Build the terms count query
-			$terms_count_query = "SELECT meta.meta_value AS ID, COUNT(meta.meta_value) AS count
-
-				FROM {$wpdb->postmeta} meta 
-				
-					INNER JOIN {$wpdb->posts} objects
-						ON objects.ID = meta.post_id
-						AND objects.post_type IN ( '" . implode( "','", $eligible_post_types ) . "' )
-						AND objects.post_status = 'publish'";
-						
-					// If we have no specific term IDs then we have to join the posts table to match taxonomy/post type
-					if ( empty( $term_ids ) ) {
-						
-						$terms_count_query .= " INNER JOIN {$wpdb->posts} terms 
-							ON terms.ID = meta.meta_value
-							AND terms.post_type = '{$taxonomy}'
-							AND objects.post_status = 'publish'";
-							
+			// Checking the cache...
+			if ( ( $terms_count_from_cache = wp_cache_get( $taxonomy, 'cpt_onomies_terms_count' ) )
+				&& $terms_count_from_cache !== false
+				&& is_array( $terms_count_from_cache ) ) {
+					
+				// If we only want specific term IDs...
+				if ( ! empty( $term_ids ) ) {
+					
+					// Then only get specific term IDs from the cache
+					foreach( $terms_count_from_cache as $term_id => $term_id_count ) {
+						if ( ! in_array( $term_id, $term_ids ) )
+							unset( $terms_count_from_cache[ $term_id ] );
 					}
-						
-				$terms_count_query .= " WHERE meta.meta_key = %s";
-				
-					// If we have term IDs
-					if ( ! empty( $term_ids ) )
-						$terms_count_query .= " AND meta.meta_value IN ( '" . implode( "','", $term_ids ) . "' )";
-					
-				$terms_count_query .= " GROUP BY meta.meta_value";
-			
-			// Get term count from the database
-			if ( $terms_count_from_db = $wpdb->get_results( $wpdb->prepare( $terms_count_query, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
-				
-				// If we have a posts count, we need to rearrange the array
-				foreach( $terms_count_from_db as $terms_count_index => $terms_count_item ) {
-					
-					// Store count with ID
-					$terms_count[ $terms_count_item->ID ] = isset( $terms_count_item->count ) && $terms_count_item->count > 0 ? $terms_count_item->count : 0;
 					
 				}
+					
+				// Add the counts from the cache
+				$terms_count += $terms_count_from_cache;
 				
-				// If no specific term IDs, set the cache
-				if ( empty( $term_ids ) )
-					wp_cache_set( $taxonomy, $terms_count, 'cpt_onomies_count' );
+			} else {
+				
+				// We need to query this taxonomy
+				$taxonomies_to_query[] = $taxonomy;
 				
 			}
 			
 		}
 		
-		return $terms_count;	
+		// These taxonomies weren't cached so we need to query the database
+		if ( $taxonomies_to_query ) {
+			
+			// Build an array of eligible post types for these CPT-onomies
+			$eligible_post_types = array();
+			
+			// Get eligible post types for each taxonomy
+			foreach( $taxonomies_to_query as $index => $taxonomy ) {
+				
+				// Get eligible post types
+				$tax_eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL;
+				
+				// If we have some, then merge with the array
+				if ( $tax_eligible_post_types )
+					$eligible_post_types = array_merge( $eligible_post_types, $tax_eligible_post_types );
+				
+			}
+			
+			// Make sure the eligible post types are unique
+			$eligible_post_types = array_unique( $eligible_post_types );
+			
+			// If we have no eligible post types then there's no point in continuing
+			if ( $eligible_post_types ) {
+		
+				// Build the terms count query
+				$terms_count_query = "SELECT meta.meta_value AS ID, terms.post_type AS taxonomy, COUNT(meta.meta_value) AS count
+	
+					FROM {$wpdb->postmeta} meta 
+					
+						INNER JOIN {$wpdb->posts} objects
+							ON objects.ID = meta.post_id
+							AND objects.post_type IN ( '" . implode( "','", $eligible_post_types ) . "' )
+							AND objects.post_status = 'publish'";
+							
+						// If we have no specific term IDs then we have to join the posts table to match taxonomy/post type
+						if ( empty( $term_ids ) ) {
+							
+							$terms_count_query .= " INNER JOIN {$wpdb->posts} terms 
+								ON terms.ID = meta.meta_value
+								AND terms.post_type IN ( '" . implode( "','", $taxonomies_to_query ) . "' )
+								AND objects.post_status = 'publish'";
+								
+						}
+							
+					$terms_count_query .= " WHERE meta.meta_key = %s";
+					
+						// If we have term IDs
+						if ( ! empty( $term_ids ) )
+							$terms_count_query .= " AND meta.meta_value IN ( '" . implode( "','", $term_ids ) . "' )";
+						
+					$terms_count_query .= " GROUP BY meta.meta_value";
+				
+				// Get term count from the database
+				if ( $terms_count_from_db = $wpdb->get_results( $wpdb->prepare( $terms_count_query, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
+					
+					// If no specific term IDs, separate count by taxonomy for the cache
+					$terms_count_by_taxonomy = array();
+					
+					// If we have a posts count, we need to rearrange the array
+					foreach( $terms_count_from_db as $terms_count_index => $terms_count_item ) {
+						
+						// Get the term count
+						$term_count = isset( $terms_count_item->count ) && $terms_count_item->count > 0 ? $terms_count_item->count : 0;
+						
+						// Store count by term ID
+						$terms_count[ $terms_count_item->ID ] = $term_count;
+						
+						// Store count by taxonomy and term ID
+						$terms_count_by_taxonomy[ $terms_count_item->taxonomy ][ $terms_count_item->ID ] = $term_count;
+						
+					}
+					
+					// If no specific term IDs, set the cache
+					if ( empty( $term_ids ) && ! empty( $terms_count_by_taxonomy ) ) {
+						
+						foreach( $terms_count_by_taxonomy as $taxonomy => $taxonomy_terms_count ) {
+							
+							// Store the terms count for this taxonomy
+							wp_cache_set( $taxonomy, $taxonomy_terms_count, 'cpt_onomies_terms_count' );
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		}
+		
+		return $terms_count;
 		
 	}
 	
@@ -1269,74 +1347,11 @@ class CPT_TAXONOMY {
 				
 				// We don't want to show the current "term" if on the edit post screen in the admin
 				$current = ( is_admin() && $current_screen && $current_screen->base == 'post' && $current_screen->parent_base == 'edit' && $current_screen->post_type == $taxonomy && isset( $post->ID ) ) ? $post->ID : NULL;
-					
-				// Get count for all posts
-				// We need the IDs so we can get the count in one query
-				// We can't filter the get_posts() query to get the count
-				// because we have to supress filters to make sure nothing
-				// else interferes
-				$cpt_posts_ids = array();
-				
-				foreach( $cpt_posts as $cpt_post ) {
-					if ( isset( $cpt_post->ID ) ) {
-						$cpt_posts_ids[] = $cpt_post->ID;
-					}
-				}
-				
-				// Get the post types attached to this taxonomy
-				$cpt_onomy_eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : NULL;
 				
 				// Store the count for the CPT-onomy's terms
-				$cpt_posts_count = array();
+				$cpt_posts_count = $this->get_terms_count( $taxonomy );
 				
-				// Get CPT-onomies count for this taxonomy
-				if ( ! empty( $cpt_posts_ids ) && ! empty( $cpt_onomy_eligible_post_types ) ) {
-					
-					// See if we can get from cache
-					if ( ( $cpt_posts_count_from_cache = wp_cache_get( $taxonomy, 'cpt_onomies_count' ) )
-						&& $cpt_posts_count_from_cache !== false
-						&& is_array( $cpt_posts_count_from_cache ) ) {
-							
-						// Set the count from the cache
-						$cpt_posts_count = $cpt_posts_count_from_cache;
-					
-					// Otherwise, update CPT-onomies count from the database
-					} else { 
-						
-						// Get term count from the database
-						$cpt_posts_count_from_db = $wpdb->get_results( $wpdb->prepare( "SELECT meta.meta_value AS ID, COUNT(meta.meta_value) AS count
-	
-							FROM {$wpdb->postmeta} meta 
-							
-								INNER JOIN {$wpdb->posts} objects
-									ON objects.ID = meta.post_id
-									AND objects.post_type IN ( '" . implode( "','", $cpt_onomy_eligible_post_types ) . "' )
-									AND objects.post_status = 'publish' 
-							
-							WHERE meta.meta_key = %s AND meta.meta_value IN ( '" . implode( "','", $cpt_posts_ids ) . "' )
-							
-							GROUP BY meta.meta_value", CPT_ONOMIES_POSTMETA_KEY ) );
-							
-						// If we have a posts count, we need to rearrange the array
-						if ( $cpt_posts_count_from_db ) {
-							
-							// Loop through each count
-							foreach( $cpt_posts_count_from_db as $cpt_posts_count_index => $cpt_posts_count_item ) {
-								
-								// Store count with ID
-								$cpt_posts_count[ $cpt_posts_count_item->ID ] = isset( $cpt_posts_count_item->count ) && $cpt_posts_count_item->count > 0 ? $cpt_posts_count_item->count : 0;
-								
-							}
-							
-							// Set the cache
-							wp_cache_set( $taxonomy, $cpt_posts_count, 'cpt_onomies_count' );
-													
-						}
-						
-					}
-					
-				}
-				
+				// Loop through the posts and setup the terms
 				foreach ( $cpt_posts as $this_post ) {
 					
 					// Dont show current "term"
@@ -1662,11 +1677,7 @@ class CPT_TAXONOMY {
 			
 				// Build the query
 				// Get object ID, term count and post info
-				$cpt_posts_query = "SELECT meta.post_id AS object_id, ( 
-				
-						SELECT COUNT(*) FROM {$wpdb->postmeta} terms_count WHERE terms_count.meta_key = '_custom_post_type_onomies_relationship' AND terms_count.meta_value = terms.ID
-					
-					) AS count, terms.*
+				$cpt_posts_query = "SELECT meta.post_id AS object_id, terms.*
 					
 					FROM {$wpdb->postmeta} meta 
 	
@@ -1685,13 +1696,13 @@ class CPT_TAXONOMY {
 				// Get the posts
 				if ( $cpt_posts = $wpdb->get_results( $wpdb->prepare( $cpt_posts_query, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
 					
+					// Get the count for all of the CPT-onomy terms
+					$cpt_posts_count = $this->get_terms_count( $cpt_taxonomies );
+					
+					// Loop through each post and setup the term
 					foreach ( $cpt_posts as $this_post ) {
 						
 						if ( ! empty( $this_post ) ) {
-						
-							// Save count and remove before conversion
-							$term_count = $this_post->count;
-							unset( $this_post->count );
 						
 							// Save object ID and remove before conversion
 							$object_id = $this_post->object_id;
@@ -1708,8 +1719,8 @@ class CPT_TAXONOMY {
 							// Add object ID back to the mix
 							$term->object_id = $object_id;
 							
-							// Add term count back to the mix
-							$term->count = $term_count;
+							// Add term count
+							$term->count = isset( $cpt_posts_count[ $this_post->ID ] ) && $cpt_posts_count[ $this_post->ID ] > 0 ? $cpt_posts_count[ $this_post->ID ] : 0;
 														
 							// Add to terms
 							$terms[] = $term;
