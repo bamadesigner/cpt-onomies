@@ -945,6 +945,11 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 							'default' => 1,
 							'data' => $true_false_data
 						),
+						'admin_column_title' => (object) array(
+							'label' => __( 'Admin Column Title', CPT_ONOMIES_TEXTDOMAIN ),
+							'type' => 'text',
+							'description' => sprintf( __( 'Title, or header, for the admin column. If not set, defaults to the %s "label".', CPT_ONOMIES_TEXTDOMAIN ), "CPT-onomy's" )
+						),
 						'has_cpt_onomy_archive' => (object) array(
 							'label' => __( 'Has Archive Page', CPT_ONOMIES_TEXTDOMAIN ),
 							'type' => 'radio',

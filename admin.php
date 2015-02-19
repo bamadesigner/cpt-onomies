@@ -1024,7 +1024,8 @@ class CPT_ONOMIES_ADMIN {
 	public function add_cpt_onomy_admin_column( $columns, $post_type='page' ) {
 		global $cpt_onomies_manager;
 		foreach( get_object_taxonomies( $post_type, 'objects' ) as $taxonomy => $tax ) {
-			// make sure its a registered CPT-onomy
+			
+			// Make sure its a registered CPT-onomy
 			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 		
 				/**
@@ -1035,23 +1036,33 @@ class CPT_ONOMIES_ADMIN {
 				 * column was added by default and you used the filter to remove it.
 				 */
 				if ( get_bloginfo( 'version' ) >= 3.5 ) {
+					
+					// If the column already exists, i.e. added by WordPress...
+					if ( array_key_exists( 'taxonomy-' . $taxonomy, $columns ) ) {
 				
-					/**
-					 * If the column already exists, i.e. added by WordPress,
-					 * this filter allows you to remove the column by returning false.
-					 */
-					if ( array_key_exists( 'taxonomy-' . $taxonomy, $columns )
-						&& ! apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_column', true, $taxonomy, $post_type ) ) {
-					
-						// remove the column
-						unset( $columns[ 'taxonomy-' . $taxonomy ] );
-					
+						// This filter allows you to remove the column by returning false
+						if ( ! apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_column', true, $taxonomy, $post_type ) ) {
+						
+							// Remove the column
+							unset( $columns[ 'taxonomy-' . $taxonomy ] );
+						
+						// Otherwise, if we're keeping the column, we can customize the title
+						} else {
+							
+							// Get the new column title/header - defaults to taxonomy's label
+							if ( $new_column_title = apply_filters( 'custom_post_type_onomies_cpt_onomy_admin_column_title', ( isset( $tax->admin_column_title ) && ! empty( $tax->admin_column_title ) ? $tax->admin_column_title : $tax->label ), $taxonomy, $post_type ) ) {
+								
+								// Set the new column title
+								$columns[ 'taxonomy-' . $taxonomy ] = $new_column_title;
+								
+							}
+							
+						}
+						
 					}
 				
-				}
-				
-				// backwards compatability
-				else {
+				// Backwards compatability
+				} else {
 				
 					/**
 					 * The column is added by default. This filter allows you
@@ -1059,7 +1070,7 @@ class CPT_ONOMIES_ADMIN {
 					 */
 					if ( apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_column', ( isset( $tax->show_admin_column ) && ! $tax->show_admin_column ) ? false : true, $taxonomy, $post_type ) ) {
 					
-						// want to add before comments and date
+						// We want to add before comments and date
 						$split = -1;
 						$comments = array_search( 'comments', array_keys( $columns ) );
 						$date = array_search( 'date', array_keys( $columns ) );
@@ -1075,21 +1086,30 @@ class CPT_ONOMIES_ADMIN {
 							
 						}
 						
-						// new column
-						$new_column = array( CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy => __( $tax->label, CPT_ONOMIES_TEXTDOMAIN ) );
+						// Set the column title/header - defaults to taxonomy's label
+						$new_column_title = apply_filters( 'custom_post_type_onomies_cpt_onomy_admin_column_title', ( isset( $tax->admin_column_title ) && ! empty( $tax->admin_column_title ) ? $tax->admin_column_title : $tax->label ), $taxonomy, $post_type );
 						
-						// add somewhere in the middle
+						// Create a new column
+						$new_column = array( CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy => __( $new_column_title, CPT_ONOMIES_TEXTDOMAIN ) );
+						
+						// Add somewhere in the middle
 						if ( $split > 0 ) {
+							
 							$beginning = array_slice( $columns, 0, $split );
 							$end = array_slice( $columns, $split );
 							$columns = $beginning + $new_column + $end;
-						}
-						// add at the beginning
-						else if ( $split == 0 )
+						
+						// Add at the beginning
+						} else if ( $split == 0 ) {
+							
 							$columns = $new_column + $columns;
-						// add at the end
-						else
+						
+						// Add at the end
+						} else {
+							
 							$columns += $new_column;
+							
+						}
 							
 					}
 				
@@ -1146,20 +1166,19 @@ class CPT_ONOMIES_ADMIN {
 		if ( $post_type = isset( $current_screen->post_type ) ? $current_screen->post_type : NULL ) {
 			foreach( get_object_taxonomies( $post_type, 'objects' ) as $taxonomy => $tax ) {
 			
-				// make sure its a registered CPT-onomy
-				// get the taxonomy's query variable
+				// Make sure its a registered CPT-onomy and get the taxonomy's query variable
 				if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy )
 					&& ( $query_var = isset( $tax->query_var ) ? $tax->query_var : NULL ) ) {
 					
-					// this filter allows you to remove the column by returning false
-					// all CPT-onomy admin columns are default-ly added as sortable
+					// This filter allows you to remove the column by returning false
+					// All CPT-onomy admin columns are default-ly added as sortable
 					if ( apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_sortable_column', true, $taxonomy, $post_type ) ) {
 					
-						// if version >= 3.5
+						// If version >= 3.5
 						if ( get_bloginfo( 'version' ) >= 3.5 )
 							$sortable_columns[ 'taxonomy-' . $taxonomy ] = $query_var;
 						
-						// backwards compatibility
+						// Backwards compatibility
 						else if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false )
 							$sortable_columns[ CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy ] = $query_var;
 						
