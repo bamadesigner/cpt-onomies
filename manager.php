@@ -1093,6 +1093,10 @@ class CPT_ONOMIES_MANAGER {
 		// boolean (optional) default = true
 		if ( isset( $cpt[ 'can_export' ] ) )
 			$args[ 'can_export' ] = ( ! $cpt[ 'can_export' ] ) ? false : true;
+			
+		// boolean (optional) default = null
+		if ( isset( $cpt[ 'delete_with_user' ] ) )
+			$args[ 'delete_with_user' ] = ( ! $cpt[ 'delete_with_user' ] ) ? false : true;
 										
 		// integer (optional) default = NULL
 		if ( isset( $cpt[ 'menu_position' ] ) && ! empty( $cpt[ 'menu_position' ] ) && is_numeric( $cpt[ 'menu_position' ] ) )

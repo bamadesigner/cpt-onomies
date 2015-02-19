@@ -127,6 +127,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 
 = 1.3.4 =
 * Added 'name_admin_bar' custom post type label setting.
+* Added 'delete_with_user' custom post type setting.
 
 = 1.3.3 = 
 * Fixed bug that was causing issues for multiple tax queries.
@@ -236,6 +237,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 
 = 1.3.4 =
 * Added 'name_admin_bar' custom post type label setting.
+* Added 'delete_with_user' custom post type setting.
 
 = 1.3.3 = 
 * Fixed bug that was causing issues for multiple tax queries.

@@ -1272,6 +1272,12 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 							'default' => 1,
 							'data' => $true_false_data
 						),
+						'delete_with_user' => (object) array(
+							'label' => __( 'Delete With User', CPT_ONOMIES_TEXTDOMAIN ),
+							'type' => 'radio',
+							'description' => __( 'Whether to delete posts of this type when deleting a user. If true, posts of this type belonging to the user will be moved to trash when then user is deleted. If false, posts of this type belonging to the user will not be trashed or deleted. If not set (the default), posts are trashed if the post type supports \'author\'. Otherwise posts are not trashed or deleted.', CPT_ONOMIES_TEXTDOMAIN ) . '</strong>',
+							'data' => $true_false_data
+						),
 						'permalink_epmask' => (object) array(
 							'label' => __( 'Permalink Endpoint Bitmasks', CPT_ONOMIES_TEXTDOMAIN ),
 							'type' => 'text',
