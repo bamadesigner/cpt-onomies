@@ -687,33 +687,35 @@ class CPT_ONOMIES_MANAGER {
 	 * @return array - the filtered $allcaps
 	 */
 	public function user_has_term_capabilities( $allcaps, $caps, $args ) {
-		// no one can manage, edit, or delete CPT-onomy terms
+		
+		// No one can manage, edit, or delete CPT-onomy terms
 		foreach( $caps as $this_cap ) {
 			
-			// if user has capability manually assigned, then allow
-			// otherwise, check user settings
+			// If user has capability manually assigned, then allow
+			// Otherwise, check user settings
 			if ( preg_match( '/assign\_(.+)\_terms/i', $this_cap ) && ! isset( $allcaps[ $this_cap ] ) ) {
 				
-				// get taxonomy
+				// Get taxonomy
 				$taxonomy = preg_replace( '/(assign_|_terms)/i', '', $this_cap );
 				
-				// if registered CPT-onomy
+				// If registered CPT-onomy
 				if ( taxonomy_exists( $taxonomy ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
 				
-					// get taxonomy info
+					// Get taxonomy info
 					$tax = get_taxonomy( $taxonomy );
 					
-					// default
+					// Default
 					$allow = false;
 					
-					// no capabilities are assigned so everyone has permission
-					if ( ! isset( $tax->restrict_user_capabilities ) || empty( $tax->restrict_user_capabilities ) )
+					// No capabilities are assigned so everyone has permission
+					if ( ! isset( $tax->restrict_user_capabilities ) || empty( $tax->restrict_user_capabilities ) ) {
+						
 						$allow = true;
 					
-					// the capability is restricted to specific roles
-					else {
+					// The capability is restricted to specific roles
+					} else {
 																
-						// get user roles to see if user has capability to assign taxonomy
+						// Get user roles to see if user has capability to assign taxonomy
 						// $args contains the user id
 						$user = new WP_User( $args[1] );
 						foreach ( $user->roles as $role ) {
@@ -728,23 +730,26 @@ class CPT_ONOMIES_MANAGER {
 								
 					}
 					
-					// assign the required capability
-					if ( $allow )
+					// Assign the required capability
+					if ( $allow ) {
+						
 						$allcaps[ $this_cap ] = 1;
-					else
+					
+					} else {
+						
 						unset( $allcaps[ $this_cap ] );					
+					
+					}
 					
 				}
 					
-			}
-			
 			// NO ONE is allowed to manage, edit or delete
-			else if ( preg_match( '/(manage|edit|delete)\_([a-z\_]+)\_terms/i', $this_cap ) ) {
+			} else if ( preg_match( '/(manage|edit|delete)\_([a-z\_]+)\_terms/i', $this_cap ) ) {
 				
-				// get taxonomy
+				// Get taxonomy
 				$taxonomy = preg_replace( '/(manage_|edit_|delete_|_terms)/i', '', $this_cap );
 								
-				// if registered CPT-onomy
+				// If registered CPT-onomy
 				if ( taxonomy_exists( $taxonomy ) && $this->is_registered_cpt_onomy( $taxonomy ) )
 					unset( $allcaps[ $this_cap ] );
 					
