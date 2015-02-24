@@ -889,12 +889,22 @@ class CPT_TAXONOMY {
 	 */
 	function next_post_link( $format='%link &raquo;', $link='%title', $in_same_cpt_onomy = false, $excluded_term_ids = '', $cpt_onomy = '' ) {
 		global $cpt_onomies_manager;
+		
+		// Make sure we have a format
 		if ( empty( $format ) )
 			$format = '%link &raquo;';
-		if ( empty( $cpt_onomy ) || ! $cpt_onomies_manager->is_registered_cpt_onomy( $cpt_onomy ) )
+		
+		// If it's empty or not a valid CPT-onomy, then run the default WordPress function
+		if ( empty( $cpt_onomy ) || ! $cpt_onomies_manager->is_registered_cpt_onomy( $cpt_onomy ) ) {
+			
 			next_post_link( $format, $link, $in_same_cpt_onomy, $excluded_term_ids );
-		else
+		
+		} else {
+			
 			$this->adjacent_post_link( $format, $link, $in_same_cpt_onomy, $excluded_term_ids, false, $cpt_onomy );
+			
+		}
+		
 	}
 	
 	/**
@@ -917,10 +927,12 @@ class CPT_TAXONOMY {
 	function adjacent_post_link( $format, $link, $in_same_cpt_onomy = false, $excluded_term_ids = '', $previous = true, $cpt_onomy = '' ) {
 		global $cpt_onomies_manager;
 		
-		if ( empty( $cpt_onomy ) || ! $cpt_onomies_manager->is_registered_cpt_onomy( $cpt_onomy ) )
+		// If it's empty or not a valid CPT-onomy, then run the default WordPress function
+		if ( empty( $cpt_onomy ) || ! $cpt_onomies_manager->is_registered_cpt_onomy( $cpt_onomy ) ) {
+			
 			adjacent_post_link( $format, $link, $in_same_cpt_onomy, $excluded_term_ids, $previous );
 			
-		else {
+		} else {
 			
 			if ( $previous && is_attachment() )
 				$post = & get_post( $GLOBALS[ 'post' ]->post_parent );
@@ -1079,9 +1091,9 @@ class CPT_TAXONOMY {
 		if ( $in_same_cpt_onomy || ! empty( $excluded_term_ids ) ) {
 			
 			$join = " INNER JOIN {$wpdb->postmeta} AS pm ON p.ID = pm.post_id AND pm.meta_key ='" . CPT_ONOMIES_POSTMETA_KEY . "' INNER JOIN {$wpdb->posts} AS p2 ON pm.meta_value = p2.ID AND p2.post_type = '" . $cpt_onomy . "'";
-	
+			
 			if ( $in_same_cpt_onomy )
-				$join .= ' AND pm.meta_value IN (' . implode( ',', wp_get_object_terms( $post->ID, $cpt_onomy, array( 'fields' => 'ids' ) ) ) . ')';
+				$join .= " AND pm.meta_value IN ( '" . implode( "','", wp_get_object_terms( $post->ID, $cpt_onomy, array( 'fields' => 'ids' ) ) ) . "' )";
 	
 			if ( ! empty( $excluded_term_ids ) ) {
 				

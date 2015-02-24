@@ -129,6 +129,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 * Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
 * Fixed issue when using an array as your query orderby.
 * Fixed issue with "other" custom post type settings not displaying their values.
+* Fixed issue with get_adjacent_post() that was causing issue with next_post_link() and previous_post_link().
 * Added 'admin_column_title' CPT-onomy setting.
 * Added 'custom_post_type_onomies_cpt_onomy_admin_column_title' filter which allows users to change the CPT-onomy admin column title.
 * Added 'name_admin_bar' custom post type label setting.
@@ -244,6 +245,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 * Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
 * Fixed issue when using an array as your query orderby.
 * Fixed issue with "other" custom post type settings not displaying their values.
+* Fixed issue with get_adjacent_post() that was causing issue with next_post_link() and previous_post_link().
 * Added 'admin_column_title' CPT-onomy setting.
 * Added 'custom_post_type_onomies_cpt_onomy_admin_column_title' filter which allows users to change the CPT-onomy admin column title.
 * Added 'name_admin_bar' custom post type label setting.
