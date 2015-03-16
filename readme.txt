@@ -126,14 +126,19 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Changelog ==
 
 = 1.3.4 =
-* Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
+* Changed default CPT-onomy labels to match the custom post type labels.
+* Added 'custom_post_type_onomies_cpt_onomy_labels' filter which allows users to change the CPT-onomy labels.
 * Fixed issue when using an array as your query orderby.
+* Fixed issue with CPT-onomies not showing all of the correct results.
 * Fixed issue with "other" custom post type settings not displaying their values.
 * Fixed issue with get_adjacent_post() that was causing issue with next_post_link() and previous_post_link().
 * Added 'admin_column_title' CPT-onomy setting.
 * Added 'custom_post_type_onomies_cpt_onomy_admin_column_title' filter which allows users to change the CPT-onomy admin column title.
 * Added 'name_admin_bar' custom post type label setting.
 * Added 'delete_with_user' custom post type setting.
+* Added warning messages for when CPT-onomy terms might be conflicting with taxonomy terms.
+* Added action button to delete conflicting taxonomy terms.
+* Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
 
 = 1.3.3 = 
 * Fixed bug that was causing issues for multiple tax queries.
@@ -242,14 +247,19 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Upgrade Notice ==
 
 = 1.3.4 =
-* Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
+* Changed default CPT-onomy labels to match the custom post type labels.
+* Added 'custom_post_type_onomies_cpt_onomy_labels' filter which allows users to change the CPT-onomy labels.
 * Fixed issue when using an array as your query orderby.
+* Fixed issue with CPT-onomies not showing all of the correct results.
 * Fixed issue with "other" custom post type settings not displaying their values.
 * Fixed issue with get_adjacent_post() that was causing issue with next_post_link() and previous_post_link().
 * Added 'admin_column_title' CPT-onomy setting.
 * Added 'custom_post_type_onomies_cpt_onomy_admin_column_title' filter which allows users to change the CPT-onomy admin column title.
 * Added 'name_admin_bar' custom post type label setting.
 * Added 'delete_with_user' custom post type setting.
+* Added warning messages for when CPT-onomy terms might be conflicting with taxonomy terms.
+* Added action button to delete conflicting taxonomy terms.
+* Changed CPT-onomy capability prefixes to include ‘cpt_onomy_’ to help decrease compatibility issues with regular taxonomies.
 
 = 1.3.3 = 
 * Fixed bug that was causing issues for multiple tax queries.

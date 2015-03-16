@@ -426,6 +426,18 @@ table.manage_custom_post_type_onomies tr.add td {
 	line-height: 1.2em;
 	}
 #custom-post-type-onomies-edit-message p:first-child { padding-top: 12px; }
+
+#custom-post-type-onomies-edit-message .action.button {
+	display: inline-block;
+	background: #457800;
+	border: 0;
+	color: #fff;
+	margin: 0 5px 0 0;
+	}
+	
+#custom-post-type-onomies-edit-message.attention .action.button {
+	background: #d54e21;
+	}
 	
 #custom-post-type-onomies-edit-table {
 	width: 100%;

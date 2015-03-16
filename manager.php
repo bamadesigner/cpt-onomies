@@ -410,8 +410,8 @@ class CPT_ONOMIES_MANAGER {
 		}
 		
 		// If running a tax query
-		if ( isset( $query->tax_query ) ) {	
-			
+		if ( isset( $query->tax_query ) ) {
+
 			$is_registered_cpt_onomy = false;
 			$taxonomies = array( 'join' => '', 'where' => array() );
 			$new_where = array();
@@ -669,6 +669,9 @@ class CPT_ONOMIES_MANAGER {
 				$clauses[ 'where' ] = preg_replace( '/' . $preg_replace_str . '/i', '', $clauses[ 'where' ] );
 				
 				// Find singular 0 = 1 to replace
+				$clauses[ 'where' ] = preg_replace( '/AND[\s]+0[\s]+\=[\s]+1/i', '', $clauses[ 'where' ] );
+				
+				// Make sure it removes the AND at the end as well
 				$clauses[ 'where' ] = preg_replace( '/0[\s]+\=[\s]+1[\s]+AND/i', '', $clauses[ 'where' ] );
 				
 				$clauses[ 'where' ] .= " AND ( ";
@@ -944,16 +947,16 @@ class CPT_ONOMIES_MANAGER {
 	 */
 	public function register_cpt_onomy( $taxonomy, $object_type, $args = array() ) {
 	
-		// if taxonomy already exists (and is not a CPT-onomy) OR matching post type doesn't exist
+		// If taxonomy already exists (and is not a CPT-onomy) OR matching post type doesn't exist,
 		// this allows you to overwrite your CPT-onomy registered by the plugin, if desired
 		if ( ( taxonomy_exists( $taxonomy ) && ! $this->is_registered_cpt_onomy( $taxonomy ) ) || ! post_type_exists( $taxonomy ) )
 			return;
 			
-		// make sure $object_type is an array
+		// Make sure $object_type is an array
 		if ( ! is_array( $object_type ) )
 			$object_type = array_unique( array( $object_type ) );
 			
-		// check to make sure the object types exist
+		// Check to make sure the object types exist
 		if ( ! empty( $object_type ) ) {
 			foreach( $object_type as $object_type_index => $type ) {
 				if ( ! post_type_exists( $type ) )
@@ -961,17 +964,46 @@ class CPT_ONOMIES_MANAGER {
 			}
 		}
 
-		// we're not going to register if we have no object types
+		// We're not going to register if we have no object types
 		if ( empty( $object_type ) )
 			return;
 		
-		// get the matching custom post type info
+		// Get the matching custom post type info
 		$custom_post_type = get_post_type_object( $taxonomy );
+		
+		// Define the CPT-onomy label
+		$cpt_onomy_label = strip_tags( $custom_post_type->label );
+		
+		// What is the singular name?
+		$cpt_onomy_singular_name = isset( $custom_post_type->labels ) && isset( $custom_post_type->labels->singular_name ) ? $custom_post_type->labels->singular_name : $cpt_onomy_label;
+		
+		// Define the CPT-onomy labels
+		$cpt_onomy_labels = array(
+			'name' => _x( $cpt_onomy_label, 'CPT-onomy general name', CPT_ONOMIES_TEXTDOMAIN ),
+			'singular_name' => _x( $cpt_onomy_singular_name, 'CPT-onomy singular name', CPT_ONOMIES_TEXTDOMAIN ),
+			'search_items' => __( "Search {$cpt_onomy_label}", CPT_ONOMIES_TEXTDOMAIN ),
+			'popular_items' => __( "Popular {$cpt_onomy_label}", CPT_ONOMIES_TEXTDOMAIN ),
+			'all_items' => __( "All {$cpt_onomy_label}", CPT_ONOMIES_TEXTDOMAIN ),
+			'parent_item' => __( "Parent {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
+			'parent_item_colon' => __( "Parent {$cpt_onomy_singular_name}:", CPT_ONOMIES_TEXTDOMAIN ),
+			'edit_item' => __( "Edit {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
+			'view_item' => __( "View {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
+			'update_item' => __( "Update {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
+			'add_new_item' => __( "Add New {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
+			'new_item_name' => __( "New {$cpt_onomy_singular_name} Name", CPT_ONOMIES_TEXTDOMAIN ),
+			'separate_items_with_commas' => __( 'Separate ' . strtolower( $cpt_onomy_label ) . ' with commas', CPT_ONOMIES_TEXTDOMAIN ),
+			'add_or_remove_items' => __( 'Add or remove ' . strtolower( $cpt_onomy_label ), CPT_ONOMIES_TEXTDOMAIN ),
+			'choose_from_most_used' => __( 'Choose from the most used ' . strtolower( $cpt_onomy_label ), CPT_ONOMIES_TEXTDOMAIN ),
+			'not_found' => __( 'No ' . strtolower( $cpt_onomy_label ) . ' found.', CPT_ONOMIES_TEXTDOMAIN ),
+		);
+		
+		// Filter the labels
+		$cpt_onomy_labels = apply_filters( 'custom_post_type_onomies_cpt_onomy_labels', $cpt_onomy_labels, $taxonomy, $custom_post_type );
 		
 		// Define the CPT-onomy defaults
 	 	$cpt_onomy_defaults = array(
-	 		'label'						=> $label = strip_tags( $custom_post_type->label ),
-	 		'labels'					=> '', // if no labels are provided, WordPress uses their own
+	 		'label'						=> $cpt_onomy_label,
+	 		'labels'					=> $cpt_onomy_labels,
 	 		'public'					=> $custom_post_type->public,
 	 		'meta_box_format'			=> NULL,
 	 		'meta_box_title'			=> NULL,
@@ -985,7 +1017,7 @@ class CPT_ONOMIES_MANAGER {
 	 	// Merge defaults with incoming $args then extract
 	 	extract( wp_parse_args( $args, $cpt_onomy_defaults ) );
 	 	
-	 	// clean up the arguments for registering
+	 	// Clean up the arguments for registering
 	 	// Some CPT-onomy arguments MUST have a set value, no room for customization right now
 	 	// we have to clear out the args 'rewrite' because post types and taxonomies with the same name
 	 	// share the same $wp_rewrite permastruct and custom post types MUST win the rewrite war.
@@ -1014,35 +1046,35 @@ class CPT_ONOMIES_MANAGER {
 			)
 		);
 		
-		// add rewrite rule (default is true) to display CPT-onomy archive page - default is '{post type}/tax/{term slug}'
+		// Add rewrite rule (default is true) to display CPT-onomy archive page - default is '{post type}/tax/{term slug}'
 		// we must add our own rewrite rule instead of defining the 'rewrite' property because
 		// post types and taxonomies with the same name share the same $wp_rewrite permastruct
 		// and post types must win the rewrite war.
 		if ( ! ( isset( $has_cpt_onomy_archive ) && ! $has_cpt_onomy_archive ) ) {
 		
-			// make sure we have a slug
+			// Make sure we have a slug
 			if ( ! isset( $cpt_onomy_archive_slug ) || empty( $cpt_onomy_archive_slug ) )
 				$cpt_onomy_archive_slug = $cpt_onomy_defaults[ 'cpt_onomy_archive_slug' ];
 												
-			// add the slug to the CPT-onomy arguments so it will be added to $wp_taxonomies
+			// Add the slug to the CPT-onomy arguments so it will be added to $wp_taxonomies
 			// throughout website, if this parameter is set, then "show CPT-onomy archive page" is also set
 			$cpt_onomy_args[ 'cpt_onomy_archive_slug' ] = $cpt_onomy_archive_slug;
 								
-			// replace the variables ($post_type and $term)
+			// Replace the variables ($post_type and $term)
 			$cpt_onomy_archive_slug = str_replace( array( '$post_type', '$term_slug', '$term_id' ), array( $taxonomy, '([^/]+)', '([^/]+)' ), $cpt_onomy_archive_slug );
 								
-			// get rid of any slashes at the beginning AND end
+			// Get rid of any slashes at the beginning AND end
 			$cpt_onomy_archive_slug = preg_replace( '/^([\/]+)/', '', $cpt_onomy_archive_slug );
 			$cpt_onomy_archive_slug = preg_replace( '/([\/]+)$/', '', $cpt_onomy_archive_slug );
 			
-			// add feeds rewrite
+			// Add feeds rewrite
 			add_rewrite_rule( $cpt_onomy_archive_slug . '/feed/(feed|rdf|rss|rss2|atom)/?$', 'index.php?'.$taxonomy . '=$matches[1]&feed=$matches[2]&cpt_onomy_archive=1', 'top' );
 			add_rewrite_rule( $cpt_onomy_archive_slug . '/(feed|rdf|rss|rss2|atom)/?$', 'index.php?'.$taxonomy . '=$matches[1]&feed=$matches[2]&cpt_onomy_archive=1', 'top' );
 			
-			// adding pagination rewrite
+			// Adding pagination rewrite
 			add_rewrite_rule( $cpt_onomy_archive_slug . '/page/?([0-9]{1,})/?$', 'index.php?'.$taxonomy . '=$matches[1]&paged=$matches[2]&cpt_onomy_archive=1', 'top' );
 			
-			// add base URL rewrite
+			// Add base URL rewrite
 			add_rewrite_rule( $cpt_onomy_archive_slug . '/?$', 'index.php?'.$taxonomy . '=$matches[1]&cpt_onomy_archive=1', 'top' );			
 					
 		}
