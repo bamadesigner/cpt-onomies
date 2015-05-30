@@ -129,14 +129,27 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 	 */
 	private function get_conflicting_taxonomy_terms_count( $post_type ) {
 		global $wpdb;
-		if ( ! $this->is_network_admin
-			&& ( $terms_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE taxonomy = '{$post_type}'" ) )
+		
+		// Not in the network admin
+		if ( $this->is_network_admin )
+			return false;
+			
+		// First check both the taxonomy and terms tables together
+		if ( ( $terms_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} term_tax INNER JOIN {$wpdb->terms} terms ON terms.term_id = term_tax.term_id WHERE term_tax.taxonomy = '{$post_type}' GROUP BY term_tax.term_id" ) )
+			&& $terms_count > 0 ) {
+				
+			return $terms_count;
+			
+		// Then check just the taxonomy table
+		} else if ( ( $terms_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE taxonomy = '{$post_type}'" ) )
 			&& $terms_count > 0 ) {
 				
 			return $terms_count;
 			
 		}
+		
 		return false;
+		
 	}
 	
 	/**
