@@ -463,7 +463,14 @@ class CPT_ONOMIES_ADMIN {
 						
 						// We don't want to display the current post
 						// If a match was found, add it to the suggestions
-						if ( stripos( $this_term->label, $term ) !== false ) {
+						if ( function_exists( 'mb_stripos' ) && defined( 'DB_CHARSET' ) && ( DB_CHARSET === 'utf8' || DB_CHARSET === 'utf8mb4' ) ) {
+							$matches = mb_stripos( $this_term->label, $term, 0, 'UTF-8' ) === false ? false : true;
+						}
+						else {
+							$matches = stripos( $this_term->label, $term ) === false ? false : true;
+						}
+
+						if ( $matches ) {
 						
 							$results[] = array(
 								'value' => $this_term->ID,
