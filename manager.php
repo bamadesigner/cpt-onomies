@@ -751,10 +751,10 @@ class CPT_ONOMIES_MANAGER {
 			
 			// If user has capability manually assigned, then allow
 			// Otherwise, check user settings
-			if ( preg_match( '/assign\_cpt\_onomy\_([a-z\_]+)\_terms/i', $this_cap ) && ! isset( $allcaps[ $this_cap ] ) ) {
+			if ( preg_match( '/assign\_cpt\_onomy\_(.+)\_terms/i', $this_cap ) && ! isset( $allcaps[ $this_cap ] ) ) {
 				
 				// Get taxonomy
-				$taxonomy = preg_replace( '/assign\_cpt\_onomy\_([a-z\_]+)\_terms/i', '\1', $this_cap );
+				$taxonomy = preg_replace( '/assign\_cpt\_onomy\_(.+)\_terms/i', '\1', $this_cap );
 				
 				// If registered CPT-onomy
 				if ( taxonomy_exists( $taxonomy ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
@@ -802,10 +802,10 @@ class CPT_ONOMIES_MANAGER {
 				}
 					
 			// NO ONE is allowed to manage, edit or delete
-			} else if ( preg_match( '/(manage|edit|delete)\_cpt\_onomy\_([a-z\_]+)\_terms/i', $this_cap ) ) {
+			} else if ( preg_match( '/(manage|edit|delete)\_cpt\_onomy\_(.+)\_terms/i', $this_cap ) ) {
 				
 				// Get taxonomy
-				$taxonomy = preg_replace( '/(manage|edit|delete)\_cpt\_onomy\_([a-z\_]+)\_terms/i', '\2', $this_cap );
+				$taxonomy = preg_replace( '/(manage|edit|delete)\_cpt\_onomy\_(.+)\_terms/i', '\2', $this_cap );
 								
 				// If registered CPT-onomy
 				if ( taxonomy_exists( $taxonomy ) && $this->is_registered_cpt_onomy( $taxonomy ) )
