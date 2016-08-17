@@ -101,11 +101,11 @@ class CPT_ONOMIES_ADMIN {
 			$custom_post_type = get_post_type_object( $taxonomy );
 			// if the user is capable of editing the post to begin with
 			if ( current_user_can( $custom_post_type->cap->edit_posts ) ) {
-				wp_die( sprintf( __( 'Since \'' . $tax->labels->name . '\' is a registered %1$s, you manage it\'s "terms" by managing the posts created under the custom post type \'' . $tax->labels->name . '\'. So go ahead... %2$smanage the posts%3$s.', CPT_ONOMIES_TEXTDOMAIN ), 'CPT-onomy', '<a href="' . add_query_arg( array( 'post_type' => $taxonomy ), admin_url( 'edit.php' ) ) . '">', '</a>' ) );
+				wp_die( sprintf( __( 'Since "%1$s" is a registered %2$s, you manage it\'s "terms" by managing the posts created under the custom post type "%3$s". So go ahead... %4$smanage the posts%5$s.', 'cpt-onomies' ), $tax->labels->name, 'CPT-onomy', $tax->labels->name, '<a href="' . add_query_arg( array( 'post_type' => $taxonomy ), admin_url( 'edit.php' ) ) . '">', '</a>' ) );
 			}
 			// otherwise, don't get their hopes up
 			else {
-				wp_die( sprintf( __( 'Since \'' . $tax->labels->name . '\' is a registered %1$s, you manage it\'s "terms" by managing the posts created under the custom post type \'' . $tax->labels->name . '\'. Unfortunately, you don\'t have permission to edit these posts. Sorry. If this is a mistake, contact your administrator. %2$sGo to the dashboard%3$s.', CPT_ONOMIES_TEXTDOMAIN ), 'CPT-onomy', '<a href="' . admin_url() . '">', '</a>' ) );
+				wp_die( sprintf( __( 'Since "%1$s" is a registered %2$s, you manage it\'s "terms" by managing the posts created under the custom post type "%3$s". Unfortunately, you don\'t have permission to edit these posts. Sorry. If this is a mistake, contact your administrator.', 'cpt-onomies' ), $tax->labels->name, 'CPT-onomy', $tax->labels->name ) . ' <a href="' . admin_url() . '">' . __( 'Go to the dashboard', 'cpt-onomies' ) . '</a>' );
 			}
 		}
 	}
@@ -139,12 +139,12 @@ class CPT_ONOMIES_ADMIN {
 				// our localized info
 				$cpt_onomies_admin_post_data = array();
 				$cpt_onomies_admin_post_translation = array(
-					'term_does_not_exist' => sprintf( __( 'The term you are trying to add does not exist. %s terms, a.k.a posts, must already exist to be available for selection.', CPT_ONOMIES_TEXTDOMAIN ), 'CPT-onomy' ),
-					'add_a_term' => __( 'Add a term', CPT_ONOMIES_TEXTDOMAIN ),
-					'add_the_term' => __( 'Add the term', CPT_ONOMIES_TEXTDOMAIN ),
-					'no_self_relationship' => __( 'Kind of silly to create a relationship between a post and itself, eh?', CPT_ONOMIES_TEXTDOMAIN ),
-					'relationship_already_exists' => __( 'This relationship already exists.', CPT_ONOMIES_TEXTDOMAIN ),
-					'close' => __( 'Close', CPT_ONOMIES_TEXTDOMAIN ),
+					'term_does_not_exist' => sprintf( __( 'The term you are trying to add does not exist. %s terms, a.k.a posts, must already exist to be available for selection.', 'cpt-onomies' ), 'CPT-onomy' ),
+					'add_a_term' => __( 'Add a term', 'cpt-onomies' ),
+					'add_the_term' => __( 'Add the term', 'cpt-onomies' ),
+					'no_self_relationship' => __( 'Kind of silly to create a relationship between a post and itself, eh?', 'cpt-onomies' ),
+					'relationship_already_exists' => __( 'This relationship already exists.', 'cpt-onomies' ),
+					'close' => __( 'Close', 'cpt-onomies' ),
 				);
 				
 				// we need to know if the user has permission to edit specific taxonomies
@@ -153,7 +153,7 @@ class CPT_ONOMIES_ADMIN {
 					// get the permission
 					$cpt_onomies_admin_post_data[ 'can_assign_terms' ][ $taxonomy ] = current_user_can( $tax->cap->assign_terms );
 					// get the label name
-					$cpt_onomies_admin_post_translation[ 'no_terms_selected' ][ $taxonomy ] = sprintf( __( 'There are no %s selected.', CPT_ONOMIES_TEXTDOMAIN ), strtolower( $tax->labels->name ) );
+					$cpt_onomies_admin_post_translation[ 'no_terms_selected' ][ $taxonomy ] = sprintf( __( 'There are no %s selected.', 'cpt-onomies' ), strtolower( $tax->labels->name ) );
 				}
 				
 				// add our info to the scripts
@@ -515,7 +515,7 @@ class CPT_ONOMIES_ADMIN {
 					$meta_box_title = isset( $tax->meta_box_title ) && ! empty( $tax->meta_box_title ) ? $tax->meta_box_title : $tax->label;
 					
 					// Add the meta box					
-					add_meta_box( CPT_ONOMIES_DASH.'-'.$taxonomy, apply_filters( 'custom_post_type_onomies_meta_box_title', __( $meta_box_title, CPT_ONOMIES_TEXTDOMAIN ), $taxonomy, $post_type ), array( &$this, 'print_cpt_onomy_meta_box' ), $post_type, 'side', 'core', array( 'taxonomy' => $taxonomy ) );
+					add_meta_box( CPT_ONOMIES_DASH . '-' . $taxonomy, apply_filters( 'custom_post_type_onomies_meta_box_title', $meta_box_title, $taxonomy, $post_type ), array( &$this, 'print_cpt_onomy_meta_box' ), $post_type, 'side', 'core', array( 'taxonomy' => $taxonomy ) );
 					
 				}
 				
@@ -600,16 +600,16 @@ class CPT_ONOMIES_ADMIN {
 					?><div id="taxonomy-<?php echo $taxonomy; ?>" class="cpt_onomies_tags_div">
 						<div class="jaxtag">
 							<div class="nojs-tags hide-if-js">
-								<p><?php _e( $tax->labels->add_or_remove_items, CPT_ONOMIES_TEXTDOMAIN ); ?></p>
+								<p><?php echo $tax->labels->add_or_remove_items; ?></p>
 								<textarea name="<?php echo CPT_ONOMIES_POSTMETA_KEY; ?>[<?php echo $taxonomy; ?>]" rows="3" cols="20" class="the-tags" id="tax-input-<?php echo $taxonomy; ?>"<?php echo $disabled; ?>><?php echo get_terms_to_edit( $post->ID, $taxonomy ); // textarea_escaped by esc_attr() ?></textarea>
 							</div>
 							<?php if ( current_user_can( $tax->cap->assign_terms ) ) : ?>
 								<div class="ajaxtag hide-if-no-js">
 									<label class="screen-reader-text" for="new-tag-<?php echo $taxonomy; ?>"><?php echo $metabox[ 'title' ]; ?></label>
-									<div class="taghint"><?php _e( $tax->labels->add_new_item, CPT_ONOMIES_TEXTDOMAIN ); ?></div>
+									<div class="taghint"><?php echo $tax->labels->add_new_item; ?></div>
 									<p>
 										<input type="text" id="new-tag-<?php echo $taxonomy; ?>" name="cpt_onomies_new_tag[<?php echo $taxonomy; ?>]" class="cpt_onomies_new_tag form-input-tip" size="16" autocomplete="off" value="" />
-										<input type="button" class="button cpt_onomies_tag_add" value="<?php esc_attr_e( 'Add', CPT_ONOMIES_TEXTDOMAIN ); ?>" tabindex="3" />
+										<input type="button" class="button cpt_onomies_tag_add" value="<?php esc_attr_e( 'Add', 'cpt-onomies' ); ?>" tabindex="3" />
 									</p>
 								</div>
 							<?php endif; ?>
@@ -617,7 +617,7 @@ class CPT_ONOMIES_ADMIN {
 						<div class="cpt_onomies_tag_checklist<?php if ( ! current_user_can( $tax->cap->assign_terms ) ) { echo ' alone'; } ?>"></div>
 					</div>
 					<?php if ( current_user_can( $tax->cap->assign_terms ) ) : ?>
-						<p class="hide-if-no-js"><a href="#titlediv" class="cpt_onomies_tag_cloud" id="link-<?php echo $taxonomy; ?>"><?php _e( $tax->labels->choose_from_most_used, CPT_ONOMIES_TEXTDOMAIN ); ?></a></p>
+						<p class="hide-if-no-js"><a href="#titlediv" class="cpt_onomies_tag_cloud" id="link-<?php echo $taxonomy; ?>"><?php echo $tax->labels->choose_from_most_used; ?></a></p>
 					<?php endif;
 					break;
 				
@@ -677,8 +677,8 @@ class CPT_ONOMIES_ADMIN {
 				
 					?><div id="taxonomy-<?php echo $taxonomy; ?>" class="categorydiv cpt_onomies">
 						<ul id="<?php echo $taxonomy; ?>-tabs" class="category-tabs">
-							<li class="tabs"><a href="#<?php echo $taxonomy; ?>-all" tabindex="3"><?php _e( $tax->labels->all_items, CPT_ONOMIES_TEXTDOMAIN ); ?></a></li>
-							<li class="hide-if-no-js"><a href="#<?php echo $taxonomy; ?>-pop" tabindex="3"><?php _e( 'Most Used', CPT_ONOMIES_TEXTDOMAIN ); ?></a></li>
+							<li class="tabs"><a href="#<?php echo $taxonomy; ?>-all" tabindex="3"><?php echo $tax->labels->all_items; ?></a></li>
+							<li class="hide-if-no-js"><a href="#<?php echo $taxonomy; ?>-pop" tabindex="3"><?php _e( 'Most Used', 'cpt-onomies' ); ?></a></li>
 						</ul>
 				
 						<div id="<?php echo $taxonomy; ?>-pop" class="tabs-panel" style="display:none;">
@@ -803,8 +803,8 @@ class CPT_ONOMIES_ADMIN {
 			?><fieldset class="inline-edit-col-center inline-edit-<?php echo $taxonomy; ?>"><div class="inline-edit-col">
 			
                 <span class="title inline-edit-<?php echo $taxonomy; ?>-label"><?php echo esc_html( $tax->labels->name ) ?>
-                    <span class="catshow">[<?php _e( 'more', CPT_ONOMIES_TEXTDOMAIN ); ?>]</span>
-                    <span class="cathide" style="display:none;">[<?php _e( 'less', CPT_ONOMIES_TEXTDOMAIN ); ?>]</span>
+                    <span class="catshow">[<?php _e( 'more', 'cpt-onomies' ); ?>]</span>
+                    <span class="cathide" style="display:none;">[<?php _e( 'less', 'cpt-onomies' ); ?>]</span>
                 </span>
                 <ul class="cat-checklist cpt-onomy-checklist cpt-onomy-<?php echo esc_attr( $taxonomy )?>">
                     <?php wp_terms_checklist( NULL, array( 'taxonomy' => $taxonomy, 'walker' => new CPTonomy_Walker_Terms_Checklist() ) ); ?>
@@ -930,54 +930,55 @@ class CPT_ONOMIES_ADMIN {
 			 * via filter, if desired.
 			 */
 			
-			// get taxonomy name
+			// Get taxonomy name
 			$taxonomy = NULL;
 			
-			// if version >= 3.5
+			// If version >= 3.5
 			if ( get_bloginfo( 'version' ) >= 3.5
 				&& preg_match( '/^taxonomy\-(.+)$/i', $column_name, $match )
-				&& isset( $match ) && isset( $match[1] ) )
+				&& isset( $match ) && isset( $match[1] ) ) {
 				$taxonomy = $match[1];
+			}
 			
-			// backwards compatibility
-			else if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false )
+			// Backwards compatibility
+			else if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false ) {
 				$taxonomy = strtolower( str_replace( CPT_ONOMIES_UNDERSCORE . '_', '', $column_name ) );
+			}
 				
-			// make sure its a registered CPT-onomy
+			// Make sure its a registered CPT-onomy
 			if ( $taxonomy && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 			
-				// get taxonomy information
+				// Get taxonomy information
 				$tax = get_taxonomy( $taxonomy );
 				
-				// this filter allows you to remove the dropdown by returning false
+				// This filter allows you to remove the dropdown by returning false
 				if ( apply_filters( 'custom_post_type_onomies_add_cpt_onomy_admin_dropdown_filter', ( isset( $tax->show_admin_column ) && ! $tax->show_admin_column ) ? false : true, $taxonomy, $post_type ) ) {
 				
-					// get post type info
+					// Get post type info
 					$post_type_object = get_post_type_object( $taxonomy );
 					
-					// get selected term
+					// Get selected term
 					$selected = ( isset( $_REQUEST[ $taxonomy ] ) ) ? $_REQUEST[ $taxonomy ] : NULL;
 					
-					// if slug, then get term id					
+					// If slug, then get term id
 					if ( ! is_numeric( $selected ) ) {
 						$term = $cpt_onomy->get_term_by( 'slug', $selected, $taxonomy );
 						if ( $term ) $selected = $term->term_id;
 					}
 					
-					// print dropdown
-					$dropdown_options = array(
-						'show_option_all' => __( 'View all ' . $post_type_object->labels->all_items, CPT_ONOMIES_TEXTDOMAIN ),
-						'hierarchical' => true,
-						'show_count' => false,
-						'orderby' => 'name',
-						'selected' => $selected,
-						'name' => $taxonomy,
-						'id' => 'dropdown_' .  CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy,
-						'class' => 'postform ' . ( ( in_array( $column_name, $hidden ) ) ? ' hide-all' : '' ),
-						'taxonomy' => $taxonomy,
-						'hide_if_empty' => true
-					);
-					wp_dropdown_categories( $dropdown_options );
+					// Print dropdown
+					wp_dropdown_categories( array(
+						'show_option_all'   => sprintf( __( 'View all %s', 'cpt-onomies' ), $post_type_object->labels->all_items),
+						'hierarchical'      => true,
+						'show_count'        => false,
+						'orderby'           => 'name',
+						'selected'          => $selected,
+						'name'              => $taxonomy,
+						'id'                => 'dropdown_' .  CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy,
+						'class'             => 'postform ' . ( ( in_array( $column_name, $hidden ) ) ? ' hide-all' : '' ),
+						'taxonomy'          => $taxonomy,
+						'hide_if_empty'     => true,
+					));
 					
 				}
 				
@@ -1090,7 +1091,7 @@ class CPT_ONOMIES_ADMIN {
 						$new_column_title = apply_filters( 'custom_post_type_onomies_cpt_onomy_admin_column_title', ( isset( $tax->admin_column_title ) && ! empty( $tax->admin_column_title ) ? $tax->admin_column_title : $tax->label ), $taxonomy, $post_type );
 						
 						// Create a new column
-						$new_column = array( CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy => __( $new_column_title, CPT_ONOMIES_TEXTDOMAIN ) );
+						$new_column = array( CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy => $new_column_title );
 						
 						// Add somewhere in the middle
 						if ( $split > 0 ) {
@@ -1221,7 +1222,7 @@ class CPT_ONOMIES_ADMIN {
 			$terms = wp_get_object_terms( $post_id, $taxonomy );
 			foreach( $terms as $index => $term ) {
 				if ( $index > 0 ) echo ', ';
-				echo '<a href="' . esc_url( add_query_arg( array( 'post_type' => $post->post_type, $taxonomy => $term->term_id ), 'edit.php' ) ) . '">' . __( $term->name, CPT_ONOMIES_TEXTDOMAIN ) . '</a>';	
+				echo '<a href="' . esc_url( add_query_arg( array( 'post_type' => $post->post_type, $taxonomy => $term->term_id ), 'edit.php' ) ) . '">' . $term->name . '</a>';
 			}
 		}
 	}

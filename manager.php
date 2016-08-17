@@ -979,22 +979,22 @@ class CPT_ONOMIES_MANAGER {
 		
 		// Define the CPT-onomy labels
 		$cpt_onomy_labels = array(
-			'name' => _x( $cpt_onomy_label, 'CPT-onomy general name', CPT_ONOMIES_TEXTDOMAIN ),
-			'singular_name' => _x( $cpt_onomy_singular_name, 'CPT-onomy singular name', CPT_ONOMIES_TEXTDOMAIN ),
-			'search_items' => __( "Search {$cpt_onomy_label}", CPT_ONOMIES_TEXTDOMAIN ),
-			'popular_items' => __( "Popular {$cpt_onomy_label}", CPT_ONOMIES_TEXTDOMAIN ),
-			'all_items' => __( "All {$cpt_onomy_label}", CPT_ONOMIES_TEXTDOMAIN ),
-			'parent_item' => __( "Parent {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
-			'parent_item_colon' => __( "Parent {$cpt_onomy_singular_name}:", CPT_ONOMIES_TEXTDOMAIN ),
-			'edit_item' => __( "Edit {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
-			'view_item' => __( "View {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
-			'update_item' => __( "Update {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
-			'add_new_item' => __( "Add New {$cpt_onomy_singular_name}", CPT_ONOMIES_TEXTDOMAIN ),
-			'new_item_name' => __( "New {$cpt_onomy_singular_name} Name", CPT_ONOMIES_TEXTDOMAIN ),
-			'separate_items_with_commas' => __( 'Separate ' . strtolower( $cpt_onomy_label ) . ' with commas', CPT_ONOMIES_TEXTDOMAIN ),
-			'add_or_remove_items' => __( 'Add or remove ' . strtolower( $cpt_onomy_label ), CPT_ONOMIES_TEXTDOMAIN ),
-			'choose_from_most_used' => __( 'Choose from the most used ' . strtolower( $cpt_onomy_label ), CPT_ONOMIES_TEXTDOMAIN ),
-			'not_found' => __( 'No ' . strtolower( $cpt_onomy_label ) . ' found.', CPT_ONOMIES_TEXTDOMAIN ),
+			'name' => _x( $cpt_onomy_label, 'CPT-onomy general name', 'cpt-onomies' ),
+			'singular_name' => _x( $cpt_onomy_singular_name, 'CPT-onomy singular name', 'cpt-onomies' ),
+			'search_items' => __( "Search {$cpt_onomy_label}", 'cpt-onomies' ),
+			'popular_items' => __( "Popular {$cpt_onomy_label}", 'cpt-onomies' ),
+			'all_items' => __( "All {$cpt_onomy_label}", 'cpt-onomies' ),
+			'parent_item' => __( "Parent {$cpt_onomy_singular_name}", 'cpt-onomies' ),
+			'parent_item_colon' => __( "Parent {$cpt_onomy_singular_name}:", 'cpt-onomies' ),
+			'edit_item' => __( "Edit {$cpt_onomy_singular_name}", 'cpt-onomies' ),
+			'view_item' => __( "View {$cpt_onomy_singular_name}", 'cpt-onomies' ),
+			'update_item' => __( "Update {$cpt_onomy_singular_name}", 'cpt-onomies' ),
+			'add_new_item' => __( "Add New {$cpt_onomy_singular_name}", 'cpt-onomies' ),
+			'new_item_name' => __( "New {$cpt_onomy_singular_name} Name", 'cpt-onomies' ),
+			'separate_items_with_commas' => __( 'Separate ' . strtolower( $cpt_onomy_label ) . ' with commas', 'cpt-onomies' ),
+			'add_or_remove_items' => __( 'Add or remove ' . strtolower( $cpt_onomy_label ), 'cpt-onomies' ),
+			'choose_from_most_used' => __( 'Choose from the most used ' . strtolower( $cpt_onomy_label ), 'cpt-onomies' ),
+			'not_found' => __( 'No ' . strtolower( $cpt_onomy_label ) . ' found.', 'cpt-onomies' ),
 		);
 		
 		// Filter the labels

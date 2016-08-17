@@ -141,12 +141,12 @@ class CPT_TAXONOMY {
 		$null = null;
 	
 		if ( empty( $term ) ) {
-			$error = new WP_Error( 'invalid_term', __( 'Empty Term', CPT_ONOMIES_TEXTDOMAIN ) );
+			$error = new WP_Error( 'invalid_term', __( 'Empty Term', 'cpt-onomies' ) );
 			return $error;
 		}
 	
 		if ( ! taxonomy_exists( $taxonomy ) ) {
-			$error = new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', CPT_ONOMIES_TEXTDOMAIN ) );
+			$error = new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', 'cpt-onomies' ) );
 			return $error;
 		}
 		
@@ -527,7 +527,7 @@ class CPT_TAXONOMY {
 	public function get_term_children( $term_id, $taxonomy ) {
 		global $wpdb, $cpt_onomies_manager;
 		if ( ! taxonomy_exists( $taxonomy ) )
-			return new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', CPT_ONOMIES_TEXTDOMAIN ) );
+			return new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', 'cpt-onomies' ) );
 		
 		/**
 		 * This function only processes registered CPT-onomies.
@@ -564,7 +564,7 @@ class CPT_TAXONOMY {
 		global $cpt_onomies_manager;
 		
 		if ( ! taxonomy_exists( $taxonomy ) )
-			return new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', CPT_ONOMIES_TEXTDOMAIN ) );
+			return new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', 'cpt-onomies' ) );
 			
 		/**
 		 * This function only processes registered CPT-onomies.
@@ -749,7 +749,7 @@ class CPT_TAXONOMY {
 		}
 	
 		if ( ! is_object( $term ) )
-			$term = new WP_Error( 'invalid_term', __( 'Empty Term', CPT_ONOMIES_TEXTDOMAIN ) );
+			$term = new WP_Error( 'invalid_term', __( 'Empty Term', 'cpt-onomies' ) );
 	
 		if ( is_wp_error( $term ) )
 			return $term;
@@ -945,7 +945,7 @@ class CPT_TAXONOMY {
 			$title = $post->post_title;
 		
 			if ( empty($post->post_title) )
-				$title = $previous ? __( 'Previous Post', CPT_ONOMIES_TEXTDOMAIN ) : __( 'Next Post', CPT_ONOMIES_TEXTDOMAIN );
+				$title = $previous ? __( 'Previous Post', 'cpt-onomies' ) : __( 'Next Post', 'cpt-onomies' );
 		
 			$title = apply_filters( 'the_title', $title, $post->ID );
 			$date = mysql2date( get_option( 'date_format' ), $post->post_date );
@@ -1042,7 +1042,7 @@ class CPT_TAXONOMY {
 			return;
 	
 		if ( empty($post->post_title) )
-			$post->post_title = $previous ? __( 'Previous Post', CPT_ONOMIES_TEXTDOMAIN ) : __( 'Next Post', CPT_ONOMIES_TEXTDOMAIN );
+			$post->post_title = $previous ? __( 'Previous Post', 'cpt-onomies' ) : __( 'Next Post', 'cpt-onomies' );
 	
 		$date = mysql2date(get_option('date_format'), $post->post_date);
 	
@@ -1100,7 +1100,7 @@ class CPT_TAXONOMY {
 				if ( ! is_array( $excluded_term_ids ) ) {
 					// Back-compat, $excluded_term_ids used to be IDs separated by " and "
 					if ( strpos( $excluded_term_ids, ' and ' ) !== false ) {
-						_deprecated_argument( __FUNCTION__, '3.3', sprintf( __( 'Use commas instead of %s to separate excluded categories.', CPT_ONOMIES_TEXTDOMAIN ), "'and'" ) );
+						_deprecated_argument( __FUNCTION__, '3.3', sprintf( __( 'Use commas instead of %s to separate excluded categories.', 'cpt-onomies' ), "'and'" ) );
 						$excluded_term_ids = explode( ' and ', $excluded_term_ids );
 					} else {
 						$excluded_term_ids = explode( ',', $excluded_term_ids );
@@ -1933,7 +1933,7 @@ class CPT_TAXONOMY {
 			return wp_set_object_terms( $object_id, $terms, $taxonomy, $append );
 			
 		if ( ! taxonomy_exists( $taxonomy ) )
-			return new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', CPT_ONOMIES_TEXTDOMAIN ) );
+			return new WP_Error( 'invalid_taxonomy', __( 'Invalid Taxonomy', 'cpt-onomies' ) );
 			
 		/*
 		 * current_user_can() doesn't work when running CRON jobs because
@@ -1942,14 +1942,14 @@ class CPT_TAXONOMY {
 		 */
 		$tax = get_taxonomy( $taxonomy );
 		if ( ! defined( 'DOING_CRON' ) && ! current_user_can( $tax->cap->assign_terms ) )
-			return new WP_Error( $tax->cap->assign_terms, __( 'You are not allowed to assign terms for this taxonomy.', CPT_ONOMIES_TEXTDOMAIN ) );
+			return new WP_Error( $tax->cap->assign_terms, __( 'You are not allowed to assign terms for this taxonomy.', 'cpt-onomies' ) );
 			
 		$object_id = (int) $object_id;
 		$object_post_type = get_post_type( $object_id );
 		
 		// Make sure these posts are allowed to have a relationship
 		if ( ! is_object_in_taxonomy( $object_post_type, $taxonomy ) )
-			return new WP_Error( 'taxonomy_relationship', __( 'This post type object and taxonomy are not allowed to have a relationship.', CPT_ONOMIES_TEXTDOMAIN ) );
+			return new WP_Error( 'taxonomy_relationship', __( 'This post type object and taxonomy are not allowed to have a relationship.', 'cpt-onomies' ) );
 		
 		// Make sure terms is an array
 		if ( ! is_array( $terms ) ) {

@@ -23,8 +23,8 @@ function cpt_onomies_register_widgets() {
 class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 	
 	function __construct() {
-		$widget_ops = array( 'description' => sprintf( __( 'If you are using a custom post type as a taxonomy, a.k.a %s, this will show your most used tags in cloud format.' ), CPT_ONOMIES_TEXTDOMAIN ), '"CPT-onomy"' );
-		parent::__construct( 'cpt_onomy_tag_cloud', sprintf( __( '%s Tag Cloud', CPT_ONOMIES_TEXTDOMAIN ), 'CPT-onomy' ), $widget_ops );
+		$widget_ops = array( 'description' => sprintf( __( 'If you are using a custom post type as a taxonomy, a.k.a %s, this will show your most used tags in cloud format.' ), 'cpt-onomies' ), '"CPT-onomy"' );
+		parent::__construct( 'cpt_onomy_tag_cloud', sprintf( __( '%s Tag Cloud', 'cpt-onomies' ), 'CPT-onomy' ), $widget_ops );
 	}
 	
 	/**
@@ -66,7 +66,7 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 					
 					echo $before_widget;
 					if ( $title )
-						echo $before_title . __( $title, CPT_ONOMIES_TEXTDOMAIN ) . $after_title;
+						echo $before_title . $title . $after_title;
 					echo '<div class="tagcloud">' . $tag_cloud . "</div>\n";
 					echo $after_widget;
 					
@@ -108,25 +108,25 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 		$instance = wp_parse_args( $instance, $defaults );
 		$current_taxonomy = ( ! empty( $instance[ 'taxonomy' ] ) && $cpt_onomies_manager->is_registered_cpt_onomy( $instance[ 'taxonomy' ] ) ) ? $instance[ 'taxonomy' ] : NULL;
 		?>
-		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', CPT_ONOMIES_TEXTDOMAIN ) ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'cpt-onomies' ) ?></label>
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php if ( isset( $instance[ 'title' ] ) ) { echo esc_attr( $instance[ 'title' ] ); } ?>" /></p>
-		<p><label for="<?php echo $this->get_field_id( 'taxonomy' ); ?>"><?php _e( 'Taxonomy:', CPT_ONOMIES_TEXTDOMAIN ) ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'taxonomy' ); ?>"><?php _e( 'Taxonomy:', 'cpt-onomies' ) ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'taxonomy' ); ?>" name="<?php echo $this->get_field_name( 'taxonomy' ); ?>">
         <?php foreach ( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
         	if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) || empty( $tax->labels->name ) )
         		continue;
-        	?><option value="<?php echo esc_attr( $taxonomy ); ?>" <?php selected( $taxonomy, $current_taxonomy ); ?>><?php _e( $tax->labels->name, CPT_ONOMIES_TEXTDOMAIN ); ?></option><?php
+        	?><option value="<?php echo esc_attr( $taxonomy ); ?>" <?php selected( $taxonomy, $current_taxonomy ); ?>><?php echo $tax->labels->name; ?></option><?php
 		} ?>
 		</select></p>
-        <p><label for="<?php echo $this->get_field_id( 'show_if_empty' ); ?>"><?php _e( 'Show tag cloud if empty:', CPT_ONOMIES_TEXTDOMAIN ) ?></label>
+        <p><label for="<?php echo $this->get_field_id( 'show_if_empty' ); ?>"><?php _e( 'Show tag cloud if empty:', 'cpt-onomies' ) ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'show_if_empty' ); ?>" name="<?php echo $this->get_field_name( 'show_if_empty' ); ?>">
-			<option value="1" <?php selected( $instance[ 'show_if_empty' ], 1 ); ?>><?php _e( 'Yes', CPT_ONOMIES_TEXTDOMAIN ); ?></option>
-			<option value="0" <?php selected( $instance[ 'show_if_empty' ], 0 ); ?>><?php _e( 'No', CPT_ONOMIES_TEXTDOMAIN ); ?></option>
+			<option value="1" <?php selected( $instance[ 'show_if_empty' ], 1 ); ?>><?php _e( 'Yes', 'cpt-onomies' ); ?></option>
+			<option value="0" <?php selected( $instance[ 'show_if_empty' ], 0 ); ?>><?php _e( 'No', 'cpt-onomies' ); ?></option>
 		</select></p>
-        <p><label for="<?php echo $this->get_field_id( 'term_link' ); ?>"><?php _e( 'The term links to:', CPT_ONOMIES_TEXTDOMAIN ) ?></label>
+        <p><label for="<?php echo $this->get_field_id( 'term_link' ); ?>"><?php _e( 'The term links to:', 'cpt-onomies' ) ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'term_link' ); ?>" name="<?php echo $this->get_field_name( 'term_link' ); ?>">
-			<option value="view" <?php selected( $instance[ 'term_link' ], 'view' ); ?>><?php _e( 'Term archive page', CPT_ONOMIES_TEXTDOMAIN ); ?></option>
-			<option value="cpt_post" <?php selected( $instance[ 'term_link' ], 'cpt_post' ); ?>><?php _e( 'CPT post page', CPT_ONOMIES_TEXTDOMAIN ); ?></option>
+			<option value="view" <?php selected( $instance[ 'term_link' ], 'view' ); ?>><?php _e( 'Term archive page', 'cpt-onomies' ); ?></option>
+			<option value="cpt_post" <?php selected( $instance[ 'term_link' ], 'cpt_post' ); ?>><?php _e( 'CPT post page', 'cpt-onomies' ); ?></option>
 		</select></p>
 		<?php
 	}
