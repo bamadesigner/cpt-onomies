@@ -125,6 +125,9 @@ If FAQ didn't cover your problem, refer to the following resources:
 
 == Changelog ==
 
+= 1.3.5 =
+* Removed all the of the constants the plugin defined so be sure to remove any dependencies on them
+
 = 1.3.4 =
 * Changed default CPT-onomy labels to match the custom post type labels.
 * Added 'custom_post_type_onomies_cpt_onomy_labels' filter which allows users to change the CPT-onomy labels.
@@ -245,6 +248,9 @@ If FAQ didn't cover your problem, refer to the following resources:
 * Plugin launch!
 
 == Upgrade Notice ==
+
+= 1.3.5 =
+* Removed all the of the constants the plugin defined so be sure to remove any dependencies on them
 
 = 1.3.4 =
 * Changed default CPT-onomy labels to match the custom post type labels.

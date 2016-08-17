@@ -47,14 +47,14 @@ class CPT_ONOMIES_MANAGER {
 			&& isset( $plugins[ CPT_ONOMIES_PLUGIN_FILE ] ) ) {
 		
 			// Store network custom post types
-			if ( $network_custom_post_types = get_site_option( CPT_ONOMIES_UNDERSCORE . '_custom_post_types' ) )
+			if ( $network_custom_post_types = get_site_option( 'custom_post_type_onomies_custom_post_types' ) )
 				$this->user_settings[ 'network_custom_post_types' ] = $network_custom_post_types;
 				
 		}
 		
 		// Get site user settings
-		$this->user_settings[ 'custom_post_types' ] = ( $custom_post_types = get_option( CPT_ONOMIES_UNDERSCORE . '_custom_post_types' ) ) ? $custom_post_types : array();
-		$this->user_settings[ 'other_custom_post_types' ] = ( $other_custom_post_types = get_option( CPT_ONOMIES_UNDERSCORE . '_other_custom_post_types' ) ) ? $other_custom_post_types : array();
+		$this->user_settings[ 'custom_post_types' ] = ( $custom_post_types = get_option( 'custom_post_type_onomies_custom_post_types' ) ) ? $custom_post_types : array();
+		$this->user_settings[ 'other_custom_post_types' ] = ( $other_custom_post_types = get_option( 'custom_post_type_onomies_other_custom_post_types' ) ) ? $other_custom_post_types : array();
 				
 		// register custom query vars
 		add_filter( 'query_vars', array( &$this, 'register_custom_query_vars' ) );

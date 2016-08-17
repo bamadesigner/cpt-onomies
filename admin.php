@@ -128,13 +128,13 @@ class CPT_ONOMIES_ADMIN {
 		switch( $page ) {
 		
 			case 'edit.php':
-				wp_enqueue_script( CPT_ONOMIES_DASH . '-admin-edit', plugins_url( 'js/admin-edit.js', __FILE__ ), array( 'jquery', 'inline-edit-post' ), NULL, true );
+				wp_enqueue_script( 'custom-post-type-onomies-admin-edit', plugins_url( 'js/admin-edit.js', __FILE__ ), array( 'jquery', 'inline-edit-post' ), NULL, true );
 				break;
 				
 			case 'post.php':
 			case 'post-new.php':
-				wp_enqueue_style( CPT_ONOMIES_DASH . '-admin-post', plugins_url( 'css/admin-post.css', __FILE__ ), false, NULL );
-				wp_enqueue_script( CPT_ONOMIES_DASH . '-admin-post', plugins_url( 'js/admin-post.js', __FILE__ ), array( 'jquery', 'post', 'jquery-ui-autocomplete' ), NULL, true );
+				wp_enqueue_style( 'custom-post-type-onomies-admin-post', plugins_url( 'css/admin-post.css', __FILE__ ), false, NULL );
+				wp_enqueue_script( 'custom-post-type-onomies-admin-post', plugins_url( 'js/admin-post.js', __FILE__ ), array( 'jquery', 'post', 'jquery-ui-autocomplete' ), NULL, true );
 				
 				// our localized info
 				$cpt_onomies_admin_post_data = array();
@@ -157,8 +157,8 @@ class CPT_ONOMIES_ADMIN {
 				}
 				
 				// add our info to the scripts
-				wp_localize_script( CPT_ONOMIES_DASH . '-admin-post', 'cpt_onomies_admin_post_data', $cpt_onomies_admin_post_data );
-				wp_localize_script( CPT_ONOMIES_DASH . '-admin-post', 'cpt_onomies_admin_post_L10n', $cpt_onomies_admin_post_translation );
+				wp_localize_script( 'custom-post-type-onomies-admin-post', 'cpt_onomies_admin_post_data', $cpt_onomies_admin_post_data );
+				wp_localize_script( 'custom-post-type-onomies-admin-post', 'cpt_onomies_admin_post_L10n', $cpt_onomies_admin_post_translation );
 				
 				break;
 				
@@ -515,7 +515,7 @@ class CPT_ONOMIES_ADMIN {
 					$meta_box_title = isset( $tax->meta_box_title ) && ! empty( $tax->meta_box_title ) ? $tax->meta_box_title : $tax->label;
 					
 					// Add the meta box					
-					add_meta_box( CPT_ONOMIES_DASH . '-' . $taxonomy, apply_filters( 'custom_post_type_onomies_meta_box_title', $meta_box_title, $taxonomy, $post_type ), array( &$this, 'print_cpt_onomy_meta_box' ), $post_type, 'side', 'core', array( 'taxonomy' => $taxonomy ) );
+					add_meta_box( 'custom-post-type-onomies-' . $taxonomy, apply_filters( 'custom_post_type_onomies_meta_box_title', $meta_box_title, $taxonomy, $post_type ), array( &$this, 'print_cpt_onomy_meta_box' ), $post_type, 'side', 'core', array( 'taxonomy' => $taxonomy ) );
 					
 				}
 				
@@ -558,7 +558,7 @@ class CPT_ONOMIES_ADMIN {
 	public function print_cpt_onomy_meta_box( $post, $metabox ) {	
 		
 		// add nonce
-		wp_nonce_field( 'assigning_' . CPT_ONOMIES_UNDERSCORE . '_taxonomy_relationships', CPT_ONOMIES_UNDERSCORE . '_nonce' );
+		wp_nonce_field( 'assigning_custom_post_type_onomies_taxonomy_relationships', 'custom_post_type_onomies_nonce' );
 		
 		// define variables
 		$post_type = ( isset( $post->post_type ) && ! empty( $post->post_type ) && post_type_exists( $post->post_type ) ) ? $post->post_type : NULL;
@@ -642,8 +642,9 @@ class CPT_ONOMIES_ADMIN {
 						
 					}
 					// make sure 'exclude' term ids are included
-					if ( $exclude_term_ids )
+					if ( $exclude_term_ids ) {
 						$dropdown_exclude_term_ids = array_unique( array_merge( $dropdown_exclude_term_ids, $exclude_term_ids ) );
+					}
 					
 					$dropdown = wp_dropdown_categories( array(
 						'show_option_none' => 'No ' . $tax->labels->all_items . ' are selected',
@@ -662,12 +663,15 @@ class CPT_ONOMIES_ADMIN {
 						'hide_if_empty' => false
 					));
 					
-					// need to add disabled to select element
-					// as a backup, this attribute is also checked in admin-post.js
-					if ( $disabled )
+					/**
+					 * Need to add disabled to select element
+					 * as a backup, this attribute is also checked in admin-post.js
+					 */
+					if ( $disabled ) {
 						$dropdown = preg_replace( '/^\<select/', '<select' . $disabled, $dropdown );
+					}
 					
-					// print dropdown
+					// Print dropdown
 					echo $dropdown;
 		                
 					break;
@@ -719,7 +723,7 @@ class CPT_ONOMIES_ADMIN {
 			return $post_id;
 					
 		// verify nonce
-		if ( ! ( isset( $_POST[ 'is_bulk_quick_edit' ] ) || ( isset( $_POST[ '_wpnonce' ] ) && wp_verify_nonce( $_POST[ '_wpnonce' ], 'update-' . $post->post_type . '_' . $post_id ) ) || ( isset( $_POST[ CPT_ONOMIES_UNDERSCORE . '_nonce' ] ) && wp_verify_nonce( $_POST[ CPT_ONOMIES_UNDERSCORE . '_nonce' ], 'assigning_' . CPT_ONOMIES_UNDERSCORE . '_taxonomy_relationships' ) ) ) )
+		if ( ! ( isset( $_POST[ 'is_bulk_quick_edit' ] ) || ( isset( $_POST[ '_wpnonce' ] ) && wp_verify_nonce( $_POST[ '_wpnonce' ], 'update-' . $post->post_type . '_' . $post_id ) ) || ( isset( $_POST[ 'custom_post_type_onomies_nonce' ] ) && wp_verify_nonce( $_POST[ 'custom_post_type_onomies_nonce' ], 'assigning_custom_post_type_onomies_taxonomy_relationships' ) ) ) )
 			return $post_id;
 					
 		// check autosave
@@ -793,8 +797,8 @@ class CPT_ONOMIES_ADMIN {
 		// allows bulk and quick edit whether the column was added via WordPress register_taxonomy() or CPT-onomies.
 		// WP < 3.5 is added via CPT-onomies, WP >= 3.5 is added via register_taxonomy()'s 'show_admin_column'.
 		$taxonomy = NULL;
-		if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false )
-			$taxonomy = strtolower( str_replace( CPT_ONOMIES_UNDERSCORE . '_', '', $column_name ) );
+		if ( strpos( $column_name, 'custom_post_type_onomies' ) !== false )
+			$taxonomy = strtolower( str_replace( 'custom_post_type_onomies_', '', $column_name ) );
 		else if ( strpos( $column_name, 'taxonomy-' ) !== false )
 			$taxonomy = strtolower( str_replace( 'taxonomy-', '', $column_name ) );
 			
@@ -941,8 +945,8 @@ class CPT_ONOMIES_ADMIN {
 			}
 			
 			// Backwards compatibility
-			else if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false ) {
-				$taxonomy = strtolower( str_replace( CPT_ONOMIES_UNDERSCORE . '_', '', $column_name ) );
+			else if ( strpos( $column_name, 'custom_post_type_onomies' ) !== false ) {
+				$taxonomy = strtolower( str_replace( 'custom_post_type_onomies_', '', $column_name ) );
 			}
 				
 			// Make sure its a registered CPT-onomy
@@ -974,7 +978,7 @@ class CPT_ONOMIES_ADMIN {
 						'orderby'           => 'name',
 						'selected'          => $selected,
 						'name'              => $taxonomy,
-						'id'                => 'dropdown_' .  CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy,
+						'id'                => 'dropdown_custom_post_type_onomies_' . $taxonomy,
 						'class'             => 'postform ' . ( ( in_array( $column_name, $hidden ) ) ? ' hide-all' : '' ),
 						'taxonomy'          => $taxonomy,
 						'hide_if_empty'     => true,
@@ -1091,7 +1095,7 @@ class CPT_ONOMIES_ADMIN {
 						$new_column_title = apply_filters( 'custom_post_type_onomies_cpt_onomy_admin_column_title', ( isset( $tax->admin_column_title ) && ! empty( $tax->admin_column_title ) ? $tax->admin_column_title : $tax->label ), $taxonomy, $post_type );
 						
 						// Create a new column
-						$new_column = array( CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy => $new_column_title );
+						$new_column = array( 'custom_post_type_onomies_' . $taxonomy => $new_column_title );
 						
 						// Add somewhere in the middle
 						if ( $split > 0 ) {
@@ -1180,8 +1184,8 @@ class CPT_ONOMIES_ADMIN {
 							$sortable_columns[ 'taxonomy-' . $taxonomy ] = $query_var;
 						
 						// Backwards compatibility
-						else if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false )
-							$sortable_columns[ CPT_ONOMIES_UNDERSCORE . '_' . $taxonomy ] = $query_var;
+						else if ( strpos( $column_name, 'custom_post_type_onomies' ) !== false )
+							$sortable_columns[ 'custom_post_type_onomies_' . $taxonomy ] = $query_var;
 						
 					}
 					
@@ -1217,8 +1221,8 @@ class CPT_ONOMIES_ADMIN {
 	 */
 	public function edit_cpt_onomy_admin_column( $column_name, $post_id ) {
 		global $post;
-		if ( strpos( $column_name, CPT_ONOMIES_UNDERSCORE ) !== false ) {
-			$taxonomy = strtolower( str_replace( CPT_ONOMIES_UNDERSCORE . '_', '', $column_name ) );
+		if ( strpos( $column_name, 'custom_post_type_onomies' ) !== false ) {
+			$taxonomy = strtolower( str_replace( 'custom_post_type_onomies_', '', $column_name ) );
 			$terms = wp_get_object_terms( $post_id, $taxonomy );
 			foreach( $terms as $index => $term ) {
 				if ( $index > 0 ) echo ', ';

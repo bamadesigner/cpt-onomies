@@ -20,53 +20,165 @@ if ( ! defined( 'WPINC' ) ) {
  
 // If you define them, will they be used?
 define( 'CPT_ONOMIES_VERSION', '1.3.4' );
-define( 'CPT_ONOMIES_WORDPRESS_MIN', '3.1' );
-define( 'CPT_ONOMIES_DIR', dirname( __FILE__ ) );
-define( 'CPT_ONOMIES_PLUGIN_NAME', 'CPT-onomies: Using Custom Post Types as Taxonomies' );
 define( 'CPT_ONOMIES_PLUGIN_DIRECTORY_URL', 'http://wordpress.org/extend/plugins/cpt-onomies/' );
 define( 'CPT_ONOMIES_PLUGIN_FILE', 'cpt-onomies/cpt-onomies.php' );
-define( 'CPT_ONOMIES_DASH', 'custom-post-type-onomies' );
-define( 'CPT_ONOMIES_UNDERSCORE', 'custom_post_type_onomies' );
-define( 'CPT_ONOMIES_OPTIONS_PAGE', 'custom-post-type-onomies' );
-define( 'CPT_ONOMIES_POSTMETA_KEY', '_custom_post_type_onomies_relationship' );
+define( 'CPT_ONOMIES_OPTIONS_PAGE', 'custom-post-type-onomies' ); // @TODO remove when we create admin class
+define( 'CPT_ONOMIES_POSTMETA_KEY', '_custom_post_type_onomies_relationship' ); // @TODO remove when we create admin class
 
 // If we build them, they will load
-require_once( CPT_ONOMIES_DIR . '/cpt-onomy.php' );
-require_once( CPT_ONOMIES_DIR . '/manager.php' );
-require_once( CPT_ONOMIES_DIR . '/widgets.php' );
+require_once plugin_dir_path( __FILE__ ) . 'cpt-onomy.php';
+require_once plugin_dir_path( __FILE__ ) . 'manager.php';
+require_once plugin_dir_path( __FILE__ ) . 'widgets.php';
 
 // We only need these in the admin
 if ( is_admin() ) {
-	require_once( CPT_ONOMIES_DIR . '/admin.php' );
-	require_once( CPT_ONOMIES_DIR . '/admin-settings.php' );
+	require_once plugin_dir_path( __FILE__ ) . 'admin.php';
+	require_once plugin_dir_path( __FILE__ ) . 'admin-settings.php';
 }
 
 // Extend all the things
-require_once( CPT_ONOMIES_DIR . '/extend/gravity-forms-custom-post-types.php' );
+require_once plugin_dir_path( __FILE__ ) . 'extend/gravity-forms-custom-post-types.php';
 
-// For translations
-add_action( 'plugins_loaded', 'custom_post_type_onomies_load_textdomain' );
-function custom_post_type_onomies_load_textdomain() {
-	load_plugin_textdomain( 'cpt-onomies', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+/**
+ * Our main plugin class.
+ *
+ * Class    CPT_onomies
+ * @since   1.3.5
+ */
+class CPT_onomies {
+
+	/**
+	 * Whether or not this plugin is network active.
+	 *
+	 * @since	1.3.5
+	 * @access	public
+	 * @var		boolean
+	 */
+	public $is_network_active;
+
+	/**
+	 * Holds the class instance.
+	 *
+	 * @since	1.3.5
+	 * @access	private
+	 * @var		CPT_onomies
+	 */
+	private static $instance;
+
+	/**
+	 * Returns the instance of this class.
+	 *
+	 * @access  public
+	 * @since   1.3.5
+	 * @return	CPT_onomies
+	 */
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			$className = __CLASS__;
+			self::$instance = new $className;
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Let's warm up the engine.
+	 *
+	 * @access  protected
+	 * @since   1.3.5
+	 */
+	protected function __construct() {
+
+		// Is this plugin network active?
+		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ CPT_ONOMIES_PLUGIN_FILE ] );
+
+		// Load our text domain
+		add_action( 'init', array( $this, 'textdomain' ) );
+
+		// Runs on install
+		register_activation_hook( __FILE__, array( $this, 'install' ) );
+
+		// Runs when the plugin is upgraded
+		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
+
+	}
+
+	/**
+	 * Method to keep our instance from being cloned.
+	 *
+	 * @since	1.3.5
+	 * @access	private
+	 * @return	void
+	 */
+	private function __clone() {}
+
+	/**
+	 * Method to keep our instance from being unserialized.
+	 *
+	 * @since	1.3.5
+	 * @access	private
+	 * @return	void
+	 */
+	private function __wakeup() {}
+
+	/**
+	 * Runs when the plugin is installed.
+	 *
+	 * @access  public
+	 * @since   1.3.5
+	 */
+	public function install() {
+
+		/**
+		 * Rewrite rules can be a pain in the ass
+		 * so let's flush them out and start fresh.
+		 */
+		flush_rewrite_rules( false );
+
+	}
+
+	/**
+	 * Runs when the plugin is upgraded.
+	 *
+	 * @access  public
+	 * @since   1.3.5
+	 */
+	public function upgrader_process_complete( $upgrader, $upgrade_info ) {
+
+		/**
+		 * For some reason I find myself having to flush my
+		 * rewrite rules whenever I upgrade WordPress so just
+		 * helping everyone out by taking care of this automatically
+		 */
+		flush_rewrite_rules( false );
+
+	}
+
+	/**
+	 * Internationalization FTW.
+	 * Load our textdomain.
+	 *
+	 * @access  public
+	 * @since   1.3.5
+	 */
+	public function textdomain() {
+		load_plugin_textdomain( 'cpt-onomies', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	}
+
 }
 
-// runs when you activate the plugin
-register_activation_hook( __FILE__, 'custom_post_type_onomies_activation_hook' );
-function custom_post_type_onomies_activation_hook( $network_wide ) {
-	
-	// rewrite rules can be a pain in the ass
-	// so let's flush them out and start fresh
-	flush_rewrite_rules( false );
-	
+/**
+ * Returns the instance of our main CPT_onomies class.
+ *
+ * Will come in handy when we need to access the
+ * class to retrieve data throughout the plugin.
+ *
+ * @since	1.3.5
+ * @access	public
+ * @return	CPT_onomies
+ */
+function cpt_onomies() {
+	return CPT_onomies::instance();
 }
 
-// runs when you upgrade anything
-add_action( 'upgrader_process_complete', 'custom_post_type_onomies_upgrader_process_complete', 1, 2 );
-function custom_post_type_onomies_upgrader_process_complete( $upgrader, $upgrade_info ) {
-		
-	// for some reason I find myself having to flush my
-	// rewrite rules whenever I upgrade WordPress so just
-	// helping everyone out by taking care of this automatically
-	flush_rewrite_rules( false );
-	
-}
+// Let's get this show on the road
+cpt_onomies();
