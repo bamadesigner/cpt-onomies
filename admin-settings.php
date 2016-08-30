@@ -1,15 +1,11 @@
 <?php
 
-// Instantiate the class
-global $cpt_onomies_admin_settings;
-$cpt_onomies_admin_settings = new CPT_ONOMIES_ADMIN_SETTINGS();
-
 /**
  * Holds the functions needed for the admin settings page.
  *
  * @since 1.0
  */
-class CPT_ONOMIES_ADMIN_SETTINGS {
+class CPT_onomies_Admin_Settings {
 	
 	public $options_page,
 		$is_network_admin,
@@ -17,7 +13,31 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 		$manage_options_capability,
 		$dismiss_ids,
 		$thickbox_network_sites;
-	
+
+	/**
+	 * Holds the class instance.
+	 *
+	 * @since	1.3.5
+	 * @access	private
+	 * @var		CPT_onomies_Admin_Settings
+	 */
+	private static $instance;
+
+	/**
+	 * Returns the instance of this class.
+	 *
+	 * @access  public
+	 * @since   1.3.5
+	 * @return	CPT_onomies_Admin_Settings
+	 */
+	public static function instance() {
+		if ( ! isset( self::$instance ) ) {
+			$class_name = __CLASS__;
+			self::$instance = new $class_name;
+		}
+		return self::$instance;
+	}
+
 	/**
 	 * Adds WordPress hooks (actions and filters).
 	 *
@@ -26,7 +46,7 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 	 * @since   1.0
 	 * @uses    $cpt_onomies_manager
 	 */
-	public function __construct() {
+	protected function __construct() {
 		global $cpt_onomies_manager;
 		
 		if ( is_admin() ) {
@@ -87,7 +107,24 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 		}
 		
 	}
-	public function CPT_ONOMIES_ADMIN_SETTINGS() { $this->__construct(); }
+
+	/**
+	 * Method to keep our instance from being cloned.
+	 *
+	 * @since	1.3.5
+	 * @access	private
+	 * @return	void
+	 */
+	private function __clone() {}
+
+	/**
+	 * Method to keep our instance from being unserialized.
+	 *
+	 * @since	1.3.5
+	 * @access	private
+	 * @return	void
+	 */
+	private function __wakeup() {}
 	
 	/**
 	 * Adds a settings link to network and site plugins page.
@@ -2328,35 +2365,35 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 			
 			switch( $metabox[ 'args' ] ) {
 					
-				//! Add New CPT Meta Box
+				// Add New CPT Meta Box
 				case 'add_new_custom_post_type':
 					?><div class="custom-post-type-onomies-button-postbox">
 						<a class="add_new_cpt_onomies_custom_post_type" href="<?php echo esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => 'new' ), $this->admin_url ) ); ?>" title="<?php esc_attr_e( 'Add a new custom post type', 'cpt-onomies' ); ?>"><?php _e( 'Add a new custom post type', 'cpt-onomies' ); ?></a>
 					</div> <!-- .custom-post-type-onomies-button-postbox --><?php
 					break;
 					
-				//! About Meta Box
+				// About Meta Box
 				case 'about':
 					?><p><strong><a href="<?PHP echo CPT_ONOMIES_PLUGIN_DIRECTORY_URL; ?>" title="<?php printf( esc_attr__( '%s: Using Custom Post Types as Taxonomies', 'cpt-onomies' ), 'CPT-onomies' ); ?>" target="_blank"><?php printf( __( '%s: Using Custom Post Types as Taxonomies', 'cpt-onomies' ), 'CPT-onomies' ); ?></a></strong></p>
 	                <p><strong><?php _e( 'Version', 'cpt-onomies' ); ?>:</strong> <?php echo CPT_ONOMIES_VERSION; ?><br />
 	                <strong><?php _e( 'Author', 'cpt-onomies' ); ?>:</strong> <a href="http://wpdreamer.com" title="Rachel Carden" target="_blank">Rachel Carden</a></p><?php
 					break;
 					
-				//! Key Meta Box
+				// Key Meta Box
 				case 'key':
 					?><p class="inactive"><img src="<?php echo plugins_url( 'assets/images/inactive.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is inactive.', 'cpt-onomies' ), 'CPT' ); ?></span></p>
                     <p class="attention"><img src="<?php echo plugins_url( 'assets/images/attention.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is not registered.', 'cpt-onomies' ), 'CPT' ); ?></span></p>
                     <p class="working"><img src="<?php echo plugins_url( 'assets/images/working.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is registered and working.', 'cpt-onomies' ), 'CPT' ); ?></span></p><?php
 					break;
 					
-				//! Promote Meta Box
+				// Promote Meta Box
 				case 'promote':
-					?><p class="plugin-rating"><a href="<?php echo CPT_ONOMIES_PLUGIN_DIRECTORY_URL; ?>" title="<?php esc_attr_e( 'Give the plugin a good rating', 'cpt-onomies' ); ?>" target="_blank"><img src="<?php echo plugins_url( 'assets/images/rating_star.png', __FILE__ ); ?>" /><span><?php _e( 'Give the plugin a good rating', 'cpt-onomies' ); ?></span></a></p>
-	                <p class="twitter"><a href="https://twitter.com/bamadesigner" title="<?php printf( esc_attr__( '%s on Twitter', 'cpt-onomies' ), 'bamadesigner' ); ?>" target="_blank"><img src="<?php echo plugins_url( 'assets/images/twitter_bird.png', __FILE__ ); ?>" /><span><?php _e( 'Follow me on Twitter', 'cpt-onomies' ); ?></span></a></p>
-                    <p class="donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=bamadesigner%40gmail%2ecom&lc=US&item_name=Rachel%20Carden%20%28CPT%2donomies%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="<?php esc_attr_e( 'Donate a few bucks to the plugin', 'cpt-onomies' ); ?>" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="<?php esc_attr_e( 'Donate', 'cpt-onomies' ); ?>" /><span><?php _e( 'a few bucks', 'cpt-onomies' ); ?></span></a></p><?php
+					?><p class="star"><a href="<?php echo CPT_ONOMIES_PLUGIN_DIRECTORY_URL; ?>" title="<?php esc_attr_e( 'Give the plugin a good rating', 'cpt-onomies' ); ?>" target="_blank"><span class="dashicons dashicons-star-filled"></span> <span class="promote-text"><?php _e( 'Give the plugin a good rating', 'cpt-onomies' ); ?></span></a></p>
+					<p class="twitter"><a href="https://twitter.com/bamadesigner" title="<?php _e( 'Follow bamadesigner on Twitter', 'cpt-onomies' ); ?>" target="_blank"><span class="dashicons dashicons-twitter"></span> <span class="promote-text"><?php _e( 'Follow me on Twitter', 'cpt-onomies' ); ?></span></a></p>
+					<p class="donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=bamadesigner%40gmail%2ecom&lc=US&item_name=Rachel%20Carden%20%28CPT%2donomies%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="<?php esc_attr_e( 'Donate a few bucks to the plugin', 'cpt-onomies' ); ?>" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="<?php esc_attr_e( 'Donate', 'cpt-onomies' ); ?>" /> <span class="promote-text"><?php _e( 'and buy me a coffee', 'cpt-onomies' ); ?></span></a></p><?php
 					break;
 					
-				//! Support Meta Box
+				// Support Meta Box
 				case 'support':
 					?><p><strong><?php _e( 'Need help?', 'cpt-onomies' ); ?></strong> <?php _e( 'Here are a few options:', 'cpt-onomies' ); ?></p>
                     <ol>
@@ -2367,7 +2404,7 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 	                <p><?php printf( __( 'If you notice any bugs or problems with the plugin, %1$splease let me know%2$s.', 'cpt-onomies' ), '<a href="http://wpdreamer.com/contact/" target="_blank">', '</a>' ); ?></p><?php
 	                break;
 	                
-	            //! Manage CPT Meta Boxes
+	            // Manage CPT Meta Boxes
 	            case 'manage_custom_post_types':
 				case 'manage_other_custom_post_types':
 				
@@ -2821,14 +2858,14 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 			            
 					break;
 					
-				//! Save Changes Meta Box
+				// Save Changes Meta Box
 				case 'save_changes':
 					?><div class="custom-post-type-onomies-button-postbox"><?php
 						submit_button( __( 'Save Your Changes', 'cpt-onomies' ), 'primary', 'save_cpt_onomies_changes', false, array( 'id' => 'custom-post-type-onomies-save-changes' ) );
 					?></div> <!-- .custom-post-type-onomies-button-postbox --><?php
 					break;
 					
-				//! Delete CPT Meta Box
+				// Delete CPT Meta Box
 				case 'delete_custom_post_type':
 					$edit = $_REQUEST[ 'edit' ];
 					$delete_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'delete' => $edit, '_wpnonce' => wp_create_nonce( 'delete-cpt-' . $edit ) ), $this->admin_url ), 'delete-cpt-' . $edit );
@@ -2838,7 +2875,7 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
                     <a class="delete_cpt_onomy_custom_post_type button" href="<?php echo $delete_url; ?>" title="<?php esc_attr_e( 'Delete this custom post type', 'cpt-onomies' ); ?>"><?php _e( 'Delete this custom post type', 'cpt-onomies' ); ?></a><?php
 	                break;
 					
-				//! Edit CPT Meta Box
+				// Edit CPT Meta Box
 				case 'edit_custom_post_type':
 				
 					/*
@@ -3441,3 +3478,20 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 	}
 	
 }
+
+/**
+ * Returns the instance of our CPT_onomies_Admin_Settings class.
+ *
+ * Will come in handy when we need to access the
+ * class to retrieve data throughout the plugin.
+ *
+ * @since	1.3.5
+ * @access	public
+ * @return	CPT_onomies_Admin_Settings
+ */
+function cpt_onomies_admin_settings() {
+	return CPT_onomies_Admin_Settings::instance();
+}
+
+// Let's get this show on the road.
+cpt_onomies_admin_settings();

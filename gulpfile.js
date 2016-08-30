@@ -68,7 +68,7 @@ gulp.task('codesniff', function () {
         .pipe(phpcs({
             bin: 'vendor/bin/phpcs',
             standard: 'WordPress',
-            warningSeverity: 0
+            warningSeverity: 2
         }))
         // Log all problems that was found
         .pipe(phpcs.reporter('log'));

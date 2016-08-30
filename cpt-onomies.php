@@ -17,7 +17,7 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
- 
+
 // If you define them, will they be used?
 define( 'CPT_ONOMIES_VERSION', '1.3.4' );
 define( 'CPT_ONOMIES_PLUGIN_DIRECTORY_URL', 'http://wordpress.org/extend/plugins/cpt-onomies/' );
@@ -74,8 +74,8 @@ class CPT_onomies {
 	 */
 	public static function instance() {
 		if ( ! isset( self::$instance ) ) {
-			$className = __CLASS__;
-			self::$instance = new $className;
+			$class_name = __CLASS__;
+			self::$instance = new $class_name;
 		}
 		return self::$instance;
 	}
@@ -91,13 +91,13 @@ class CPT_onomies {
 		// Is this plugin network active?
 		$this->is_network_active = is_multisite() && ( $plugins = get_site_option( 'active_sitewide_plugins' ) ) && isset( $plugins[ CPT_ONOMIES_PLUGIN_FILE ] );
 
-		// Load our text domain
+		// Load our text domain.
 		add_action( 'init', array( $this, 'textdomain' ) );
 
-		// Runs on install
+		// Runs on install.
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
-		// Runs when the plugin is upgraded
+		// Runs when the plugin is upgraded.
 		add_action( 'upgrader_process_complete', array( $this, 'upgrader_process_complete' ), 1, 2 );
 
 	}
@@ -141,6 +141,12 @@ class CPT_onomies {
 	 *
 	 * @access  public
 	 * @since   1.3.5
+	 * @param   Plugin_Upgrader $upgrader   Plugin_Upgrader instance.
+	 * @param   array $upgrade_info         Array of bulk item update data.
+	 *              @type string $action   Type of action. Default 'update'.
+	 *              @type string $type     Type of update process. Accepts 'plugin', 'theme', or 'core'.
+	 *              @type bool   $bulk     Whether the update process is a bulk update. Default true.
+	 *              @type array  $packages Array of plugin, theme, or core packages to update.
 	 */
 	public function upgrader_process_complete( $upgrader, $upgrade_info ) {
 
@@ -180,5 +186,5 @@ function cpt_onomies() {
 	return CPT_onomies::instance();
 }
 
-// Let's get this show on the road
+// Let's get this show on the road.
 cpt_onomies();

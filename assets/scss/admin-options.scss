@@ -199,26 +199,50 @@ table.manage_custom_post_type_onomies .add_new_cpt_onomies_custom_post_type {
 	margin-top: -5px;
 }
 
-/**
- * Key and promote meta boxes
- */
-#custom-post-type-onomies-key-mb p,
-#custom-post-type-onomies-promote-mb p {
-	margin: 10px 0;
+// Key meta box
+#custom-post-type-onomies-key-mb {
+
+	p {
+		margin: 8px 0;
+	}
+
+	img {
+		margin: 0 6px 2px 0;
+		vertical-align: middle;
+	}
+
+	.rating img { margin-right:8px; }
+
+	.inactive { color: #333; margin-top:9px; }
+	.attention { color: #d54e21; }
+	.working { color: #457800; }
 }
 
-#custom-post-type-onomies-key-mb img,
-#custom-post-type-onomies-promote-mb img {
-	margin: 0 6px 2px 0;
-	vertical-align: middle;
+// Promote meta box
+#custom-post-type-onomies-promote-mb {
+
+	p {
+		margin: 10px 0;
+	}
+
+	a {
+		text-decoration: none;
+	}
+
+	.promote-text {
+		text-decoration: underline;
+	}
+
+	.dashicons {
+		text-decoration: none;
+	}
+
+	.donate img {
+		margin: 0 4px 2px 0;
+		vertical-align: middle;
+	}
+
 }
-#custom-post-type-onomies-promote-mb .rating img { margin-right:8px; }
-
-#custom-post-type-onomies-key-mb .inactive { color: #333; margin-top:9px; }
-#custom-post-type-onomies-key-mb .attention { color: #d54e21; }
-#custom-post-type-onomies-key-mb .working { color: #457800; }
-
-#custom-post-type-onomies-promote-mb p.twitter { margin-bottom: 8px; }
 
 /**
  * Manage meta boxes
