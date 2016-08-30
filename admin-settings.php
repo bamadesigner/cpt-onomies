@@ -2344,15 +2344,15 @@ class CPT_ONOMIES_ADMIN_SETTINGS {
 					
 				//! Key Meta Box
 				case 'key':
-					?><p class="inactive"><img src="<?php echo plugins_url( 'images/inactive.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is inactive.', 'cpt-onomies' ), 'CPT' ); ?></span></p>
-                    <p class="attention"><img src="<?php echo plugins_url( 'images/attention.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is not registered.', 'cpt-onomies' ), 'CPT' ); ?></span></p>
-                    <p class="working"><img src="<?php echo plugins_url( 'images/working.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is registered and working.', 'cpt-onomies' ), 'CPT' ); ?></span></p><?php
+					?><p class="inactive"><img src="<?php echo plugins_url( 'assets/images/inactive.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is inactive.', 'cpt-onomies' ), 'CPT' ); ?></span></p>
+                    <p class="attention"><img src="<?php echo plugins_url( 'assets/images/attention.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is not registered.', 'cpt-onomies' ), 'CPT' ); ?></span></p>
+                    <p class="working"><img src="<?php echo plugins_url( 'assets/images/working.png', __FILE__ ); ?>" /><span><?php printf( __( 'This %s is registered and working.', 'cpt-onomies' ), 'CPT' ); ?></span></p><?php
 					break;
 					
 				//! Promote Meta Box
 				case 'promote':
-					?><p class="plugin-rating"><a href="<?php echo CPT_ONOMIES_PLUGIN_DIRECTORY_URL; ?>" title="<?php esc_attr_e( 'Give the plugin a good rating', 'cpt-onomies' ); ?>" target="_blank"><img src="<?php echo plugins_url( 'images/rating_star.png', __FILE__ ); ?>" /><span><?php _e( 'Give the plugin a good rating', 'cpt-onomies' ); ?></span></a></p>
-	                <p class="twitter"><a href="https://twitter.com/bamadesigner" title="<?php printf( esc_attr__( '%s on Twitter', 'cpt-onomies' ), 'bamadesigner' ); ?>" target="_blank"><img src="<?php echo plugins_url( 'images/twitter_bird.png', __FILE__ ); ?>" /><span><?php _e( 'Follow me on Twitter', 'cpt-onomies' ); ?></span></a></p>
+					?><p class="plugin-rating"><a href="<?php echo CPT_ONOMIES_PLUGIN_DIRECTORY_URL; ?>" title="<?php esc_attr_e( 'Give the plugin a good rating', 'cpt-onomies' ); ?>" target="_blank"><img src="<?php echo plugins_url( 'assets/images/rating_star.png', __FILE__ ); ?>" /><span><?php _e( 'Give the plugin a good rating', 'cpt-onomies' ); ?></span></a></p>
+	                <p class="twitter"><a href="https://twitter.com/bamadesigner" title="<?php printf( esc_attr__( '%s on Twitter', 'cpt-onomies' ), 'bamadesigner' ); ?>" target="_blank"><img src="<?php echo plugins_url( 'assets/images/twitter_bird.png', __FILE__ ); ?>" /><span><?php _e( 'Follow me on Twitter', 'cpt-onomies' ); ?></span></a></p>
                     <p class="donate"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=bamadesigner%40gmail%2ecom&lc=US&item_name=Rachel%20Carden%20%28CPT%2donomies%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="<?php esc_attr_e( 'Donate a few bucks to the plugin', 'cpt-onomies' ); ?>" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="<?php esc_attr_e( 'Donate', 'cpt-onomies' ); ?>" /><span><?php _e( 'a few bucks', 'cpt-onomies' ); ?></span></a></p><?php
 					break;
 					
