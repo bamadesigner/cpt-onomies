@@ -2,6 +2,7 @@
 var autoprefixer = require('gulp-autoprefixer');
 var clean_css = require('gulp-clean-css');
 var gulp = require('gulp');
+var phpcs = require('gulp-phpcs');
 var rename = require('gulp-rename');
 var sass = require('gulp-sass');
 var sort = require('gulp-sort');
@@ -58,6 +59,19 @@ gulp.task('translate', function () {
             headers: false
         } ))
         .pipe(gulp.dest('languages'));
+});
+
+// "Sniff" the code for PHP standards
+gulp.task('codesniff', function () {
+    return gulp.src('**/*.php')
+        // Validate files using PHP Code Sniffer
+        .pipe(phpcs({
+            bin: 'vendor/bin/phpcs',
+            standard: 'WordPress',
+            warningSeverity: 0
+        }))
+        // Log all problems that was found
+        .pipe(phpcs.reporter('log'));
 });
 
 // I've got my eyes on you(r file changes)

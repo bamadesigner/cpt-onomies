@@ -1,0 +1,14 @@
+{
+    "name": "cpt-onomies",
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.6",
+        "wp-coding-standards/wpcs": "^0.10.0"
+    },
+    "authors": [
+        {
+            "name": "Rachel Carden",
+            "email": "bamadesigner@gmail.com"
+        }
+    ],
+    "license": "GPL-2.0+"
+}
