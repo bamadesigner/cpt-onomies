@@ -15,22 +15,25 @@ jQuery.noConflict()(function(){
 			// Build the message
 			var $message = null;
 			
-			if ( cpt_onomies_admin_options_L10n.unsaved_message1 != '' )
+			if ( cpt_onomies_admin_options_L10n.unsaved_message1 != '' ) {
 				$message = cpt_onomies_admin_options_L10n.unsaved_message1
-			else
+			} else {
 				$message = 'It looks like you might have some unsaved changes.';
+			}
 			
-			if ( cpt_onomies_admin_options_L10n.unsaved_message2 != '' )
+			if ( cpt_onomies_admin_options_L10n.unsaved_message2 != '' ) {
 				$message += '\n' + cpt_onomies_admin_options_L10n.unsaved_message2
-			else
+			} else {
 				$message += '\nAre you sure you want to leave?';
+			}
 			
 			// Ask the user to confirm
 			var $confirm = confirm( $message );
 			
 			// If they confirmed, stop the event from happening
-			if ( $confirm != true )
+			if ( $confirm != true ) {
 				$event.preventDefault();
+			}
 				
 		}
 		
@@ -53,22 +56,25 @@ jQuery.noConflict()(function(){
 		// Build the message
 		var $message = null;
 		
-		if ( cpt_onomies_admin_options_L10n.delete_conflicting_terms_message1 != '' )
+		if ( cpt_onomies_admin_options_L10n.delete_conflicting_terms_message1 != '' ) {
 			$message = cpt_onomies_admin_options_L10n.delete_conflicting_terms_message1;
-		else
+		} else {
 			$message = 'Are you sure you want to delete the conflicting taxonomy terms?';
+		}
 		
-		if ( cpt_onomies_admin_options_L10n.delete_conflicting_terms_message2 != '' )
+		if ( cpt_onomies_admin_options_L10n.delete_conflicting_terms_message2 != '' ) {
 			$message += '\n\n' + cpt_onomies_admin_options_L10n.delete_conflicting_terms_message2;
-		else
+		} else {
 			$message += '\n\nThere is NO undo and once you click "OK", all of the terms will be deleted and cannot be restored.';
+		}
 			
 		// Ask the user to confirm
 		var $confirm = confirm( $message );
 		
 		// If they confirmed, stop the event from happening
-		if ( $confirm != true )
+		if ( $confirm != true ) {
 			$event.preventDefault();
+		}
 		
 	});
 		
@@ -78,37 +84,43 @@ jQuery.noConflict()(function(){
 		// Build the message
 		var $message = null;
 		
-		if ( cpt_onomies_admin_options_L10n.delete_message1 != '' )
+		if ( cpt_onomies_admin_options_L10n.delete_message1 != '' ) {
 			$message = cpt_onomies_admin_options_L10n.delete_message1;
-		else
+		} else {
 			$message = 'Are you sure you want to delete this custom post type?';
+		}
 		
-		if ( cpt_onomies_admin_options_L10n.delete_message2 != '' )
+		if ( cpt_onomies_admin_options_L10n.delete_message2 != '' ) {
 			$message += '\n\n' + cpt_onomies_admin_options_L10n.delete_message2;
-		else
+		} else {
 			$message += '\n\nThere is NO undo and once you click "OK", all of your settings will be gone.';
+		}
 		
-		if ( cpt_onomies_admin_options_L10n.delete_message3 != '' )
+		if ( cpt_onomies_admin_options_L10n.delete_message3 != '' ) {
 			$message += '\n\n' + cpt_onomies_admin_options_L10n.delete_message3;
-		else
+		} else {
 			$message += '\n\nDeleting your custom post type DOES NOT delete the actual posts.';
+		}
 		
-		if ( cpt_onomies_admin_options_L10n.delete_message4 != '' )
+		if ( cpt_onomies_admin_options_L10n.delete_message4 != '' ) {
 			$message += ' ' + cpt_onomies_admin_options_L10n.delete_message4;
-		else
+		} else {
 			$message += ' They\'ll be waiting for you if you decide to register this post type again.';
+		}
 		
-		if ( cpt_onomies_admin_options_L10n.delete_message5 != '' )
+		if ( cpt_onomies_admin_options_L10n.delete_message5 != '' ) {
 			$message += ' ' + cpt_onomies_admin_options_L10n.delete_message5;
-		else
+		} else {
 			$message += ' Just make sure you use the same name.';
+		}
 		
 		// Ask the user to confirm
 		var $confirm = confirm( $message );
 		
 		// If they confirmed, stop the event from happening
-		if ( $confirm != true )
+		if ( $confirm != true ) {
 			$event.preventDefault();
+		}
 			
 	});
 	
@@ -170,8 +182,9 @@ jQuery.noConflict()(function(){
 		
 		// Define the help tab
 		var $panel = jQuery( '#contextual-help-wrap' );
-		if ( ! $panel.length )
+		if ( ! $panel.length ) {
 			return;
+		}
 
 		// Open help tab
 		if ( ! $panel.is( ':visible' ) ) {
@@ -202,18 +215,20 @@ jQuery.noConflict()(function(){
 
 jQuery.fn.custom_post_type_onomies_change_header_label = function( $default_header_label ) {
 	
-	if ( jQuery( this ).val() != '' )
+	if ( jQuery( this ).val() != '' ) {
 		jQuery( '#custom-post-type-onomies-edit-header .label' ).html( jQuery( this ).val() );
-	else if ( $default_header_label != '' )
+	} else if ( $default_header_label != '' ) {
 		jQuery( '#custom-post-type-onomies-edit-header .label' ).html( $default_header_label );
+	}
 	
 }
 
 jQuery.fn.custom_post_type_onomies_create_name = function( $label_value ) {
 	
 	// If name is blank, convert label value to name
-	if ( jQuery( this ).val() == '' )
+	if ( jQuery( this ).val() == '' ) {
 		jQuery( this ).val( $label_value.replace( /[^a-zA-Z0-9\_\s]/i, '' ).replace( /\s/, '_' ).toLowerCase() );
+	}
 	
 }
 
@@ -250,10 +265,11 @@ jQuery.fn.custom_post_type_onomies_setup_advanced_table = function() {
 	
 	var $advanced = jQuery( this );
 	
-	if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'show' ) )
+	if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'show' ) ) {
 		$advanced.custom_post_type_onomies_show_advanced_table();
-	else
+	} else {
 		$advanced.custom_post_type_onomies_hide_advanced_table();
+	}
 	
 }
 
@@ -268,36 +284,40 @@ jQuery.fn.custom_post_type_onomies_show_advanced_table = function() {
 	// Get edit table
 	var $edit_table = null;
 	
-	if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'site_registration' ) )
+	if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'site_registration' ) ) {
 		$edit_table = 'site_registration';
-	else if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'labels' ) )
+	} else if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'labels' ) ) {
 		$edit_table = 'labels';
-	else
+	} else {
 		$edit_table = 'options';
+	}
 		
 	// Create close message
 	var $close_message = null;
 	
 	if ( $edit_table == 'site_registration' ) {
 	
-		if ( cpt_onomies_admin_options_L10n.close_site_registration != '' )
+		if ( cpt_onomies_admin_options_L10n.close_site_registration != '' ) {
 			$close_message = cpt_onomies_admin_options_L10n.close_site_registration;
-		else
+		} else {
 			$close_message = 'Close Site Registration';
+		}
 			
 	} else if ( $edit_table == 'labels' ) {
 	
-		if ( cpt_onomies_admin_options_L10n.close_labels != '' )
+		if ( cpt_onomies_admin_options_L10n.close_labels != '' ) {
 			$close_message = cpt_onomies_admin_options_L10n.close_labels;
-		else
+		} else {
 			$close_message = 'Close Labels';
+		}
 	
 	} else if ( $edit_table == 'options' ) {
 	
-		if ( cpt_onomies_admin_options_L10n.close_advanced_options != '' )
+		if ( cpt_onomies_admin_options_L10n.close_advanced_options != '' ) {
 			$close_message = cpt_onomies_admin_options_L10n.close_advanced_options;
-		else 
+		} else {
 			$close_message = 'Close Advanced Options';
+		}
 			
 	} else {
 		
@@ -308,8 +328,9 @@ jQuery.fn.custom_post_type_onomies_show_advanced_table = function() {
 	$close_message = '<span class="close_advanced">' + $close_message + '</span>';
 	
 	// Add close message	
-	if ( $advanced.parent( '.advanced_message' ).size() > 0 )
+	if ( $advanced.parent( '.advanced_message' ).size() > 0 ) {
 		$advanced.parent( '.advanced_message' ).remove();
+	}
 	$advanced.closest( 'td' ).prepend( '<span class="advanced_message">' + $close_message + '</span>' );
 	
 	// If they click "close"
@@ -346,12 +367,13 @@ jQuery.fn.custom_post_type_onomies_hide_advanced_table = function() {
 	
 	// Get edit table
 	var $edit_table = null;
-	if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'site_registration' ) )
+	if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'site_registration' ) ) {
 		$edit_table = 'site_registration';
-	else if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'labels' ) )
+	} else if ( $advanced.closest( '#custom-post-type-onomies-edit-table' ).hasClass( 'labels' ) ) {
 		$edit_table = 'labels';
-	else
+	} else {
 		$edit_table = 'options';
+	}
 		
 	// Create message
 	var $message = null;
@@ -359,30 +381,33 @@ jQuery.fn.custom_post_type_onomies_hide_advanced_table = function() {
 	// Add message 1 for the site registration table
 	if ( $edit_table == 'site_registration' ) {
 		
-		if ( cpt_onomies_admin_options_L10n.site_registration_message1 != '' )
+		if ( cpt_onomies_admin_options_L10n.site_registration_message1 != '' ) {
 			$message = cpt_onomies_admin_options_L10n.site_registration_message1;
-		else
+		} else {
 			$message = 'If you want to register your custom post type on multiple sites, but not the entire network, this section is for you. However, your list of sites is kind of long so we hid it away as to not clog up your screen.';
+		}
 			
 	}
 	
 	// Add message 1 for the labels table
 	else if ( $edit_table == 'labels' ) {
 		
-		if ( cpt_onomies_admin_options_L10n.labels_message1 != '' )
+		if ( cpt_onomies_admin_options_L10n.labels_message1 != '' ) {
 			$message = cpt_onomies_admin_options_L10n.labels_message1;
-		else
+		} else {
 			$message = 'Instead of sticking with the boring defaults, why don\'t you customize the labels used for your custom post type. They can really add a nice touch.';
+		}
 			
 	}
 	
 	// Add message 1 for the advanced options table
 	else if ( $edit_table == 'options' ) {
 		
-		if ( cpt_onomies_admin_options_L10n.advanced_options_message1 != '' )
+		if ( cpt_onomies_admin_options_L10n.advanced_options_message1 != '' ) {
 			$message = cpt_onomies_admin_options_L10n.advanced_options_message1;
-		else
+		} else {
 			$message = 'You can make your custom post type as "advanced" as you like but, beware, some of these options can get tricky. Visit the "Help" tab if you get stuck.';
+		}
 		
 	}
 		
@@ -391,32 +416,36 @@ jQuery.fn.custom_post_type_onomies_hide_advanced_table = function() {
 
 		if ( $edit_table == 'site_registration' ) {
 		
-			if ( cpt_onomies_admin_options_L10n.site_registration_message2 != '' )
+			if ( cpt_onomies_admin_options_L10n.site_registration_message2 != '' ) {
 				$message += cpt_onomies_admin_options_L10n.site_registration_message2;
-			else
+			} else {
 				$message += 'Customize the Sites';
+			}
 				
 		} else if ( $edit_table == 'labels' ) {
 			
-			if ( cpt_onomies_admin_options_L10n.labels_message2 != '' )
+			if ( cpt_onomies_admin_options_L10n.labels_message2 != '' ) {
 				$message += cpt_onomies_admin_options_L10n.labels_message2;
-			else
+			} else {
 				$message += 'Customize the Labels';
+			}
 				
 		} else if ( $edit_table == 'options' ) {
 		
-			if ( cpt_onomies_admin_options_L10n.advanced_options_message2 != '' )
+			if ( cpt_onomies_admin_options_L10n.advanced_options_message2 != '' ) {
 				$message += cpt_onomies_admin_options_L10n.advanced_options_message2;
-			else
+			} else {
 				$message += 'Edit the Advanced Options';
+			}
 				
 		}
 			
 	$message += '</span>';
 	
 	// Add message
-	if ( $advanced.parent( '.advanced_message' ).size() > 0 )
+	if ( $advanced.parent( '.advanced_message' ).size() > 0 ) {
 		$advanced.parent( '.advanced_message' ).remove();
+	}
 	$advanced.closest( 'td' ).prepend( '<span class="advanced_message">' + $message + '</span>' );
 	
 	// If they click "show"

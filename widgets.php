@@ -126,7 +126,7 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
         <p><label for="<?php echo $this->get_field_id( 'term_link' ); ?>"><?php _e( 'The term links to:', 'cpt-onomies' ) ?></label>
 		<select class="widefat" id="<?php echo $this->get_field_id( 'term_link' ); ?>" name="<?php echo $this->get_field_name( 'term_link' ); ?>">
 			<option value="view" <?php selected( $instance[ 'term_link' ], 'view' ); ?>><?php _e( 'Term archive page', 'cpt-onomies' ); ?></option>
-			<option value="cpt_post" <?php selected( $instance[ 'term_link' ], 'cpt_post' ); ?>><?php _e( 'CPT post page', 'cpt-onomies' ); ?></option>
+			<option value="cpt_post" <?php selected( $instance[ 'term_link' ], 'cpt_post' ); ?>><?php printf( __( '%s post page', 'cpt-onomies' ), 'CPT' ); ?></option>
 		</select></p>
 		<?php
 	}

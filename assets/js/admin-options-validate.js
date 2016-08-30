@@ -1,31 +1,33 @@
 jQuery.noConflict()(function(){
 		
-	// validate form
+	// Validate form
 	jQuery( 'form#custom-post-type-onomies-edit-cpt' ).validate({
 		onkeyup: false,
 		ignore: []
 	});
 	
-	// create invalid post type name message
+	// Create invalid post type name message
 	$invalid_post_type_name = null
-	if ( cpt_onomies_admin_options_L10n.invalid_post_type_name != '' )
+	if ( cpt_onomies_admin_options_L10n.invalid_post_type_name != '' ) {
 		$invalid_post_type_name = cpt_onomies_admin_options_L10n.invalid_post_type_name;
-	else
+	} else {
 		$invalid_post_type_name = 'Your post type name is invalid.';
+	}
 	
-	// validate custom post type name to make sure it contains valid characters
+	// Validate custom post type name to make sure it contains valid characters
 	jQuery.validator.addMethod( 'custom_post_type_onomies_validate_post_type_name_characters', function( value, element ) {
 		return this.optional( element ) || ( value.length <= 20 && ! value.match( /([^a-z0-9\_\-])/ ) );
 	}, $invalid_post_type_name );
 	
-	// create post type name exists message
+	// Create post type name exists message
 	$post_type_name_exists = null;
-	if ( cpt_onomies_admin_options_L10n.post_type_name_exists != '' )
+	if ( cpt_onomies_admin_options_L10n.post_type_name_exists != '' ) {
 		$post_type_name_exists = cpt_onomies_admin_options_L10n.post_type_name_exists;
-	else
+	} else {
 		$post_type_name_exists = 'That post type name already exists. Please choose another name.';
+	}
 		
-	// validate custom post type name to make sure post type doesnt already exist
+	// Validate custom post type name to make sure post type doesnt already exist
 	jQuery.validator.addMethod( 'custom_post_type_onomies_validate_post_type_name', function( value, element ) {
 		var validator = this, response;
 		jQuery.ajax({

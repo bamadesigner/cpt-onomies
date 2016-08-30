@@ -1019,22 +1019,22 @@ class CPT_ONOMIES_MANAGER {
 		
 		// Define the CPT-onomy labels
 		$cpt_onomy_labels = array(
-			'name' => _x( $cpt_onomy_label, 'CPT-onomy general name', 'cpt-onomies' ),
-			'singular_name' => _x( $cpt_onomy_singular_name, 'CPT-onomy singular name', 'cpt-onomies' ),
-			'search_items' => __( "Search {$cpt_onomy_label}", 'cpt-onomies' ),
-			'popular_items' => __( "Popular {$cpt_onomy_label}", 'cpt-onomies' ),
-			'all_items' => __( "All {$cpt_onomy_label}", 'cpt-onomies' ),
-			'parent_item' => __( "Parent {$cpt_onomy_singular_name}", 'cpt-onomies' ),
-			'parent_item_colon' => __( "Parent {$cpt_onomy_singular_name}:", 'cpt-onomies' ),
-			'edit_item' => __( "Edit {$cpt_onomy_singular_name}", 'cpt-onomies' ),
-			'view_item' => __( "View {$cpt_onomy_singular_name}", 'cpt-onomies' ),
-			'update_item' => __( "Update {$cpt_onomy_singular_name}", 'cpt-onomies' ),
-			'add_new_item' => __( "Add New {$cpt_onomy_singular_name}", 'cpt-onomies' ),
-			'new_item_name' => __( "New {$cpt_onomy_singular_name} Name", 'cpt-onomies' ),
-			'separate_items_with_commas' => __( 'Separate ' . strtolower( $cpt_onomy_label ) . ' with commas', 'cpt-onomies' ),
-			'add_or_remove_items' => __( 'Add or remove ' . strtolower( $cpt_onomy_label ), 'cpt-onomies' ),
-			'choose_from_most_used' => __( 'Choose from the most used ' . strtolower( $cpt_onomy_label ), 'cpt-onomies' ),
-			'not_found' => __( 'No ' . strtolower( $cpt_onomy_label ) . ' found.', 'cpt-onomies' ),
+			'name'          => $cpt_onomy_label,
+			'singular_name' => $cpt_onomy_singular_name,
+			'search_items'  => sprintf( __( 'Search %s', 'cpt-onomies' ), $cpt_onomy_label ),
+			'popular_items' => sprintf( __( 'Popular %s', 'cpt-onomies' ), $cpt_onomy_label ),
+			'all_items'     => sprintf( __( 'All %s', 'cpt-onomies' ), $cpt_onomy_label ),
+			'parent_item'   => sprintf( __( 'Parent %s', 'cpt-onomies' ), $cpt_onomy_singular_name ),
+			'parent_item_colon' => sprintf( __( 'Parent %s', 'cpt-onomies' ), $cpt_onomy_singular_name ),
+			'edit_item'     => sprintf( __( 'Edit %s', 'cpt-onomies' ), $cpt_onomy_singular_name ),
+			'view_item'     => sprintf( __( 'View %s', 'cpt-onomies' ), $cpt_onomy_singular_name ),
+			'update_item'   => sprintf( __( 'Update %s', 'cpt-onomies' ), $cpt_onomy_singular_name ),
+			'add_new_item'  => sprintf( __( 'Add New %s', 'cpt-onomies' ), $cpt_onomy_singular_name ),
+			'new_item_name' => sprintf( __( 'New %s Name', 'cpt-onomies' ), $cpt_onomy_singular_name ),
+			'separate_items_with_commas' => sprintf( __( 'Separate %s with commas', 'cpt-onomies' ), strtolower( $cpt_onomy_label ) ),
+			'add_or_remove_items' => sprintf( __( 'Add or remove %s', 'cpt-onomies' ), strtolower( $cpt_onomy_label ) ),
+			'choose_from_most_used' => sprintf( __( 'Choose from the most used %s', 'cpt-onomies' ), strtolower( $cpt_onomy_label ) ),
+			'not_found'     => sprintf( __( 'No %s found.', 'cpt-onomies' ), strtolower( $cpt_onomy_label ) ),
 		);
 		
 		// Filter the labels

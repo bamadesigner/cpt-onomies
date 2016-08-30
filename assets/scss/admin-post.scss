@@ -1,8 +1,8 @@
 select.category.cpt_onomies {
 	width: 100%;
 	margin-top: 7px;
-	}
-	
+}
+
 .cpt_onomies_tags_div input.cpt_onomies_new_tag {
 	width: 71%;
 }
@@ -19,29 +19,29 @@ select.category.cpt_onomies {
 	cursor: pointer;
 	color: #333;
 	line-height: 1.3em;
-	}
-	
+}
+
 .cpt_onomies_tags_div .cpt_onomies_add_tag_error_message .close {
 	color: #888;
 	text-decoration: underline;
-	}
+}
 
 .cpt_onomies_tags_div .cpt_onomies_tag_checklist {
 	margin: 0!important;
 	padding: 0!important;
 	margin-left: 8px!important;
 	border: 0!important;
-	}
-	
+}
+
 .cpt_onomies_tags_div .cpt_onomies_tag_checklist.alone {
 	margin-top: 10px!important;
 	margin-left: 2px!important;
-	}
-	
+}
+
 .cpt_onomies_tags_div .cpt_onomies_tag_checklist.loading {
 	min-height: 18px;
 	background: url('../../../../wp-admin/images/loading.gif') left top no-repeat !important;
-	}
+}
 
 .cpt_onomies_tags_div .cpt_onomies_tag_checklist .tag {
 	display: inline-block!important;
@@ -50,7 +50,7 @@ select.category.cpt_onomies {
 	padding: 1px 0 2px 0!important;
 	border: 0!important;
 	cursor: default!important;
-    }
+}
 
 .cpt_onomies_tags_div .cpt_onomies_tag_checklist .delbutton {
 	display: inline-block!important;
@@ -63,13 +63,13 @@ select.category.cpt_onomies {
 	position: static!important;
 	line-height: normal!important;
 	cursor: pointer!important;
-    text-indent: -9999px!important;
-    vertical-align: text-top!important;
-	}
+	text-indent: -9999px!important;
+	vertical-align: text-top!important;
+}
 .cpt_onomies_tags_div .cpt_onomies_tag_checklist .delbutton:hover {
 	background-position: -10px 2px!important;
-	}
-	
+}
+
 .cpt_onomies_tags_div .cpt_onomies_tag_checklist .term {
 	display: inline-block!important;
 	margin: 0!important;
@@ -77,10 +77,10 @@ select.category.cpt_onomies {
 	border: 0!important;
 	white-space: normal!important;
 	font-size: 11px!important;
-    line-height: 1.4em!important;
-    vertical-align: text-top!important;
-	}
-	
+	line-height: 1.4em!important;
+	vertical-align: text-top!important;
+}
+
 .cpt_onomies_tags_div .cpt_onomies_tag_checklist .term .parent {
 	color: #888!important;
 	font-style: italic!important;
@@ -89,13 +89,13 @@ select.category.cpt_onomies {
 	margin: 0!important;
 	border: 0!important;
 	white-space: normal!important;
-	}
-	
+}
+
 .ui-autocomplete.cpt_onomies {
 	background: none!important;
 	max-width: 255px!important;
 	border: 0!important;
-	}
+}
 
 .ui-autocomplete.cpt_onomies .ui-menu-item {
 	padding: 0!important;
@@ -103,8 +103,8 @@ select.category.cpt_onomies {
 	color: #fff!important;
 	line-height: normal!important;
 	white-space: normal!important;
-	}
-	
+}
+
 .ui-autocomplete.cpt_onomies .ui-menu-item .parent {
 	font-size: 90%!important;
 	font-style: italic!important;
@@ -112,8 +112,8 @@ select.category.cpt_onomies {
 	margin: 0!important;
 	padding: 0 3px 0 0!important;
 	border: 0!important;
-	}
-	
+}
+
 .ui-autocomplete.cpt_onomies .ui-menu-item a {
 	display: block!important;
 	background: #0074a2!important;
@@ -125,9 +125,9 @@ select.category.cpt_onomies {
 	border-radius: 5px!important;
 	color: #fff!important;
 	cursor: pointer!important;
-	}
-	
+}
+
 .ui-autocomplete.cpt_onomies .ui-menu-item a.ui-state-hover,
 .ui-autocomplete.cpt_onomies .ui-menu-item a:hover {
 	background: #d54e21!important;
-	}
+}
