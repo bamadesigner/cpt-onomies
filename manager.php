@@ -441,8 +441,8 @@ class CPT_ONOMIES_MANAGER {
 					
 				// @TODO This used to skip for non-CPT-onomies but that caused a bug
 				// Now we let them through. Does this need to be fixed?
-				//if ( ! ( $is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy ) ) )
-				//	continue;
+				if ( ! ( $is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy ) ) )
+					continue;
 				$is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy );
 		
 				$this_query[ 'terms' ] = array_unique( (array) $this_query[ 'terms' ] );
