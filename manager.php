@@ -118,42 +118,48 @@ class CPT_ONOMIES_MANAGER {
 		global $cpt_onomy, $pagenow, $post_type;
 		if ( isset( $query[ 'cpt_onomy_archive' ] ) && $query[ 'cpt_onomy_archive' ] ) {
 		
-			// make sure CPT-onomy AND term exists, otherwise, why bother
+			// Make sure CPT-onomy AND term exists, otherwise, why bother
 			$change_query_vars = false;
 			foreach( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
 				if ( isset( $query[ $taxonomy ] ) && ! empty( $query[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
 				
-					// make sure the term exists
+					// Make sure the term exists
 					$cpt_onomy_term_var = explode( "/", $query[ $taxonomy ] );
 										
-					// get parent
+					// Get parent
 					$parent_term_id = $parent_term = 0;
 					if ( count( $cpt_onomy_term_var ) > 1 ) {
 						foreach( $cpt_onomy_term_var as $index => $term_var ) {
 							if ( $index > 0 ) {
+
 								$parent_term = $cpt_onomy->get_term_by( 'slug', $cpt_onomy_term_var[ $index - 1 ], $taxonomy, OBJECT, 'raw', ( isset( $parent_term ) && isset( $parent_term->term_id ) ) ? $parent_term->term_id : 0 );
-								if ( isset( $parent_term->term_id ) ) $parent_term_id = $parent_term->term_id;
+
+								if ( isset( $parent_term->term_id ) ) {
+									$parent_term_id = $parent_term->term_id;
+								}
+
 							}						
 						}
 					}
 					
-					// if term id, then we need to get the term by id
+					// If term id, then we need to get the term by id
 					$get_term_by = 'slug';
-					if ( is_numeric( $cpt_onomy_term_var[ count( $cpt_onomy_term_var ) - 1 ] ) )
+					if ( is_numeric( $cpt_onomy_term_var[ count( $cpt_onomy_term_var ) - 1 ] ) ) {
 						$get_term_by = 'id';
+					}
 											
-					// if the term doesn't exist, we're not going to change the query vars
+					// If the term doesn't exist, we're not going to change the query vars
 					if ( $cpt_onomy_term = $cpt_onomy->get_term_by( $get_term_by, $cpt_onomy_term_var[ count( $cpt_onomy_term_var ) - 1 ], $taxonomy, NULL, NULL, $parent_term_id ) ) {
 						
-						// we're going to want to change the query vars
+						// We're going to want to change the query vars
 						$change_query_vars = true;
 					
-						// to avoid confusion with other children of the same name, change term to term id
-						if ( $cpt_onomy_term->parent )
+						// To avoid confusion with other children of the same name, change term to term id
+						if ( $cpt_onomy_term->parent ) {
 							$query[ $taxonomy ] = $cpt_onomy_term->term_id;
+						}
 							
-					}
-					else {
+					} else {
 						$change_query_vars = false;
 						break;
 					}
@@ -163,25 +169,27 @@ class CPT_ONOMIES_MANAGER {
 			
 			if ( $change_query_vars ) {
 														
-				// the 'name' variable makes WordPress think this is a single post with the assigned 'name'
+				// The 'name' variable makes WordPress think this is a single post with the assigned 'name'
 				unset( $query[ 'name' ] );
 						
 			}
 			
 		}
-		// for filtering by CPT-onomy on admin edit posts screen
+		// For filtering by CPT-onomy on admin edit posts screen
 		else if ( is_admin()  && $pagenow == 'edit.php' && isset( $post_type ) ) {
 			foreach( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
 				if ( isset( $_REQUEST[ $taxonomy ] ) && ! empty( $_REQUEST[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) )  {
 									
-					if ( is_numeric( $_REQUEST[ $taxonomy ] ) )
+					if ( is_numeric( $_REQUEST[ $taxonomy ] ) ) {
 						$cpt_onomy_term = $cpt_onomy->get_term( (int) $_REQUEST[ $taxonomy ], $taxonomy );
-					else
+					} else {
 						$cpt_onomy_term = $cpt_onomy->get_term_by( 'slug', $_REQUEST[ $taxonomy ], $taxonomy );
+					}
 					
-					// the 'name' variable makes WordPress think we are looking for a post with that 'name'
-					if ( ! empty( $cpt_onomy_term ) )
-						unset( $query[ 'name' ] );
+					// The 'name' variable makes WordPress think we are looking for a post with that 'name'
+					if ( ! empty( $cpt_onomy_term ) ) {
+						unset( $query['name'] );
+					}
 
 				}
 			}
@@ -208,57 +216,88 @@ class CPT_ONOMIES_MANAGER {
 	 */	
 	public function revert_query_vars( $query ) {
 		if ( isset( $query->query_vars[ 'cpt_onomy_archive' ] ) && $query->query_vars[ 'cpt_onomy_archive' ] && ( isset( $query->matched_query ) && ( $matched_query = $query->matched_query ) ) ) {
-			// we want the post type objects that all queried CPT-onomies have in common
-			// we also want to store which CPT-onomies are actually being queried
+
+			/**
+			 * We want the post type objects that all queried
+			 * CPT-onomies have in common we also want to store
+			 * which CPT-onomies are actually being queried.
+			 */
 			$cpt_onomy_objects = $queried_cpt_onomies = array();
 			$cpt_onomy_index = 0;
 			foreach( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
-				// only want the CPT-onomies that are being queried
+
+				// Only want the CPT-onomies that are being queried
 				if ( array_key_exists( $taxonomy, $query->query_vars ) && $this->is_registered_cpt_onomy( $taxonomy ) ) {
 					$queried_cpt_onomies[ $taxonomy ] = $tax;
-					// get array started
-					if ( $cpt_onomy_index == 0 )
+
+					// Get array started
+					if ( $cpt_onomy_index == 0 ) {
 						$cpt_onomy_objects = array_merge( $cpt_onomy_objects, $tax->object_type );
-					// intersect the arrays
-					else
+					}
+
+					// Intersect the arrays
+					else {
 						$cpt_onomy_objects = array_intersect( $cpt_onomy_objects, $tax->object_type );
+					}
+					
 					$cpt_onomy_index++;
 				}
 			}
 			if ( $cpt_onomy_index > 0 ) {
-				// if only one CPT-onomy is being queried, then we want to use its post types
-				if ( count( $queried_cpt_onomies ) == 1 && isset( $queried_cpt_onomies[0]->object_type ) )
+
+				// If only one CPT-onomy is being queried, then we want to use its post types
+				if ( count( $queried_cpt_onomies ) == 1 && isset( $queried_cpt_onomies[0]->object_type ) ) {
 					$custom_post_type = $queried_cpt_onomies[0]->object_type;
-				// otherwise, we'll use the ones our multiple CPT-onomies have in common
-				else
-					$custom_post_type = ! empty( $cpt_onomy_objects ) ? $cpt_onomy_objects : NULL;
-				// if our custom query/rewrite defines a 'post_type', it overwrites the rest
+				}
+
+				// Otherwise, we'll use the ones our multiple CPT-onomies have in common
+				else {
+					$custom_post_type = ! empty( $cpt_onomy_objects ) ? $cpt_onomy_objects : null;
+				}
+
+				// If our custom query/rewrite defines a 'post_type', it overwrites the rest
 				foreach( explode( '&', $matched_query ) as $parameter ) {
 					$parameter = explode( '=', $parameter );
 					if ( isset( $parameter[0] ) && strtolower( $parameter[0] ) == 'post_type'
 						&& isset( $parameter[1] ) && ( $set_post_type = $parameter[1] ) ) {
-						// we want to use the post type in our custom query/rewrite
+
+						// We want to use the post type in our custom query/rewrite
 						$custom_post_type = $set_post_type;
+
 						break;
 					}
 				}
-				// convert to array for testing
-				// want to remove any post types who are not publicy queryable
-				if ( ! is_array( $custom_post_type ) ) $custom_post_type = array( $custom_post_type );
+
+				/**
+				 * Convert to array for testing
+				 * want to remove any post types who are not publicy queryable
+				 */
+				if ( ! is_array( $custom_post_type ) ) {
+					$custom_post_type = array( $custom_post_type );
+				}
+
 				foreach( $custom_post_type as $post_type_index => $post_type ) {
 					$post_type_exists = post_type_exists( $post_type );
-					if ( ! $post_type_exists || ( $post_type_exists && get_post_type_object( $post_type )->exclude_from_search ) )
+					if ( ! $post_type_exists || ( $post_type_exists && get_post_type_object( $post_type )->exclude_from_search ) ) {
 						unset( $custom_post_type[ $post_type_index ] );
+					}
 				}
-				// if just one custom post type, then convert to string
-				if ( is_array( $custom_post_type ) && count( $custom_post_type ) == 1 )
+
+				// If just one custom post type, then convert to string
+				if ( is_array( $custom_post_type ) && count( $custom_post_type ) == 1 ) {
 					$custom_post_type = array_shift( $custom_post_type );
-				// re-assign the 'post_type' query variable
-				if ( isset( $custom_post_type ) && ! empty( $custom_post_type ) )
-					$query->query_vars[ 'post_type' ] = $custom_post_type;
-				// there are no post types that are searchable and attached so kill the query
-				else
-					$query->query_vars[ 'cpt_onomies_kill_query' ] = true;
+				}
+
+				// Re-assign the 'post_type' query variable
+				if ( isset( $custom_post_type ) && ! empty( $custom_post_type ) ) {
+					$query->query_vars['post_type'] = $custom_post_type;
+				}
+
+				// There are no post types that are searchable and attached so kill the query
+				else {
+					$query->query_vars['cpt_onomies_kill_query'] = true;
+				}
+				
 			}			
 		}
 	}
@@ -300,10 +339,10 @@ class CPT_ONOMIES_MANAGER {
 						
 					if ( ! empty( $cpt_onomy_term ) ) {
 					
-						// make sure WordPress knows this is not a post type archive
+						// Make sure WordPress knows this is not a post type archive
 						$query->is_post_type_archive = false;
 					
-						// add queried object and queried object ID
+						// Add queried object and queried object ID
 						$query->queried_object = $cpt_onomy_term;
 						$query->queried_object_id = $cpt_onomy_term->term_id;
 						
@@ -432,17 +471,21 @@ class CPT_ONOMIES_MANAGER {
 			foreach ( $query->tax_query->queries as $this_query_key => $this_query ) {
 				
 				// Get the taxonomy
-				$taxonomy = isset( $this_query[ 'taxonomy' ] ) ? $this_query[ 'taxonomy' ] : NULL;
-			
+				$taxonomy = isset( $this_query['taxonomy'] ) ? $this_query['taxonomy'] : null;
+
 				// Make sure the taxonomy exists
 				if ( ! $taxonomy || ! taxonomy_exists( $taxonomy ) ) {
 					continue;
 				}
 					
-				// @TODO This used to skip for non-CPT-onomies but that caused a bug
-				// Now we let them through. Does this need to be fixed?
-				//if ( ! ( $is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy ) ) )
-				//	continue;
+				/**
+				 * @TODO This used to skip for non-CPT-onomies but that caused a bug
+				 *
+				 * Now we let them through. Does this need to be fixed?
+				 */
+				/*if ( ! ( $is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy ) ) ) {
+					continue;
+				}*/
 				$is_registered_cpt_onomy = $this->is_registered_cpt_onomy( $taxonomy );
 		
 				$this_query[ 'terms' ] = array_unique( (array) $this_query[ 'terms' ] );
@@ -451,7 +494,7 @@ class CPT_ONOMIES_MANAGER {
 					continue;
 				}
 					
-				// if terms are ID, change field
+				// If terms are ID, change field
 				foreach ( $this_query[ 'terms' ] as $term ) {
 					if ( is_numeric( $term ) ) {
 						$this_query[ 'field' ] = 'id';
@@ -471,7 +514,8 @@ class CPT_ONOMIES_MANAGER {
 							$terms = array_map( 'intval', $this_query[ 'terms' ] );						
 					}
 				}
-				// taxonomies
+
+				// Taxonomies
 				else {
 					switch ( $this_query[ 'field' ] ) {
 						case 'slug':
@@ -552,7 +596,8 @@ class CPT_ONOMIES_MANAGER {
 						$c++;
 						
 					}
-					// taxonomies
+
+					// Taxonomies
 					else {
 					
 						$alias = $t ? 'cpt_onomy_tt' . $t : $wpdb->term_relationships;
@@ -590,7 +635,7 @@ class CPT_ONOMIES_MANAGER {
 						
 					}
 
-					// taxonomies
+					// Taxonomies
 					else {
 						
 						$new_where[] = $taxonomies[ 'where' ][] = "$primary_table.$primary_id_column NOT IN (
@@ -623,7 +668,8 @@ class CPT_ONOMIES_MANAGER {
 						) = $num_terms";
 						
 					}
-					// taxonomies
+
+					// Taxonomies
 					else {
 						
 						$new_where[] = $taxonomies[ 'where' ][] = "(
@@ -664,11 +710,13 @@ class CPT_ONOMIES_MANAGER {
 			
 			if ( ! empty( $new_where ) )  {
 				
-				// remove the post_name (WP adds this if the post type is hierarhical. I'm not sure why)
+				// Remove the post_name (WP adds this if the post type is hierarhical. I'm not sure why)
 				$clauses[ 'where' ] = preg_replace( '/wp\_posts\.post\_name\s=\s\'([^\']*)\'\sAND\s/i', '', $clauses[ 'where' ] );
 				
-				// Remove 0 = 1
-				// Build replace string
+				/**
+				 * Remove 0 = 1.
+				 * Build the replace string.
+				 */
 				$preg_replace_str = NULL;
 				
 				// We have to set it up for each tax query
@@ -983,8 +1031,11 @@ class CPT_ONOMIES_MANAGER {
 	 */
 	public function register_cpt_onomy( $taxonomy, $object_type, $args = array() ) {
 	
-		// If taxonomy already exists (and is not a CPT-onomy) OR matching post type doesn't exist,
-		// this allows you to overwrite your CPT-onomy registered by the plugin, if desired
+		/**
+		 * If taxonomy already exists (and is not a CPT-onomy)
+		 * OR matching post type doesn't exist, this allows you
+		 * to overwrite your CPT-onomy registered by the plugin, if desired.
+		 */
 		if ( ( taxonomy_exists( $taxonomy ) && ! $this->is_registered_cpt_onomy( $taxonomy ) ) || ! post_type_exists( $taxonomy ) ) {
 			return;
 		}
@@ -1057,11 +1108,16 @@ class CPT_ONOMIES_MANAGER {
 	 	// Merge defaults with incoming $args then extract
 	 	extract( wp_parse_args( $args, $cpt_onomy_defaults ) );
 	 	
-	 	// Clean up the arguments for registering
-	 	// Some CPT-onomy arguments MUST have a set value, no room for customization right now
-	 	// we have to clear out the args 'rewrite' because post types and taxonomies with the same name
-	 	// share the same $wp_rewrite permastruct and custom post types MUST win the rewrite war.
-		// we will add our own rewrite rule for the CPT-onomy archive page
+	 	/**
+		 * Clean up the arguments for registering
+		 * Some CPT-onomy arguments MUST have a set value,
+		 * no room for customization right now we have to
+		 * clear out the args 'rewrite' because post types
+		 * and taxonomies with the same name share the same
+		 * $wp_rewrite permastruct and custom post types MUST
+		 * win the rewrite war. we will add our own rewrite rule
+		 * for the CPT-onomy archive page.
+		 */
 	 	$cpt_onomy_args = array(
 			'cpt_onomy'					=> true,
 			'created_by_cpt_onomies'	=> isset( $created_by_cpt_onomies ) ? $created_by_cpt_onomies : false,
@@ -1086,10 +1142,14 @@ class CPT_ONOMIES_MANAGER {
 			)
 		);
 		
-		// Add rewrite rule (default is true) to display CPT-onomy archive page - default is '{post type}/tax/{term slug}'
-		// we must add our own rewrite rule instead of defining the 'rewrite' property because
-		// post types and taxonomies with the same name share the same $wp_rewrite permastruct
-		// and post types must win the rewrite war.
+		/**
+		 * Add rewrite rule (default is true) to display CPT-onomy
+		 * archive page - default is '{post type}/tax/{term slug}'
+		 * we must add our own rewrite rule instead of defining the
+		 * 'rewrite' property because post types and taxonomies with
+		 * the same name share the same $wp_rewrite permastruct and
+		 * post types must win the rewrite war.
+		 */
 		if ( ! ( isset( $has_cpt_onomy_archive ) && ! $has_cpt_onomy_archive ) ) {
 		
 			// Make sure we have a slug
@@ -1097,8 +1157,11 @@ class CPT_ONOMIES_MANAGER {
 				$cpt_onomy_archive_slug = $cpt_onomy_defaults['cpt_onomy_archive_slug'];
 			}
 												
-			// Add the slug to the CPT-onomy arguments so it will be added to $wp_taxonomies
-			// throughout website, if this parameter is set, then "show CPT-onomy archive page" is also set
+			/**
+			 * Add the slug to the CPT-onomy arguments so it will be
+			 * added to $wp_taxonomies throughout website, if this
+			 * parameter is set, then "show CPT-onomy archive page" is also set.
+			 */
 			$cpt_onomy_args[ 'cpt_onomy_archive_slug' ] = $cpt_onomy_archive_slug;
 								
 			// Replace the variables ($post_type and $term)
@@ -1195,14 +1258,16 @@ class CPT_ONOMIES_MANAGER {
 			$labels['name_admin_bar'] = strip_tags( $cpt['name_admin_bar'] );
 		}
 		
-		// define the labels
+		// Define the labels
 		$args[ 'labels' ] = $labels;
 		
 		// WP default = false, plugin default = true
 		$args[ 'public' ] = ( isset( $cpt[ 'public' ] ) && ! $cpt[ 'public' ] ) ? false : true;
 		
-		// boolean (optional) default = false
-		// this must be defined for use with register_taxonomy()
+		/**
+		 * boolean (optional) default = false
+		 * This must be defined for use with register_taxonomy().
+		 */
 		$args[ 'hierarchical' ] = ( isset( $cpt[ 'hierarchical' ] ) && $cpt[ 'hierarchical' ] ) ? true : false;
 									
 		/*
@@ -1221,7 +1286,7 @@ class CPT_ONOMIES_MANAGER {
 			$args['supports'] = false;
 		}
 			
-		// array (optional) no default
+		// Array (optional) no default
 		if ( isset( $cpt[ 'taxonomies' ] ) && ! empty( $cpt[ 'taxonomies' ] ) ) {
 			if ( ! is_array( $cpt[ 'taxonomies' ] ) ) {
 				$cpt['taxonomies'] = array( $cpt['taxonomies'] );
@@ -1229,94 +1294,97 @@ class CPT_ONOMIES_MANAGER {
 			$args[ 'taxonomies' ] = $cpt[ 'taxonomies' ];
 		}
 		
-		// boolean (optional) default = public
+		// Boolean (optional) default = public
 		if ( isset( $cpt[ 'show_ui' ] ) ) {
 			$args['show_ui'] = ( ! $cpt['show_ui'] ) ? false : true;
 		}
 		
-		// boolean (optional) default = public
+		// Boolean (optional) default = public
 		if ( isset( $cpt[ 'show_in_nav_menus' ] ) ) {
 			$args['show_in_nav_menus'] = ( ! $cpt['show_in_nav_menus'] ) ? false : true;
 		}
 		
-		// boolean (optional) default = show_in_menu
+		// Boolean (optional) default = show_in_menu
 		if ( isset( $cpt[ 'show_in_admin_bar' ] ) ) {
 			$args['show_in_admin_bar'] = ( ! $cpt['show_in_admin_bar'] ) ? false : true;
 		}
 		
-		// boolean (optional) default = public
+		// Boolean (optional) default = public
 		if ( isset( $cpt[ 'publicly_queryable' ] ) ) {
 			$args['publicly_queryable'] = ( ! $cpt['publicly_queryable'] ) ? false : true;
 		}
 		
-		// boolean (optional) default = opposite of public
+		// Boolean (optional) default = opposite of public
 		if ( isset( $cpt[ 'exclude_from_search' ] ) ) {
 			$args['exclude_from_search'] = ( $cpt['exclude_from_search'] ) ? true : false;
 		}
 		
-		// boolean (optional) default = false
+		// Boolean (optional) default = false
 		if ( isset( $cpt[ 'map_meta_cap' ] ) ) {
 			$args['map_meta_cap'] = ( $cpt['map_meta_cap'] ) ? true : false;
 		}
 		
-		// boolean (optional) default = true
+		// Boolean (optional) default = true
 		if ( isset( $cpt[ 'can_export' ] ) ) {
 			$args['can_export'] = ( ! $cpt['can_export'] ) ? false : true;
 		}
 			
-		// boolean (optional) default = null
+		// Boolean (optional) default = null
 		if ( isset( $cpt[ 'delete_with_user' ] ) ) {
 			$args['delete_with_user'] = ( ! $cpt['delete_with_user'] ) ? false : true;
 		}
 										
-		// integer (optional) default = NULL
+		// Integer (optional) default = NULL
 		if ( isset( $cpt[ 'menu_position' ] ) && ! empty( $cpt[ 'menu_position' ] ) && is_numeric( $cpt[ 'menu_position' ] ) ) {
 			$args['menu_position'] = intval( $cpt['menu_position'] );
 		}
 		
-		// string (optional) default is blank
+		// String (optional) default is blank
 		if ( isset( $cpt[ 'description' ] ) && ! empty( $cpt[ 'description' ] ) ) {
 			$args['description'] = strip_tags( $cpt['description'] );
 		}
 
-		// string (optional) default = NULL
+		// String (optional) default = NULL
 		if ( isset( $cpt[ 'menu_icon' ] ) && ! empty( $cpt[ 'menu_icon' ] ) ) {
 			$args['menu_icon'] = $cpt['menu_icon'];
 		}
 
-		// string (optional) no default
+		// String (optional) no default
 		if ( isset( $cpt[ 'register_meta_box_cb' ] ) && ! empty( $cpt[ 'register_meta_box_cb' ] ) ) {
 			$args['register_meta_box_cb'] = $cpt['register_meta_box_cb'];
 		}
 
-		// string (optional) default = EP_PERMALINK
+		// String (optional) default = EP_PERMALINK
 		if ( isset( $cpt[ 'permalink_epmask' ] ) && ! empty( $cpt[ 'permalink_epmask' ] ) ) {
 			$args['permalink_epmask'] = $cpt['permalink_epmask'];
 		}
 			
-		// string or array (optional) default = "post"
+		// String or array (optional) default = "post"
 		if ( isset( $cpt[ 'capability_type' ] ) && ! empty( $cpt[ 'capability_type' ] ) ) {
 			$args['capability_type'] = $cpt['capability_type'];
 		}
 			
-		// boolean or string (optional)
-		// default = true (which is opposite of WP default so we must include the setting)
-		// if set to string 'true', then store as true
-		// else if not set to false, store string	
+		/**
+		 * Boolean or string (optional)
+		 * Default = true (which is opposite of WP default so we must include the setting)
+		 * If set to string 'true', then store as true
+		 * Else if not set to false, store string
+		 */
 		if ( isset( $cpt[ 'has_archive' ] ) && ! empty( $cpt[ 'has_archive' ] ) && strtolower( $cpt[ 'has_archive' ] ) != 'true' ) {
 			if ( strtolower( $cpt[ 'has_archive' ] ) == 'false' ) {
 				$args[ 'has_archive' ] = false;
 			} else if ( strtolower( $cpt[ 'has_archive' ] ) != 'true' ) {
 				$args[ 'has_archive' ] = $cpt[ 'has_archive' ];
 			}
-		}
-		else {
+		} else {
 			$args['has_archive'] = true;
 		}
 		
-		// boolean or string (optional) default = true
-		// if set to string 'false', then store as false
-		// else if set to true, store string	
+		/**
+		 * Boolean or string (optional) default = true
+		 * If set to string 'false', then store as false
+		 * Else if set to true, store string
+		 */
 		if ( isset( $cpt[ 'query_var' ] ) && ! empty( $cpt[ 'query_var' ] ) ) {
 			if ( strtolower( $cpt[ 'query_var' ] ) == 'false' ) {
 				$args[ 'query_var' ] = false;
@@ -1325,10 +1393,12 @@ class CPT_ONOMIES_MANAGER {
 			}
 		}	
 		
-		// boolean or string (optional) default = NULL
-		// if set to string 'false', then store as false
-		// if set to string 'true', then store as true
-		// if set to another string, store string
+		/**
+		 * Boolean or string (optional) default = NULL
+		 * If set to string 'false', then store as false
+		 * If set to string 'true', then store as true
+		 * If set to another string, store string
+		 */
 		if ( isset( $cpt[ 'show_in_menu' ] ) && ! empty( $cpt[ 'show_in_menu' ] ) ) {
 			if ( strtolower( $cpt[ 'show_in_menu' ] ) == 'false' ) {
 				$args[ 'show_in_menu' ] = false;
@@ -1339,8 +1409,10 @@ class CPT_ONOMIES_MANAGER {
 			}
 		}
 		
-		// array (optional) default = capability_type is used to construct 
-		// if you include blank capabilities, it messes up that capability
+		/**
+		 * Array (optional) default = capability_type is used to construct
+		 * If you include blank capabilities, it messes up that capability
+		 */
 		if ( isset( $cpt[ 'capabilities' ] ) && ! empty( $cpt[ 'capabilities' ] ) ) {
 			foreach( $cpt[ 'capabilities' ] as $capability_key => $capability ) {
 				if ( ! empty( $capability ) ) {
@@ -1349,16 +1421,19 @@ class CPT_ONOMIES_MANAGER {
 			}
 		}
 		
-		// boolean or array (optional) default = true and use post type as slug 
+		// Boolean or array (optional) default = true and use post type as slug
 		if ( isset( $cpt[ 'rewrite' ] ) && ! empty( $cpt[ 'rewrite' ] ) ) {
 			if ( isset( $cpt[ 'rewrite' ][ 'enable_rewrite' ] ) && ! $cpt[ 'rewrite' ][ 'enable_rewrite' ] ) {
 				$args['rewrite'] = false;
 			} else {
-				// remove "enable rewrite" and include the rest
+
+				// Remove "enable rewrite" and include the rest
 				unset( $cpt[ 'rewrite' ][ 'enable_rewrite' ] );
+
 				if ( isset( $cpt[ 'rewrite' ] ) && ! empty( $cpt[ 'rewrite' ] ) ) {
 					$args['rewrite'] = $cpt['rewrite'];
 				}
+				
 			}
 		}
 		
@@ -1384,40 +1459,39 @@ class CPT_ONOMIES_MANAGER {
 	private function unserialize_network_custom_post_type_argument( $argument ) {
 		global $blog_id;
 		
-		// if it's already an array, there's no point
+		// If it's already an array, there's no point
 		if ( is_array( $argument ) ) {
 			return $argument;
 		}
 	
-		// remove any and all white space
+		// Remove any and all white space
 		$argument = preg_replace( '/\s/i', '', $argument );
 	
-		// divide by ';' which separates site definitions
+		// Divide by ';' which separates site definitions
 		$argument = explode( ';', $argument );
 		
-		// going to need to store some info
+		// Going to need to store some info
 		$network_property = $site_property = $overwrite = array();
 		
-		// separate network/site definitions
+		// Separate network/site definitions
 		foreach( $argument as $user_role ) {
 		
-			// see if there is a blog id
+			// See if there is a blog id
 			$site_definition = explode( ':', $user_role );
 			
-			// network definition
+			// Network definition
 			if ( count( $site_definition ) == 1 ) {
 				$network_property = array_merge( $network_property, explode( ',', array_shift( $site_definition ) ) );
 			}
 				
-			// site definition
+			// Site definition
 			else {
 						
-				if ( ( $site_blog_id = array_shift( $site_definition ) )
-					&& $site_blog_id > 0 ) {
+				if ( ( $site_blog_id = array_shift( $site_definition ) ) && $site_blog_id > 0 ) {
 					
 					$site_property[ $site_blog_id ] = explode( ',', array_shift( $site_definition ) );
 					
-					// figure out if this is supposed to overwrite the network definition
+					// Figure out if this is supposed to overwrite the network definition
 					if ( isset( $site_definition ) && ! empty( $site_definition ) && ( $site_definition = array_shift( $site_definition ) ) && 'overwrite' == $site_definition ) {
 						$overwrite[ $site_blog_id ] = true;
 					}
@@ -1463,43 +1537,56 @@ class CPT_ONOMIES_MANAGER {
 	public function register_custom_post_types_and_taxonomies() {
 		global $blog_id;
 		
-		// going to save register CPT-onomy info so we can register
-		// all the CPT-onomies at the same time, after the CPTs are registered
+		/**
+		 * Going to save register CPT-onomy info so we
+		 * can register all the CPT-onomies at the same time,
+		 * after the CPTs are registered.
+		 */
 		$register_cpt_onomies = array();
 		
-		//! Register Network CPTs
+		// Register Network CPTs
 		if ( isset( $this->user_settings[ 'network_custom_post_types' ] ) ) {
 		
-			// take this one CPT at a time
+			// Take this one CPT at a time
 			foreach( $this->user_settings[ 'network_custom_post_types' ] as $cpt_key => $cpt ) {
 				if ( ( ! isset( $cpt[ 'site_registration' ] ) || ( isset( $cpt[ 'site_registration' ] ) && empty( $cpt[ 'site_registration' ] ) ) )
 					|| ( isset( $cpt[ 'site_registration' ] ) && in_array( $blog_id, $cpt[ 'site_registration' ] ) ) ) {
 					
-					// In previous versions, we had to register the post type last in order for it to win the rewrite war
-					// As of 1.1, the post type must be registered first in order to register the CPT-onomy and the
-					// post type will still win the rewrite war
+					/**
+					 * In previous versions, we had to register the post type
+					 * last in order for it to win the rewrite war As of 1.1,
+					 * the post type must be registered first in order to register
+					 * the CPT-onomy and the post type will still win the rewrite war.
+					 */
 					
-					// make sure post type is not deactivated and does not already exist		
+					// Make sure post type is not deactivated and does not already exist
 					if ( ! isset( $cpt[ 'deactivate' ] ) && ! post_type_exists( $cpt_key ) ) {
 					
-						// unserialize 'taxonomies' for network settings, since they are a text input
-						// site property is an array of checkboxes and doesn't need to be tampered with
+						/**
+						 * unserialize 'taxonomies' for network settings, since they
+						 * are a text input site property is an array of checkboxes
+						 * and doesn't need to be tampered with.
+						 */
 						if ( isset( $cpt[ 'taxonomies' ] ) && ! empty( $cpt[ 'taxonomies' ] )
 							&& ! is_array( $cpt[ 'taxonomies' ] ) ) {
 							$cpt['taxonomies'] = $this->unserialize_network_custom_post_type_argument( $cpt['taxonomies'] );
 						}
 					
-						// create the arguments
+						// Create the arguments
 						if ( $args = $this->create_custom_post_type_arguments_for_registration( $cpt_key, $cpt, array( 'created_by_cpt_onomies' => true, 'cpt_onomies_network_cpt' => true ) ) ) {
 						
-							// register this puppy
+							// Register this puppy
 							register_post_type( $cpt_key, $args );
 							
 							// If designated, register CPT-onomy
 							if ( isset( $cpt[ 'attach_to_post_type' ] ) && ! empty( $cpt[ 'attach_to_post_type' ] ) ) {
 							
-								// unserialize 'restrict_user_capabilities' for network settings, since they are a text input
-								// site property is an array of checkboxes and doesn't need to be tampered with
+								/**
+								 * unserialize 'restrict_user_capabilities'
+								 * for network settings, since they are a text input
+								 * site property is an array of checkboxes and doesn't
+								 * need to be tampered with.
+								 */
 								if ( isset( $cpt[ 'restrict_user_capabilities' ] ) && ! empty( $cpt[ 'restrict_user_capabilities' ] )
 									&& ! is_array( $cpt[ 'restrict_user_capabilities' ] ) ) {
 									$cpt['restrict_user_capabilities'] = $this->unserialize_network_custom_post_type_argument( $cpt['restrict_user_capabilities'] );
@@ -1532,29 +1619,31 @@ class CPT_ONOMIES_MANAGER {
 			
 		}
 		
-		//! Register Site CPTs
+		// Register Site CPTs
 		if ( isset( $this->user_settings[ 'custom_post_types' ] ) ) {
 		
-			// take this one CPT at a time
+			// Take this one CPT at a time
 			foreach( $this->user_settings[ 'custom_post_types' ] as $cpt_key => $cpt ) {
 			
-				// In previous versions, we had to register the post type last
-				// in order for it to win the rewrite war/
-				// As of 1.1, the post type must be registered first in order to
-				// register the CPT-onomy and the post type will still win the rewrite war.
+				/**
+				 * In previous versions, we had to register the post type last
+				 * in order for it to win the rewrite war. As of 1.1, the post type
+				 * must be registered first in order to register the CPT-onomy and
+				 * the post type will still win the rewrite war.
+				 */
 						
-				// make sure post type is not deactivated
+				// Make sure post type is not deactivated
 				if ( ! isset( $cpt[ 'deactivate' ] ) ) {
 				
-					// make sure the CPT does not already exist
+					// Make sure the CPT does not already exist
 					// (unless its a network-registered CPT, which you're allowed to overwrite on a site level)
 					$post_type_exists = post_type_exists( $cpt_key );
 					if ( ! $post_type_exists || ( $post_type_exists && $this->is_registered_network_cpt( $cpt_key ) ) ) {
 					
-						// create the arguments
+						// Create the arguments
 						if ( $args = $this->create_custom_post_type_arguments_for_registration( $cpt_key, $cpt, array( 'created_by_cpt_onomies' => true ) ) ) {
 						
-							// register this puppy
+							// Register this puppy
 							register_post_type( $cpt_key, $args );
 													
 							// If designated, register CPT-onomy
@@ -1577,7 +1666,7 @@ class CPT_ONOMIES_MANAGER {
 								);
 								
 							}
-							// overwriting network CPT so we have to remove existing CPT-onomy
+							// Overwriting network CPT so we have to remove existing CPT-onomy
 							else if ( isset( $register_cpt_onomies[ $cpt_key ] ) && $this->overwrote_network_cpt( $cpt_key ) ) {
 								unset( $register_cpt_onomies[ $cpt_key ] );
 							}
@@ -1592,15 +1681,15 @@ class CPT_ONOMIES_MANAGER {
 			
 		}
 		
-		//! Register CPT-onomies AFTER all CPTs are registered
+		// Register CPT-onomies AFTER all CPTs are registered
 		foreach( $register_cpt_onomies as $cpt_key => $cpt_onomy_info ) {
 			
-			// let's get this sucker registered!							
+			// Let's get this sucker registered!
 			$this->register_cpt_onomy( $cpt_key, $cpt_onomy_info[ 'attach_to_post_type' ], $cpt_onomy_info[ 'cpt_onomy_args' ] );
 			
 		}
 					
-		//! Register OTHER CPTs as CPT-onomies
+		// Register OTHER CPTs as CPT-onomies
 		if ( ! empty( $this->user_settings[ 'other_custom_post_types' ] ) ) {	
 			foreach( $this->user_settings[ 'other_custom_post_types' ] as $cpt_key => $cpt_settings ) {
 			
@@ -1609,10 +1698,10 @@ class CPT_ONOMIES_MANAGER {
 					&& ! $this->is_registered_cpt( $cpt_key )
 					&& isset( $cpt_settings[ 'attach_to_post_type' ] ) && ! empty( $cpt_settings[ 'attach_to_post_type' ] ) ) {
 				
-					// get post type object
+					// Get post type object
 					$custom_post_type = get_post_type_object( $cpt_key );
 					
-					// create the arguments
+					// Create the arguments
 					$cpt_onomy_args = array(
 						'label' => strip_tags( $custom_post_type->label ),
 						'public' => $custom_post_type->public,
@@ -1626,7 +1715,7 @@ class CPT_ONOMIES_MANAGER {
 						'created_by_cpt_onomies' => true
 					);
 										
-					// let's get this sucker registered!							
+					// Let's get this sucker registered!
 					$this->register_cpt_onomy( $cpt_key, $cpt_settings[ 'attach_to_post_type' ], $cpt_onomy_args );
 					
 				}

@@ -23,1623 +23,1627 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: admin-settings.php:390
+#: admin-settings.php:394
 msgid "You are not running a WordPress multisite and therefore only have one site/blog with a blog ID of 1."
 msgstr ""
 
-#: admin-settings.php:392
+#: admin-settings.php:396
 msgid "You are running a WordPress multisite but there seems to have been a problem retrieving your site information. If the problem persists, %1$svisit your \"Sites\" page%2$s for more information."
 msgstr ""
 
-#: admin-settings.php:568
+#: admin-settings.php:576
 msgid "Settings saved."
 msgstr ""
 
-#: admin-settings.php:659
+#: admin-settings.php:669
 msgid "You must provide a valid \"Label\" or \"Name\" for the custom post type to be saved."
 msgstr ""
 
-#: admin-settings.php:696
+#: admin-settings.php:708
 msgid "The \"name\" you provided for your custom post type was invalid so %1$s just made one up. If \"%2$s\" doesn't work for you, then make sure you edit the name property below."
 msgstr ""
 
-#: admin-settings.php:701
+#: admin-settings.php:713
 msgid "You did not provide a \"name\" for your custom post type so %1$s just made one up. If \"%2$s\" doesn't work for you, then make sure you edit the name property below."
 msgstr ""
 
-#: admin-settings.php:706
+#: admin-settings.php:718
 msgid "The \"name\" you provided for your custom post type was already taken so %1$s just made one up. If \"%2$s\" doesn't work for you, then make sure you edit the name property below."
 msgstr ""
 
-#: admin-settings.php:730
+#: admin-settings.php:742
 msgid "The new \"name\" you provided for your custom post type was already taken so %s restored the original name."
 msgstr ""
 
-#: admin-settings.php:960
+#: admin-settings.php:979
 msgid "%1$s %2$sdeactivated%3$s"
 msgstr ""
 
-#: admin-settings.php:980
+#: admin-settings.php:999
 msgid "%1$s %2$snot registered%3$s"
 msgstr ""
 
-#: admin-settings.php:1029
+#: admin-settings.php:1048
 msgid "Title"
 msgstr ""
 
-#: admin-settings.php:1032
+#: admin-settings.php:1051
 msgid "Editor"
 msgstr ""
 
-#: admin-settings.php:1035, admin-settings.php:2379
+#: admin-settings.php:1054, admin-settings.php:2397
 msgid "Author"
 msgstr ""
 
-#: admin-settings.php:1038
+#: admin-settings.php:1057
 msgid "Thumbnail"
 msgstr ""
 
-#: admin-settings.php:1041
+#: admin-settings.php:1060
 msgid "Excerpt"
 msgstr ""
 
-#: admin-settings.php:1044
+#: admin-settings.php:1063
 msgid "Trackbacks"
 msgstr ""
 
-#: admin-settings.php:1047
+#: admin-settings.php:1066
 msgid "Custom Fields"
 msgstr ""
 
-#: admin-settings.php:1050
+#: admin-settings.php:1069
 msgid "Comments"
 msgstr ""
 
-#: admin-settings.php:1053
+#: admin-settings.php:1072
 msgid "Revisions"
 msgstr ""
 
-#: admin-settings.php:1056
+#: admin-settings.php:1075
 msgid "Page Attributes"
 msgstr ""
 
-#: admin-settings.php:1059
+#: admin-settings.php:1078
 msgid "Post Formats"
 msgstr ""
 
-#: admin-settings.php:1072
+#: admin-settings.php:1091
 msgid "True"
 msgstr ""
 
-#: admin-settings.php:1075
+#: admin-settings.php:1094
 msgid "False"
 msgstr ""
 
-#: admin-settings.php:1083, admin-settings.php:2494
+#: admin-settings.php:1102, admin-settings.php:2512
 msgid "Label"
 msgstr ""
 
-#: admin-settings.php:1087
+#: admin-settings.php:1106
 msgid "A general, %1$susually plural%2$s, descriptive name for the post type."
 msgstr ""
 
-#: admin-settings.php:1087, admin-settings.php:1094
+#: admin-settings.php:1106, admin-settings.php:1113
 msgid "This field is required."
 msgstr ""
 
-#: admin-settings.php:1090, admin-settings.php:2495
+#: admin-settings.php:1109, admin-settings.php:2513
 msgid "Name"
 msgstr ""
 
-#: admin-settings.php:1094
+#: admin-settings.php:1113
 msgid "The name of the post type. This property is very important because it is used to reference the post type all throughout WordPress."
 msgstr ""
 
-#: admin-settings.php:1094
+#: admin-settings.php:1113
 msgid "This should contain only lowercase alphanumeric characters and underscores. Maximum is 20 characters."
 msgstr ""
 
-#: admin-settings.php:1094
+#: admin-settings.php:1113
 msgid "Be careful about changing this field once it has been set and you have created posts because the posts will not convert to the new name."
 msgstr ""
 
-#: admin-settings.php:1097
+#: admin-settings.php:1116
 msgid "Description"
 msgstr ""
 
-#: admin-settings.php:1099
+#: admin-settings.php:1118
 msgid "Feel free to include a description."
 msgstr ""
 
-#: admin-settings.php:1105, admin-settings.php:1698
+#: admin-settings.php:1124, admin-settings.php:1717
 msgid "Register this Custom Post Type as a %s"
 msgstr ""
 
-#: admin-settings.php:1109
+#: admin-settings.php:1128
 msgid "Attach to Post Types"
 msgstr ""
 
-#: admin-settings.php:1111
+#: admin-settings.php:1130
 msgid "This setting allows you to use your custom post type in the same manner as a taxonomy, using your post titles as the terms. This is what we call a \"%1$s\". You can attach this %2$s to to any post type and assign posts just as you would assign taxonomy terms."
 msgstr ""
 
-#: admin-settings.php:1111
+#: admin-settings.php:1130
 msgid "A post type must be checked in order to register this custom post type as a %s."
 msgstr ""
 
-#: admin-settings.php:1115
+#: admin-settings.php:1134
 msgid "Meta Box Title"
 msgstr ""
 
-#: admin-settings.php:1117
+#: admin-settings.php:1136
 msgid "Title, or header, for the admin meta box. If not set, defaults to the %s \"label\"."
 msgstr ""
 
-#: admin-settings.php:1120
+#: admin-settings.php:1139
 msgid "Meta Box Format"
 msgstr ""
 
-#: admin-settings.php:1122
+#: admin-settings.php:1141
 msgid "Meta boxes will be added to each \"Edit Post\" page, where applicable, so users, who have the capability, can assign the desired terms. If a format is not selected, %1$s will use '%2$s' for hierarchical %3$s and '%4$s' for non-hierarchical %5$s."
 msgstr ""
 
-#: admin-settings.php:1125
+#: admin-settings.php:1144
 msgid "Autocomplete"
 msgstr ""
 
-#: admin-settings.php:1128
+#: admin-settings.php:1147
 msgid "Checklist"
 msgstr ""
 
-#: admin-settings.php:1131
+#: admin-settings.php:1150
 msgid "Dropdown"
 msgstr ""
 
-#: admin-settings.php:1131
+#: admin-settings.php:1150
 msgid "limits to one term"
 msgstr ""
 
-#: admin-settings.php:1136
+#: admin-settings.php:1155
 msgid "Show Admin Column"
 msgstr ""
 
-#: admin-settings.php:1138
+#: admin-settings.php:1157
 msgid "Whether or not to add/show the %s column on the admin edit screen for associated post types."
 msgstr ""
 
-#: admin-settings.php:1143
+#: admin-settings.php:1162
 msgid "Admin Column Title"
 msgstr ""
 
-#: admin-settings.php:1145
+#: admin-settings.php:1164
 msgid "Title, or header, for the admin column. If not set, defaults to the %s \"label\"."
 msgstr ""
 
-#: admin-settings.php:1148, admin-settings.php:1271
+#: admin-settings.php:1167, admin-settings.php:1290
 msgid "Has Archive Page"
 msgstr ""
 
-#: admin-settings.php:1150
+#: admin-settings.php:1169
 msgid "This setting allows you to enable archive pages for this %s. If enabled, you can customize the archive page slug below."
 msgstr ""
 
-#: admin-settings.php:1155
+#: admin-settings.php:1174
 msgid "Archive Page Slug"
 msgstr ""
 
-#: admin-settings.php:1157
+#: admin-settings.php:1176
 msgid "You can use the variables %1$s, %2$s and %3$s to customize your slug. %4$s, which is also the default archive page slug, translates to %5$s."
 msgstr ""
 
-#: admin-settings.php:1160, admin-settings.php:1699
+#: admin-settings.php:1179, admin-settings.php:1718
 msgid "Restrict User's Capability to Assign Term Relationships"
 msgstr ""
 
-#: admin-settings.php:1164, admin-settings.php:1280, admin-settings.php:1700, admin-settings.php:1710
+#: admin-settings.php:1183, admin-settings.php:1299, admin-settings.php:1719, admin-settings.php:1729
 msgid "This setting is a little trickier in the network admin to allow for maximum customization."
 msgstr ""
 
-#: admin-settings.php:1164, admin-settings.php:1700
+#: admin-settings.php:1183, admin-settings.php:1719
 msgid "If you want to define user roles network wide, just enter the user roles separated by a comma: %1$s. If you want to define user roles for a specific site, prefix the user roles with the blog ID: %2$s. For multiple sites, separate each site definition with a semicolon: %3$s. To combine network and site definitions, simply separate with a semicolon: %4$s. In this scenario, the site definitions will not overwrite, but merge with, the network definition. If you would like the site definition to overwrite the network definition, add %5$s to the end of your site definition: %6$s."
 msgstr ""
 
-#: admin-settings.php:1166
+#: admin-settings.php:1185
 msgid "This setting allows you to grant specific user roles the capability, or permission, to assign term relationships for this %s."
 msgstr ""
 
-#: admin-settings.php:1166, admin-settings.php:1282
+#: admin-settings.php:1185, admin-settings.php:1301
 msgid "Visit the \"Help\" tab for instructions."
 msgstr ""
 
-#: admin-settings.php:1166
+#: admin-settings.php:1185
 msgid "If no user roles are defined, then all user roles will have permission."
 msgstr ""
 
-#: admin-settings.php:1173, admin-settings.php:1578
+#: admin-settings.php:1192, admin-settings.php:1597
 msgid "Customize the Labels"
 msgstr ""
 
-#: admin-settings.php:1178
+#: admin-settings.php:1197
 msgid "Singular Name"
 msgstr ""
 
-#: admin-settings.php:1180
+#: admin-settings.php:1199
 msgid "Name for one object of this post type. If not set, defaults to the value of the \"Label\" property."
 msgstr ""
 
-#: admin-settings.php:1183
+#: admin-settings.php:1202
 msgid "Add New"
 msgstr ""
 
-#: admin-settings.php:1185
+#: admin-settings.php:1204
 msgid "This label is used for \"Add New\" submenu item. If not set, the default is \"Add New\" for both hierarchical and non-hierarchical posts."
 msgstr ""
 
-#: admin-settings.php:1188
+#: admin-settings.php:1207
 msgid "Add New Item"
 msgstr ""
 
-#: admin-settings.php:1190
+#: admin-settings.php:1209
 msgid "This label is used for the \"Add New\" button. If not set, the default is \"Add New Post\" for non-hierarchical posts and \"Add New Page\" for hierarchical posts."
 msgstr ""
 
-#: admin-settings.php:1193
+#: admin-settings.php:1212
 msgid "Edit Item"
 msgstr ""
 
-#: admin-settings.php:1195
+#: admin-settings.php:1214
 msgid "This label is used when editing an individual post. If not set, the default is \"Edit Post\" for non-hierarchical posts and \"Edit Page\" for hierarchical posts."
 msgstr ""
 
-#: admin-settings.php:1198
+#: admin-settings.php:1217
 msgid "New Item"
 msgstr ""
 
-#: admin-settings.php:1200
+#: admin-settings.php:1219
 msgid "This label is used when creating a new post. If not set, the default is \"New Post\" for non-hierarchical posts and \"New Page\" for hierarchical posts."
 msgstr ""
 
-#: admin-settings.php:1203
+#: admin-settings.php:1222
 msgid "All Items"
 msgstr ""
 
-#: admin-settings.php:1205
+#: admin-settings.php:1224
 msgid "This label is used for the \"All Items\" submenu item. If not set, defaults to the value of the \"Label\" property."
 msgstr ""
 
-#: admin-settings.php:1208
+#: admin-settings.php:1227
 msgid "View Item"
 msgstr ""
 
-#: admin-settings.php:1210
+#: admin-settings.php:1229
 msgid "This label is used when viewing an individual post. If not set, the default is \"View Post\" for non-hierarchical posts and \"View Page\" for hierarchical posts."
 msgstr ""
 
-#: admin-settings.php:1213
+#: admin-settings.php:1232
 msgid "Search Items"
 msgstr ""
 
-#: admin-settings.php:1215
+#: admin-settings.php:1234
 msgid "This label is used for the \"Search Posts\" button. If not set, the default is \"Search Posts\" for non-hierarchical posts and \"Search Pages\" for hierarchical posts."
 msgstr ""
 
-#: admin-settings.php:1218
+#: admin-settings.php:1237
 msgid "Not Found"
 msgstr ""
 
-#: admin-settings.php:1220
+#: admin-settings.php:1239
 msgid "This label is used when no posts are found. If not set, the default is \"No posts found\" for non-hierarchical posts and \"No pages found\" for hierarchical posts."
 msgstr ""
 
-#: admin-settings.php:1223
+#: admin-settings.php:1242
 msgid "Not Found in Trash"
 msgstr ""
 
-#: admin-settings.php:1225
+#: admin-settings.php:1244
 msgid "This label is used when no posts are found in the trash. If not set, the default is \"No posts found in Trash\" for non-hierarchical posts and \"No pages found in Trash\" for hierarchical posts."
 msgstr ""
 
-#: admin-settings.php:1228
+#: admin-settings.php:1247
 msgid "Parent Item Colon"
 msgstr ""
 
-#: admin-settings.php:1230
+#: admin-settings.php:1249
 msgid "This label is used when displaying a post's parent. This string is not used on non-hierarchical posts. If post is hierarchical, and not set, the default is \"Parent Page\"."
 msgstr ""
 
-#: admin-settings.php:1233
+#: admin-settings.php:1252
 msgid "Menu Name"
 msgstr ""
 
-#: admin-settings.php:1235
+#: admin-settings.php:1254
 msgid "This label is used as the text for the menu item. If not set, defaults to the value of the \"Label\" property."
 msgstr ""
 
-#: admin-settings.php:1238
+#: admin-settings.php:1257
 msgid "Name for Admin Bar"
 msgstr ""
 
-#: admin-settings.php:1240
+#: admin-settings.php:1259
 msgid "This label is used for the \"Add New\" dropdown on the admin bar. If not set, uses the \"Singular Name\" label, if it exists. Otherwise, it defaults to the value of the \"Label\" property."
 msgstr ""
 
-#: admin-settings.php:1245, admin-settings.php:1706
+#: admin-settings.php:1264, admin-settings.php:1725
 msgid "Advanced Options"
 msgstr ""
 
-#: admin-settings.php:1250, admin-settings.php:2496
+#: admin-settings.php:1269, admin-settings.php:2514
 msgid "Public"
 msgstr ""
 
-#: admin-settings.php:1252
+#: admin-settings.php:1271
 msgid "This setting defines whether this post type is visible in the admin and front-end of your site. This property is a catchall and trickles down to define other properties (\"Show UI\", \"Publicly Queryable\", and \"Exclude From Search\") unless they are set individually. For complete customization, be sure to check the value of these other properties."
 msgstr ""
 
-#: admin-settings.php:1257
+#: admin-settings.php:1276
 msgid "Hierarchical"
 msgstr ""
 
-#: admin-settings.php:1259
+#: admin-settings.php:1278
 msgid "This setting defines whether this post type is hierarchical, which allows a parent to be specified. In order to define a post's parent, the post type must support \"Page Attributes\"."
 msgstr ""
 
-#: admin-settings.php:1264
+#: admin-settings.php:1283
 msgid "Supports"
 msgstr ""
 
-#: admin-settings.php:1266
+#: admin-settings.php:1285
 msgid "These settings let you register support for certain features. All features are directly associated with a functional area of the edit post screen."
 msgstr ""
 
-#: admin-settings.php:1273
+#: admin-settings.php:1292
 msgid "This setting allows you to define/enable an archives page for this post type."
 msgstr ""
 
-#: admin-settings.php:1273
+#: admin-settings.php:1292
 msgid "%1$sThe default setting is true so leave the field blank if you want an archives page%2$s (which will tell WordPress to use the post type name as the slug) or enter your own customized archive slug. Type %3$s if you do not want an archives page."
 msgstr ""
 
-#: admin-settings.php:1276, admin-settings.php:1709
+#: admin-settings.php:1295, admin-settings.php:1728
 msgid "Taxonomies"
 msgstr ""
 
-#: admin-settings.php:1280, admin-settings.php:1710
+#: admin-settings.php:1299, admin-settings.php:1729
 msgid "If you want to define taxonomies network wide, just enter the taxonomy names separated by a comma: %1$s. If you want to define taxonomies for a specific site, prefix the taxonomy names with the blog ID: %2$s. For multiple sites, separate each site definition with a semicolon: %3$s. To combine network and site definitions, simply separate with a semicolon: %4$s. In this scenario, the site definitions will not overwrite, but merge with, the network definition. If you would like the site definition to overwrite the network definition, add %5$s to the end of your site definition: %6$s."
 msgstr ""
 
-#: admin-settings.php:1282
+#: admin-settings.php:1301
 msgid "This setting allows you to add support for pre-existing, registered %s taxonomies."
 msgstr ""
 
-#: admin-settings.php:1286
+#: admin-settings.php:1305
 msgid "Show UI"
 msgstr ""
 
-#: admin-settings.php:1288
+#: admin-settings.php:1307
 msgid "This setting defines whether to show the administration screens for managing this post type."
 msgstr ""
 
-#: admin-settings.php:1288, admin-settings.php:1310, admin-settings.php:1327
+#: admin-settings.php:1307, admin-settings.php:1329, admin-settings.php:1346
 msgid "If not set, defaults to the value of the \"Public\" property."
 msgstr ""
 
-#: admin-settings.php:1292
+#: admin-settings.php:1311
 msgid "Show in Admin Menu"
 msgstr ""
 
-#: admin-settings.php:1294
+#: admin-settings.php:1313
 msgid "This setting allows you to customize the placement of this post type in the admin menu."
 msgstr ""
 
-#: admin-settings.php:1294
+#: admin-settings.php:1313
 msgid "Note that \"Show UI\" must be true."
 msgstr ""
 
-#: admin-settings.php:1294
+#: admin-settings.php:1313
 msgid "If you think the menu item is fine where it is, leave this field blank."
 msgstr ""
 
-#: admin-settings.php:1294
+#: admin-settings.php:1313
 msgid " Type %1$s to remove from the menu, %2$s to display as a top-level menu, or enter the name of a top-level menu (i.e. %3$s or %4$s) to add this item to it's submenu."
 msgstr ""
 
-#: admin-settings.php:1297, admin-settings.php:1716
+#: admin-settings.php:1316, admin-settings.php:1735
 msgid "Admin Menu Position"
 msgstr ""
 
-#: admin-settings.php:1300
+#: admin-settings.php:1319
 msgid "This setting defines the position in the menu order where the post type item should appear. If you think the menu item is fine where it is, leave this field blank. To move the menu item up or down, enter a custom menu position."
 msgstr ""
 
-#: admin-settings.php:1300
+#: admin-settings.php:1319
 msgid "If not set, post types are added below the \"Comments\" menu item."
 msgstr ""
 
-#: admin-settings.php:1300
+#: admin-settings.php:1319
 msgid "Visit the \"Help\" tab for a list of suggested menu positions."
 msgstr ""
 
-#: admin-settings.php:1303
+#: admin-settings.php:1322
 msgid "Menu Icon"
 msgstr ""
 
-#: admin-settings.php:1305
+#: admin-settings.php:1324
 msgid "This setting defines the URL to the image you want to use as the menu icon for this post type in the admin menu."
 msgstr ""
 
-#: admin-settings.php:1305
+#: admin-settings.php:1324
 msgid "If not set, the menu will show the Posts icon."
 msgstr ""
 
-#: admin-settings.php:1308
+#: admin-settings.php:1327
 msgid "Show in Nav Menus"
 msgstr ""
 
-#: admin-settings.php:1310
+#: admin-settings.php:1329
 msgid "This setting enables posts of this type to appear for selection in the navigation menus."
 msgstr ""
 
-#: admin-settings.php:1314
+#: admin-settings.php:1333
 msgid "Show in Admin Bar"
 msgstr ""
 
-#: admin-settings.php:1316
+#: admin-settings.php:1335
 msgid "This setting defines whether or not to make this post type available in the WordPress admin bar."
 msgstr ""
 
-#: admin-settings.php:1316
+#: admin-settings.php:1335
 msgid "If not set, defaults to the value of the \"Show In Admin Menu\" property."
 msgstr ""
 
-#: admin-settings.php:1320
+#: admin-settings.php:1339
 msgid "Query Variable"
 msgstr ""
 
-#: admin-settings.php:1322
+#: admin-settings.php:1341
 msgid "This setting defines the query variable used to search for posts of this type. Type %s to prevent queries or enter a custom query variable name."
 msgstr ""
 
-#: admin-settings.php:1322
+#: admin-settings.php:1341
 msgid "If not set, defaults to true and the variable will equal the name of the post type."
 msgstr ""
 
-#: admin-settings.php:1325
+#: admin-settings.php:1344
 msgid "Publicly Queryable"
 msgstr ""
 
-#: admin-settings.php:1327
+#: admin-settings.php:1346
 msgid "This setting defines whether queries for this post type can be performed on the front-end of your site."
 msgstr ""
 
-#: admin-settings.php:1331
+#: admin-settings.php:1350
 msgid "Exclude From Search"
 msgstr ""
 
-#: admin-settings.php:1333
+#: admin-settings.php:1352
 msgid "This setting allows you to exclude posts with this post type from search results on your site."
 msgstr ""
 
-#: admin-settings.php:1333
+#: admin-settings.php:1352
 msgid "If not set, defaults to the OPPOSITE value of the \"Public\" property."
 msgstr ""
 
-#: admin-settings.php:1337
+#: admin-settings.php:1356
 msgid "Register Meta Box Callback"
 msgstr ""
 
-#: admin-settings.php:1339
+#: admin-settings.php:1358
 msgid "This setting allows you to provide a callback function that will be called for setting up your post type's meta boxes."
 msgstr ""
 
-#: admin-settings.php:1339
+#: admin-settings.php:1358
 msgid "Enter the function's name only."
 msgstr ""
 
-#: admin-settings.php:1342
+#: admin-settings.php:1361
 msgid "Rewrite"
 msgstr ""
 
-#: admin-settings.php:1346
+#: admin-settings.php:1365
 msgid "Enable Permalinks"
 msgstr ""
 
-#: admin-settings.php:1348
+#: admin-settings.php:1367
 msgid "This setting allows you to activate custom permalinks for this post type. If %1$s, WordPress will create permalinks and use the post type (or \"Query Var\", if set) as the slug. If %2$s, this post type will have no custom permalink structure."
 msgstr ""
 
-#: admin-settings.php:1353
+#: admin-settings.php:1372
 msgid "Slug"
 msgstr ""
 
-#: admin-settings.php:1355
+#: admin-settings.php:1374
 msgid "If rewrite is enabled, you can customize your permalink rewrite even further by prepending posts with a custom slug."
 msgstr ""
 
-#: admin-settings.php:1355
+#: admin-settings.php:1374
 msgid "If not set, defaults to the post type."
 msgstr ""
 
-#: admin-settings.php:1358
+#: admin-settings.php:1377
 msgid "With Front"
 msgstr ""
 
-#: admin-settings.php:1360
+#: admin-settings.php:1379
 msgid "This setting defines whether to allow permalinks to be prepended with the permalink front base. Example: If your permalink structure is /blog/, then your links will be: %1$s = '/blog/news/', %2$s = '/news/'."
 msgstr ""
 
-#: admin-settings.php:1365
+#: admin-settings.php:1384
 msgid "Feeds"
 msgstr ""
 
-#: admin-settings.php:1367
+#: admin-settings.php:1386
 msgid "This setting defines whether this post type will have a feed for its posts."
 msgstr ""
 
-#: admin-settings.php:1367
+#: admin-settings.php:1386
 msgid "\"Has Archive Page\" needs to be set to true for the feeds to work."
 msgstr ""
 
-#: admin-settings.php:1367
+#: admin-settings.php:1386
 msgid "If not set, defaults to the value of the \"Has Archive Page\" property."
 msgstr ""
 
-#: admin-settings.php:1371
+#: admin-settings.php:1390
 msgid "Pages"
 msgstr ""
 
-#: admin-settings.php:1373
+#: admin-settings.php:1392
 msgid "This setting defines whether this post type's archive pages should be paginated."
 msgstr ""
 
-#: admin-settings.php:1373
+#: admin-settings.php:1392
 msgid "\"Has Archive Page\" needs to be set to true for the archive pages to work."
 msgstr ""
 
-#: admin-settings.php:1380
+#: admin-settings.php:1399
 msgid "Map Meta Cap"
 msgstr ""
 
-#: admin-settings.php:1382
+#: admin-settings.php:1401
 msgid "This setting defines whether to use the internal default meta capability handling."
 msgstr ""
 
-#: admin-settings.php:1387
+#: admin-settings.php:1406
 msgid "Capability Type"
 msgstr ""
 
-#: admin-settings.php:1389
+#: admin-settings.php:1408
 msgid "This setting allows you to define a custom set of capabilities. This term will be used to build the read, edit, and delete capabilities. The \"Capabilities\" property below can be used to overwrite specific individual capabilities. If you want to pass multiple capability types to allow for alternative plurals, separate the types with a space or comma, e.g. story, stories."
 msgstr ""
 
-#: admin-settings.php:1389
+#: admin-settings.php:1408
 msgid "If not set, the default is post."
 msgstr ""
 
-#: admin-settings.php:1392
+#: admin-settings.php:1411
 msgid "Capabilities"
 msgstr ""
 
-#: admin-settings.php:1396
+#: admin-settings.php:1415
 msgid "Read"
 msgstr ""
 
-#: admin-settings.php:1398
+#: admin-settings.php:1417
 msgid "This capability controls whether objects of this post type can be read by the user."
 msgstr ""
 
-#: admin-settings.php:1401
+#: admin-settings.php:1420
 msgid "Read Post"
 msgstr ""
 
-#: admin-settings.php:1406
+#: admin-settings.php:1425
 msgid "Read Private Posts"
 msgstr ""
 
-#: admin-settings.php:1408
+#: admin-settings.php:1427
 msgid "This capability controls whether private objects of this post type can be read by the user."
 msgstr ""
 
-#: admin-settings.php:1411
+#: admin-settings.php:1430
 msgid "Edit Post"
 msgstr ""
 
-#: admin-settings.php:1416
+#: admin-settings.php:1435
 msgid "Edit Posts"
 msgstr ""
 
-#: admin-settings.php:1418
+#: admin-settings.php:1437
 msgid "This capability controls whether objects of this post type can be edited by the user."
 msgstr ""
 
-#: admin-settings.php:1421
+#: admin-settings.php:1440
 msgid "Edit Others Posts"
 msgstr ""
 
-#: admin-settings.php:1423
+#: admin-settings.php:1442
 msgid "This capability controls whether objects of this type, owned by other users, can be edited by the user. If the post type does not support an author, then this will behave like edit_posts."
 msgstr ""
 
-#: admin-settings.php:1426
+#: admin-settings.php:1445
 msgid "Edit Private Posts"
 msgstr ""
 
-#: admin-settings.php:1428
+#: admin-settings.php:1447
 msgid "This capability controls whether private objects of this post type can be edited by the user."
 msgstr ""
 
-#: admin-settings.php:1431
+#: admin-settings.php:1450
 msgid "Edit Published Posts"
 msgstr ""
 
-#: admin-settings.php:1433
+#: admin-settings.php:1452
 msgid "This capability controls whether published objects of this post type can be edited by the user."
 msgstr ""
 
-#: admin-settings.php:1436
+#: admin-settings.php:1455
 msgid "Delete Post"
 msgstr ""
 
-#: admin-settings.php:1441
+#: admin-settings.php:1460
 msgid "Delete Posts"
 msgstr ""
 
-#: admin-settings.php:1443
+#: admin-settings.php:1462
 msgid "This capability controls whether objects of this post type can be deleted by the user."
 msgstr ""
 
-#: admin-settings.php:1446
+#: admin-settings.php:1465
 msgid "Delete Private Posts"
 msgstr ""
 
-#: admin-settings.php:1448
+#: admin-settings.php:1467
 msgid "This capability controls whether private objects of this post type can be deleted by the user."
 msgstr ""
 
-#: admin-settings.php:1451
+#: admin-settings.php:1470
 msgid "Delete Others Posts"
 msgstr ""
 
-#: admin-settings.php:1453
+#: admin-settings.php:1472
 msgid "This capability controls whether objects, owned by other users, can be deleted by the user. If the post type does not support an author, then this will behave like delete_posts."
 msgstr ""
 
-#: admin-settings.php:1456
+#: admin-settings.php:1475
 msgid "Delete Published Posts"
 msgstr ""
 
-#: admin-settings.php:1458
+#: admin-settings.php:1477
 msgid "This capability controls whether published objects of this post type can be deleted by the user."
 msgstr ""
 
-#: admin-settings.php:1461
+#: admin-settings.php:1480
 msgid "Publish Posts"
 msgstr ""
 
-#: admin-settings.php:1463
+#: admin-settings.php:1482
 msgid "This capability controls whether this user can publish objects of this post type."
 msgstr ""
 
-#: admin-settings.php:1468
+#: admin-settings.php:1487
 msgid "Can Export"
 msgstr ""
 
-#: admin-settings.php:1470
+#: admin-settings.php:1489
 msgid "This setting defines whether users can export posts with this post type."
 msgstr ""
 
-#: admin-settings.php:1475
+#: admin-settings.php:1494
 msgid "Delete With User"
 msgstr ""
 
-#: admin-settings.php:1477
+#: admin-settings.php:1496
 msgid "Whether to delete posts of this type when deleting a user. If true, posts of this type belonging to the user will be moved to trash when then user is deleted. If false, posts of this type belonging to the user will not be trashed or deleted. If not set (the default), posts are trashed if the post type supports 'author'. Otherwise posts are not trashed or deleted."
 msgstr ""
 
-#: admin-settings.php:1481
+#: admin-settings.php:1500
 msgid "Permalink Endpoint Bitmasks"
 msgstr ""
 
-#: admin-settings.php:1483
+#: admin-settings.php:1502
 msgid "This setting defines the rewrite endpoint bitmask used for posts with this post type."
 msgstr ""
 
-#: admin-settings.php:1483
+#: admin-settings.php:1502
 msgid "If not set, defaults to EP_PERMALINK."
 msgstr ""
 
-#: admin-settings.php:1489
+#: admin-settings.php:1508
 msgid "Deactivate"
 msgstr ""
 
-#: admin-settings.php:1491
+#: admin-settings.php:1510
 msgid "This setting allows you to deactive, or disable, your custom post type (and hide it from WordPress) while allowing you to save your settings for later use."
 msgstr ""
 
-#: admin-settings.php:1491
+#: admin-settings.php:1510
 msgid "Deactivating your custom post type does not delete its posts."
 msgstr ""
 
-#: admin-settings.php:1494
+#: admin-settings.php:1513
 msgid "Deactivate this CPT but save my settings."
 msgstr ""
 
-#: admin-settings.php:1518
+#: admin-settings.php:1537
 msgid "Register this Custom Post Type on a Site-by-Site Basis"
 msgstr ""
 
-#: admin-settings.php:1521
+#: admin-settings.php:1540
 msgid "This option is provided for those who wish to register a custom post type on multiple sites but not the entire network."
 msgstr ""
 
-#: admin-settings.php:1521
+#: admin-settings.php:1540
 msgid "Leave this setting blank if you want to register your custom post type on ALL sites."
 msgstr ""
 
-#: admin-settings.php:1563
+#: admin-settings.php:1582
 msgid "It looks like you might have some unsaved changes."
 msgstr ""
 
-#: admin-settings.php:1564
+#: admin-settings.php:1583
 msgid "Are you sure you want to leave?"
 msgstr ""
 
-#: admin-settings.php:1565
+#: admin-settings.php:1584
 msgid "Are you sure you want to delete the conflicting taxonomy terms?"
 msgstr ""
 
-#: admin-settings.php:1566
+#: admin-settings.php:1585
 msgid "There is NO undo and once you click \"OK\", all of the terms will be deleted and cannot be restored."
 msgstr ""
 
-#: admin-settings.php:1567
+#: admin-settings.php:1586
 msgid "Are you sure you want to delete this custom post type?"
 msgstr ""
 
-#: admin-settings.php:1568
+#: admin-settings.php:1587
 msgid "There is NO undo and once you click \"OK\", all of your settings will be gone."
 msgstr ""
 
-#: admin-settings.php:1569
+#: admin-settings.php:1588
 msgid "Deleting your custom post type DOES NOT delete the actual posts."
 msgstr ""
 
-#: admin-settings.php:1570
+#: admin-settings.php:1589
 msgid "They'll be waiting for you if you decide to register this post type again."
 msgstr ""
 
-#: admin-settings.php:1571
+#: admin-settings.php:1590
 msgid "Just make sure you use the same name."
 msgstr ""
 
-#: admin-settings.php:1572
+#: admin-settings.php:1591
 msgid "Close Site Registration"
 msgstr ""
 
-#: admin-settings.php:1573
+#: admin-settings.php:1592
 msgid "Close Labels"
 msgstr ""
 
-#: admin-settings.php:1574
+#: admin-settings.php:1593
 msgid "Close Advanced Options"
 msgstr ""
 
-#: admin-settings.php:1575
+#: admin-settings.php:1594
 msgid "If you want to register your custom post type on multiple sites, but not the entire network, this section is for you. However, your list of sites is kind of long so we hid it away as to not clog up your screen."
 msgstr ""
 
-#: admin-settings.php:1576
+#: admin-settings.php:1595
 msgid "Show your List of Sites"
 msgstr ""
 
-#: admin-settings.php:1577
+#: admin-settings.php:1596
 msgid "Instead of sticking with the boring defaults, why don't you customize the labels used for your custom post type. They can really add a nice touch."
 msgstr ""
 
-#: admin-settings.php:1579
+#: admin-settings.php:1598
 msgid "You can make your custom post type as \"advanced\" as you like but, beware, some of these options can get tricky. Visit the \"Help\" tab if you get stuck."
 msgstr ""
 
-#: admin-settings.php:1580
+#: admin-settings.php:1599
 msgid "Edit the Advanced Options"
 msgstr ""
 
-#: admin-settings.php:1581
+#: admin-settings.php:1600
 msgid "Your post type name is invalid."
 msgstr ""
 
-#: admin-settings.php:1582
+#: admin-settings.php:1601
 msgid "That post type name already exists. Please choose another name."
 msgstr ""
 
-#: admin-settings.php:1624
+#: admin-settings.php:1643
 msgid "Getting Started"
 msgstr ""
 
-#: admin-settings.php:1629, admin-settings.php:1694
+#: admin-settings.php:1648, admin-settings.php:1713
 msgid "Managing/Editing Your Custom Post Type Settings"
 msgstr ""
 
-#: admin-settings.php:1634, admin-settings.php:1760
+#: admin-settings.php:1653, admin-settings.php:1779
 msgid "Custom %s Archive Pages"
 msgstr ""
 
-#: admin-settings.php:1639, admin-settings.php:1792
+#: admin-settings.php:1658, admin-settings.php:1811
 msgid "Troubleshooting"
 msgstr ""
 
-#: admin-settings.php:1654
+#: admin-settings.php:1673
 msgid "Getting Started With %s"
 msgstr ""
 
-#: admin-settings.php:1655
+#: admin-settings.php:1674
 msgid "What Is A %s?"
 msgstr ""
 
-#: admin-settings.php:1656
+#: admin-settings.php:1675
 msgid "A %1$s is a Custom-Post-Type-powered taxonomy that functions just like a regular WordPress taxonomy, using your post titles as your taxonomy terms. \"Attach\", or register, your %2$s to any post type and create relationships between your posts, just as you would create taxonomy relationships. Need to associate a %3$s term with its post? No problem!"
 msgstr ""
 
-#: admin-settings.php:1656
+#: admin-settings.php:1675
 msgid "The %s term's term ID is the same as the post ID."
 msgstr ""
 
-#: admin-settings.php:1657
+#: admin-settings.php:1676
 msgid "Is %s an official WordPress term?"
 msgstr ""
 
-#: admin-settings.php:1658
+#: admin-settings.php:1677
 msgid "No. It's just a fun word I made up."
 msgstr ""
 
-#: admin-settings.php:1659
+#: admin-settings.php:1678
 msgid "Need Custom Post Types But Not (Necessarily) %s?"
 msgstr ""
 
-#: admin-settings.php:1660
+#: admin-settings.php:1679
 msgid "%1$s offers an extensive, %2$sand multisite compatible%3$s, custom post type manager, allowing you to create and completely customize your custom post types within the admin."
 msgstr ""
 
-#: admin-settings.php:1661
+#: admin-settings.php:1680
 msgid "How to Get Started"
 msgstr ""
 
-#: admin-settings.php:1664
+#: admin-settings.php:1683
 msgid "You can't have a %1$s without a custom post type! %2$sAdd a new custom post type%3$s, register the custom post type as a %4$s (under \"Register this Custom Post Type as a %5$s\" on the edit screen) and %6$s will take care of the rest."
 msgstr ""
 
-#: admin-settings.php:1666
+#: admin-settings.php:1685
 msgid "You can't have a %1$s without a custom post type! %2$sAdd a new custom post type%3$s (or %4$suse custom post types created by themes or other plugins%5$s), register the custom post type as a %6$s (under \"Register this Custom Post Type as a %7$s\" on the edit screen) and %8$s will take care of the rest."
 msgstr ""
 
-#: admin-settings.php:1669
+#: admin-settings.php:1688
 msgid "Why %s?"
 msgstr ""
 
-#: admin-settings.php:1670
+#: admin-settings.php:1689
 msgid "It doesn't take long to figure out that custom post types can be a pretty powerful tool for creating and managing numerous types of content. For example, you might use the custom post types \"Movies\" and \"Actors\" to build a movie database but what if you wanted to group your \"movies\" by its \"actors\"? You could create a custom \"actors\" taxonomy but then you would have to manage your list of actors in two places: your \"actors\" custom post type and your \"actors\" taxonomy. This can be a pretty big hassle, especially if you have an extensive custom post type."
 msgstr ""
 
-#: admin-settings.php:1671
+#: admin-settings.php:1690
 msgid "This is where %s steps in."
 msgstr ""
 
-#: admin-settings.php:1671
+#: admin-settings.php:1690
 msgid "Register your custom post type, 'Actors', as a %1$s and %2$s will build your 'actors' taxonomy for you, using your actors' post titles as the terms. Pretty cool, huh?"
 msgstr ""
 
-#: admin-settings.php:1672
+#: admin-settings.php:1691
 msgid "Using %s"
 msgstr ""
 
-#: admin-settings.php:1673
+#: admin-settings.php:1692
 msgid "What's really great about %1$s is that they function just like any other taxonomy, allowing you to use WordPress taxonomy functions, like %2$s, %3$s and %4$s, to access the %5$s information you need. %6$s will also work with tax queries when using %7$sThe Loop%8$s, help you build %9$scustom %10$s archive pages%11$s, allow you to %12$sprogrammatically register your %13$s%14$s, and includes a tag cloud widget for your sidebar. %15$sCheck out the %16$s documentation%17$s for more information."
 msgstr ""
 
-#: admin-settings.php:1674
+#: admin-settings.php:1693
 msgid "If you're not sure what a taxonomy is, how to use one, or if it's right for your needs, be sure to do some research. %1$sThe WordPress Codex page for taxonomies%2$s is a great place to start!"
 msgstr ""
 
-#: admin-settings.php:1675
+#: admin-settings.php:1694
 msgid "Note"
 msgstr ""
 
-#: admin-settings.php:1675
+#: admin-settings.php:1694
 msgid "Unfortunately, not every taxonomy function can be used at this time. %1$sCheck out the %2$s documentation%3$s to see which WordPress taxonomy functions work and when you'll need to access the plugin's %4$s functions."
 msgstr ""
 
-#: admin-settings.php:1695
+#: admin-settings.php:1714
 msgid "For the most part, managing your custom post type settings is fairly easy. However, there are a few settings that can either be confusing or complicated. If you can't find the answer below, refer to %1$sthe WordPress Codex%2$s, %3$sthe plugin's support forums%4$s, or %5$smy web site%6$s for help."
 msgstr ""
 
-#: admin-settings.php:1717
+#: admin-settings.php:1736
 msgid "If you would like to customize your custom post type's postion in the administration menu, all you have to do is enter a custom menu position. Use the table below as a quide."
 msgstr ""
 
-#: admin-settings.php:1720
+#: admin-settings.php:1739
 msgid "5"
 msgstr ""
 
-#: admin-settings.php:1720
+#: admin-settings.php:1739
 msgid "below Posts"
 msgstr ""
 
-#: admin-settings.php:1721
+#: admin-settings.php:1740
 msgid "65"
 msgstr ""
 
-#: admin-settings.php:1721
+#: admin-settings.php:1740
 msgid "below Plugins"
 msgstr ""
 
-#: admin-settings.php:1724
+#: admin-settings.php:1743
 msgid "10"
 msgstr ""
 
-#: admin-settings.php:1724
+#: admin-settings.php:1743
 msgid "below Media"
 msgstr ""
 
-#: admin-settings.php:1725
+#: admin-settings.php:1744
 msgid "70"
 msgstr ""
 
-#: admin-settings.php:1725
+#: admin-settings.php:1744
 msgid "below Users"
 msgstr ""
 
-#: admin-settings.php:1728
+#: admin-settings.php:1747
 msgid "15"
 msgstr ""
 
-#: admin-settings.php:1728
+#: admin-settings.php:1747
 msgid "below Links"
 msgstr ""
 
-#: admin-settings.php:1729
+#: admin-settings.php:1748
 msgid "75"
 msgstr ""
 
-#: admin-settings.php:1729
+#: admin-settings.php:1748
 msgid "below Tools"
 msgstr ""
 
-#: admin-settings.php:1732
+#: admin-settings.php:1751
 msgid "20"
 msgstr ""
 
-#: admin-settings.php:1732
+#: admin-settings.php:1751
 msgid "below Pages"
 msgstr ""
 
-#: admin-settings.php:1733
+#: admin-settings.php:1752
 msgid "80"
 msgstr ""
 
-#: admin-settings.php:1733
+#: admin-settings.php:1752
 msgid "below Settings"
 msgstr ""
 
-#: admin-settings.php:1736
+#: admin-settings.php:1755
 msgid "25"
 msgstr ""
 
-#: admin-settings.php:1736
+#: admin-settings.php:1755
 msgid "below comments"
 msgstr ""
 
-#: admin-settings.php:1737
+#: admin-settings.php:1756
 msgid "100"
 msgstr ""
 
-#: admin-settings.php:1737
+#: admin-settings.php:1756
 msgid "below second separator"
 msgstr ""
 
-#: admin-settings.php:1740
+#: admin-settings.php:1759
 msgid "60"
 msgstr ""
 
-#: admin-settings.php:1740
+#: admin-settings.php:1759
 msgid "below first separator"
 msgstr ""
 
-#: admin-settings.php:1761
+#: admin-settings.php:1780
 msgid "As of version 1.2, %1$s has implemented a simple, built-in method of setting up custom %2$s archive pages that's as easy as adding a rewrite rule with a few parameters. I've included a few samples that should help you get your feet wet."
 msgstr ""
 
-#: admin-settings.php:1762
+#: admin-settings.php:1781
 msgid "Just a few notes before you get started:"
 msgstr ""
 
-#: admin-settings.php:1764
+#: admin-settings.php:1783
 msgid "The %s parameter is required to make all of this work."
 msgstr ""
 
-#: admin-settings.php:1767
+#: admin-settings.php:1786
 msgid "You're running a multsite network so be sure to keep that in mind when adding rewrite rules. If you don't want to add your rewrites to every site on your network, access the global %s variable to add rewrite rules to specific blog IDs. "
 msgstr ""
 
-#: admin-settings.php:1770
+#: admin-settings.php:1789
 msgid "Be sure to flush your rewrite rules each time you edit them. Flush your rewrite rules by visiting Settings -> Permalinks and clicking \"Save Changes\"."
 msgstr ""
 
-#: admin-settings.php:1771
+#: admin-settings.php:1790
 msgid "If you have multiple rewrite rules with the same base, like the first two examples below, the rule with the longer structure needs to go first."
 msgstr ""
 
-#: admin-settings.php:1773
+#: admin-settings.php:1792
 msgid "Says that if the URL matches this rule, i.e. %1$s,%2$s then it should display the %3$s post type that are tagged with the first term (which should be%4$s from the %5$s %6$s) and the second term (which should be from the %7$s %8$s)."
 msgstr ""
 
-#: admin-settings.php:1773
+#: admin-settings.php:1792
 msgid "Says that if the URL matches this rule, i.e. %1$s,%2$s then it should display the %3$s post type that are tagged with the first term (which should%4$s be from the %5$s %6$s)."
 msgstr ""
 
-#: admin-settings.php:1773
+#: admin-settings.php:1792
 msgid "Says that if the URL matches this rule, i.e. %1$s,%2$s then it should display all post types that are tagged with the first term (which should be from the %3$s %4$s)."
 msgstr ""
 
-#: admin-settings.php:1793
+#: admin-settings.php:1812
 msgid "If you're having trouble, and can't find the answer below, %1$scheck the support forums%2$s or %3$svisit my web site%4$s. If your problem involves a custom post type setting, %5$sthe WordPress Codex%6$s might be able to help."
 msgstr ""
 
-#: admin-settings.php:1796
+#: admin-settings.php:1815
 msgid "Because the network admin is assigned a blog ID of 1, which is the same as your main blog, it detects network-registered post types AND post types registered for your main blog. This makes it hard to troubleshoot/validate network-registered custom post type settings. Please keep this in mind while managing your network-registered custom post types. If a custom post type, or %s, is not behaving as it should on an individual site, check your individual site settings to make sure you do not have a custom post type, with the same name, overwriting your network settings."
 msgstr ""
 
-#: admin-settings.php:1799
+#: admin-settings.php:1818
 msgid "My custom post type and/or %s is not showing up"
 msgstr ""
 
-#: admin-settings.php:1800
+#: admin-settings.php:1819
 msgid "Make sure your custom post type has not been deactivated. If you are %1$sprogrammatically registering a %2$s%3$s, and it is not showing up, make sure your custom post type has been registered BEFORE you register it's namesake %4$s."
 msgstr ""
 
-#: admin-settings.php:1801
+#: admin-settings.php:1820
 msgid "My custom post type and/or %s archive page is not working"
 msgstr ""
 
-#: admin-settings.php:1802
+#: admin-settings.php:1821
 msgid "If archive pages are enabled but are not working correctly, or are receiving a 404 error, it's probably the result of a rewrite or permalink error. Here are a few suggestions to get things working:"
 msgstr ""
 
-#: admin-settings.php:1804
+#: admin-settings.php:1823
 msgid "Double check \"Has Archive Page\""
 msgstr ""
 
-#: admin-settings.php:1804
+#: admin-settings.php:1823
 msgid "Make sure the archive pages are enabled."
 msgstr ""
 
-#: admin-settings.php:1805
+#: admin-settings.php:1824
 msgid "Are pretty permalinks enabled?"
 msgstr ""
 
-#: admin-settings.php:1805
+#: admin-settings.php:1824
 msgid "Archive pages will not work without pretty permalinks. Visit Settings %s Permalinks and make sure anything but \"Default\" is selected."
 msgstr ""
 
-#: admin-settings.php:1806
+#: admin-settings.php:1825
 msgid "Reset your rewrite rules:"
 msgstr ""
 
-#: admin-settings.php:1806
+#: admin-settings.php:1825
 msgid "Whenever rewrite settings are changed, the rules need to be \"flushed\" to make sure everything is in working order. Flush your rewrite rules by visiting Settings %s Permalinks and clicking \"Save Changes\"."
 msgstr ""
 
-#: admin-settings.php:1808
+#: admin-settings.php:1827
 msgid "I'm not able to save my custom post type because the page keeps telling me \"That post type name already exists.\""
 msgstr ""
 
-#: admin-settings.php:1809
+#: admin-settings.php:1828
 msgid "This is a jQuery \"bug\" that only seems to plague a few. I've noticed that this validation standstill will occur if you have any text printed outside the &lt;body&gt; element on your page. If that's not the case, and the problem still lingers after you've upgraded to version 1.1, you can dequeue the validation script by placing the following code in your %s file:"
 msgstr ""
 
-#: admin-settings.php:1811
+#: admin-settings.php:1830
 msgid "I added support for \"Thumbnail\" to my custom post type, but the \"Featured Image\" box does not show up"
 msgstr ""
 
-#: admin-settings.php:1812
+#: admin-settings.php:1831
 msgid "You also have to add theme support for post thumbnails to your functions.php file:"
 msgstr ""
 
-#: admin-settings.php:1814
+#: admin-settings.php:1833
 msgid "When I try to retrieve %s AND taxonomy terms, the results are incorrect"
 msgstr ""
 
-#: admin-settings.php:1815
+#: admin-settings.php:1834
 msgid "The most important thing to understand is that %1$s information is stored differently than regular taxonomy information. And if you are using %2$s and taxonomies and are trying to retrieve both %3$s and taxonomy term information in the same request, i.e. in %4$s, there's a small chance WordPress might get a little confused. %5$sThe easiest solution? When you are using %6$s or something similar, request %7$s or %8$s fields.%9$s If WordPress has to retrieve all of the term information, it eliminates the chance that a %10$s or taxonomy term will be overwritten and lost in the shuffle."
 msgstr ""
 
-#: admin-settings.php:1816
+#: admin-settings.php:1835
 msgid "When I filter or query posts, the results are incorrect"
 msgstr ""
 
-#: admin-settings.php:1817
+#: admin-settings.php:1836
 msgid "%1$s bear the same name as their custom post type counterparts, i.e. if you have an \"actors\" custom post type, it's %2$s is also named \"actors\". With that said, pre-%3$s, you may have had a custom taxonomy named \"actors\" and, although that taxonomy is no longer registered, your old taxonomy's term information may still exist in your database. This is where WordPress gets a little confused because %4$s information is stored differently than regular taxonomies. To fix the problem, all you have to do is remove the old taxonomy information (by following the steps below). If that doesn't solve your problem, please %5$slet me know%6$s."
 msgstr ""
 
-#: admin-settings.php:1819
+#: admin-settings.php:1838
 msgid "If you do not have access to your database or wish to only deal with the WP admin:"
 msgstr ""
 
-#: admin-settings.php:1821
+#: admin-settings.php:1840
 msgid "\"Unregister\" your %1$s. You do not have to remove your custom post type, just the %2$s. Just make sure everything is unchecked under \"Attach to Post Types\"."
 msgstr ""
 
-#: admin-settings.php:1822
+#: admin-settings.php:1841
 msgid "Open your %1$s file and %2$sregister your old taxonomy%3$s. It doesn't matter which post type you attach it to, you just need access to the taxonomy's \"edit\" page. For the sake of this tutorial, we'll pretend you've attached it to \"Posts\"."
 msgstr ""
 
-#: admin-settings.php:1823
+#: admin-settings.php:1842
 msgid "Open the \"Posts\" submenu, and click your taxonomy. Select the checkbox at the top left of the terms table and do a \"bulk action\" to delete all of the terms."
 msgstr ""
 
-#: admin-settings.php:1824
+#: admin-settings.php:1843
 msgid "Once you've removed all of the terms, you can \"unregister\" your taxonomy by removing the %1$s code from your %2$s file and then re-register your %2$s. This should clear up any WordPress confusion."
 msgstr ""
 
-#: admin-settings.php:1827
+#: admin-settings.php:1846
 msgid "If you have access to your database:"
 msgstr ""
 
-#: admin-settings.php:1829
+#: admin-settings.php:1848
 msgid "Find the %1$s table and take note of the %2$s and %3$s of all of the rows with your taxonomy, then delete these rows."
 msgstr ""
 
-#: admin-settings.php:1830, admin-settings.php:1831
+#: admin-settings.php:1849, admin-settings.php:1850
 msgid "Find the %1$s table and delete any of the rows that contain one of your noted %2$s."
 msgstr ""
 
-#: admin-settings.php:1901
+#: admin-settings.php:1920
 msgid "Looks like there was an error and the custom post type was not activated. %1$sGo back to %2$s%3$s and try again."
 msgstr ""
 
-#: admin-settings.php:1947
+#: admin-settings.php:1966
 msgid "Looks like there was an error and the custom post type was not deleted. %1$sGo back to %2$s%3$s and try again."
 msgstr ""
 
-#: admin-settings.php:1999, admin-settings.php:2018, admin-settings.php:2126, admin-settings.php:2377, admin-settings.php:2377
+#: admin-settings.php:2018, admin-settings.php:2037, admin-settings.php:2144, admin-settings.php:2395, admin-settings.php:2395
 msgid "%s: Using Custom Post Types as Taxonomies"
 msgstr ""
 
-#: admin-settings.php:2043
+#: admin-settings.php:2062
 msgid "About this Plugin"
 msgstr ""
 
-#: admin-settings.php:2050, admin-settings.php:2330, admin-settings.php:2864
+#: admin-settings.php:2068, admin-settings.php:2348, admin-settings.php:2882
 msgid "Save Your Changes"
 msgstr ""
 
-#: admin-settings.php:2054
+#: admin-settings.php:2072
 msgid "Delete this Custom Post Type"
 msgstr ""
 
-#: admin-settings.php:2058
+#: admin-settings.php:2076
 msgid "Edit Your Custom Post Type's Properties"
 msgstr ""
 
-#: admin-settings.php:2063
+#: admin-settings.php:2081
 msgid "Add A New Custom Post Type"
 msgstr ""
 
-#: admin-settings.php:2066
+#: admin-settings.php:2084
 msgid "Manage Your Custom Post Types"
 msgstr ""
 
-#: admin-settings.php:2070
+#: admin-settings.php:2088
 msgid "Manage Your Other Custom Post Types"
 msgstr ""
 
-#: admin-settings.php:2074
+#: admin-settings.php:2092
 msgid "What The Icons Mean"
 msgstr ""
 
-#: admin-settings.php:2079
+#: admin-settings.php:2097
 msgid "Spread the Love"
 msgstr ""
 
-#: admin-settings.php:2082
+#: admin-settings.php:2100
 msgid "Any Questions?"
 msgstr ""
 
-#: admin-settings.php:2115
+#: admin-settings.php:2133
 msgid "Custom Post Type Properties"
 msgstr ""
 
-#: admin-settings.php:2147, admin-settings.php:2963
+#: admin-settings.php:2165, admin-settings.php:2981
 msgid "Creating a New Custom Post Type"
 msgstr ""
 
-#: admin-settings.php:2170
+#: admin-settings.php:2188
 msgid "Editing \"%s\""
 msgstr ""
 
-#: admin-settings.php:2187
+#: admin-settings.php:2205
 msgid "Back to %s"
 msgstr ""
 
-#: admin-settings.php:2188, admin-settings.php:2188, admin-settings.php:2371, admin-settings.php:2371, admin-settings.php:2850
+#: admin-settings.php:2206, admin-settings.php:2206, admin-settings.php:2389, admin-settings.php:2389, admin-settings.php:2868
 msgid "Add a new custom post type"
 msgstr ""
 
-#: admin-settings.php:2203
+#: admin-settings.php:2221
 msgid "The custom post type was deleted."
 msgstr ""
 
-#: admin-settings.php:2226
+#: admin-settings.php:2244
 msgid "The custom post type '%s' is now active."
 msgstr ""
 
-#: admin-settings.php:2228
+#: admin-settings.php:2246
 msgid "The custom post type is now active."
 msgstr ""
 
-#: admin-settings.php:2240
+#: admin-settings.php:2258
 msgid "There seems to have been an error deleting the conflicting taxonomy terms. Please %1$srefresh the page%2$s and try again. If the problem persists, %3$sthe %4$s documentation%5$s might help."
 msgstr ""
 
-#: admin-settings.php:2250
+#: admin-settings.php:2268
 msgid "The conflicting taxonomy terms have been deleted!"
 msgstr ""
 
-#: admin-settings.php:2378
+#: admin-settings.php:2396
 msgid "Version"
 msgstr ""
 
-#: admin-settings.php:2384
+#: admin-settings.php:2402
 msgid "This %s is inactive."
 msgstr ""
 
-#: admin-settings.php:2385
+#: admin-settings.php:2403
 msgid "This %s is not registered."
 msgstr ""
 
-#: admin-settings.php:2386
+#: admin-settings.php:2404
 msgid "This %s is registered and working."
 msgstr ""
 
-#: admin-settings.php:2391, admin-settings.php:2391
+#: admin-settings.php:2409, admin-settings.php:2409
 msgid "Give the plugin a good rating"
 msgstr ""
 
-#: admin-settings.php:2392
+#: admin-settings.php:2410
 msgid "Follow bamadesigner on Twitter"
 msgstr ""
 
-#: admin-settings.php:2392
+#: admin-settings.php:2410
 msgid "Follow me on Twitter"
 msgstr ""
 
-#: admin-settings.php:2393
+#: admin-settings.php:2411
 msgid "Donate a few bucks to the plugin"
 msgstr ""
 
-#: admin-settings.php:2393
+#: admin-settings.php:2411
 msgid "Donate"
 msgstr ""
 
-#: admin-settings.php:2393
+#: admin-settings.php:2411
 msgid "and buy me a coffee"
 msgstr ""
 
-#: admin-settings.php:2398
+#: admin-settings.php:2416
 msgid "Need help?"
 msgstr ""
 
-#: admin-settings.php:2398
+#: admin-settings.php:2416
 msgid "Here are a few options:"
 msgstr ""
 
-#: admin-settings.php:2400
+#: admin-settings.php:2418
 msgid "The 'Help' tab"
 msgstr ""
 
-#: admin-settings.php:2401
+#: admin-settings.php:2419
 msgid "%s support forums"
 msgstr ""
 
-#: admin-settings.php:2401
+#: admin-settings.php:2419
 msgid "The %s support forums"
 msgstr ""
 
-#: admin-settings.php:2402
+#: admin-settings.php:2420
 msgid "Visit my web site"
 msgstr ""
 
-#: admin-settings.php:2402
+#: admin-settings.php:2420
 msgid "My web site"
 msgstr ""
 
-#: admin-settings.php:2404
+#: admin-settings.php:2422
 msgid "If you notice any bugs or problems with the plugin, %1$splease let me know%2$s."
 msgstr ""
 
-#: admin-settings.php:2417
+#: admin-settings.php:2435
 msgid "If you're using a theme, or another plugin, that creates a custom post type, you can still register these \"other\" custom post types as %s."
 msgstr ""
 
-#: admin-settings.php:2417
+#: admin-settings.php:2435
 msgid "You cannot, however, manage the actual custom post type. Sorry, but that's up to the plugin and/or theme."
 msgstr ""
 
-#: admin-settings.php:2424
+#: admin-settings.php:2442
 msgid "If you'd like to create a custom post type that's registered across your entire network, but don't want to mess with code, you've come to the right place. Only want to register your custom post type on select sites? No problem!"
 msgstr ""
 
-#: admin-settings.php:2426
+#: admin-settings.php:2444
 msgid "If you'd like to create a custom post type, but don't want to mess with code, you've come to the right place."
 msgstr ""
 
-#: admin-settings.php:2429
+#: admin-settings.php:2447
 msgid "Customize every setting, or just give us a name, and we'll take care of the rest."
 msgstr ""
 
-#: admin-settings.php:2431
+#: admin-settings.php:2449
 msgid "For more information, like how to create a %s, visit the Help tab."
 msgstr ""
 
-#: admin-settings.php:2493
+#: admin-settings.php:2511
 msgid "Status"
 msgstr ""
 
-#: admin-settings.php:2500
+#: admin-settings.php:2518
 msgid "Registered"
 msgstr ""
 
-#: admin-settings.php:2504
+#: admin-settings.php:2522
 msgid "Attached to"
 msgstr ""
 
-#: admin-settings.php:2508
+#: admin-settings.php:2526
 msgid "Ability to Assign Terms"
 msgstr ""
 
-#: admin-settings.php:2520
+#: admin-settings.php:2538
 msgid "There are no \"other\" custom post types."
 msgstr ""
 
-#: admin-settings.php:2522
+#: admin-settings.php:2540
 msgid "What are you waiting for? Custom post types are pretty awesome and you don't have to touch one line of code."
 msgstr ""
 
-#: admin-settings.php:2567
+#: admin-settings.php:2585
 msgid "The custom post type, \"%1$s\", is not registered because the built-in WordPress post type, \"%2$s\", is already registered under the name \"%3$s\". Sorry, but WordPress wins on this one. You'll have to change the post type name if you want to get \"%4$s\" up and running."
 msgstr ""
 
-#: admin-settings.php:2572
+#: admin-settings.php:2590
 msgid "The custom post type, \"%s\", is not registered because another custom post type with the same name already exists. This other custom post type is probably setup in your theme or another plugin. Check out the 'Manage Your Other Custom Post Types' section to see what else has been registered."
 msgstr ""
 
-#: admin-settings.php:2578, admin-settings.php:3032
+#: admin-settings.php:2596, admin-settings.php:3050
 msgid "This custom post type's %1$s is not registered because another taxonomy with the same name already exists. If you would like this %2$s to work, please remove the conflicting taxonomy."
 msgstr ""
 
-#: admin-settings.php:2580, admin-settings.php:3034
+#: admin-settings.php:2598, admin-settings.php:3052
 msgid "This custom post type's %1$s is not registered because the post type(s) it is attached to is not active/registered. If you would like this %2$s to work, please activate/register said post type(s)."
 msgstr ""
 
-#: admin-settings.php:2602
+#: admin-settings.php:2620
 msgid "This custom post type's %1$s is not attached to the %2$s custom post types because they are not active/registered. If you would like this %3$s to work, please activate/register said post type(s)."
 msgstr ""
 
-#: admin-settings.php:2606
+#: admin-settings.php:2624
 msgid "This custom post type's %1$s is not attached to the '%2$s' custom post type because it is not active/registered. If you would like this %3$s to work, please activate/register said post type(s)."
 msgstr ""
 
-#: admin-settings.php:2640
+#: admin-settings.php:2658
 msgid "Edit this custom post type's properties"
 msgstr ""
 
-#: admin-settings.php:2640
+#: admin-settings.php:2658
 msgid "Edit"
 msgstr ""
 
-#: admin-settings.php:2643
+#: admin-settings.php:2661
 msgid "Active this custom post type"
 msgstr ""
 
-#: admin-settings.php:2643
+#: admin-settings.php:2661
 msgid "Activate this %s"
 msgstr ""
 
-#: admin-settings.php:2647, admin-settings.php:2875, admin-settings.php:2875
+#: admin-settings.php:2665, admin-settings.php:2893, admin-settings.php:2893
 msgid "Delete this custom post type"
 msgstr ""
 
-#: admin-settings.php:2647
+#: admin-settings.php:2665
 msgid "Delete"
 msgstr ""
 
-#: admin-settings.php:2651, admin-settings.php:2651
+#: admin-settings.php:2669, admin-settings.php:2669
 msgid "View posts"
 msgstr ""
 
-#: admin-settings.php:2655, admin-settings.php:2688
+#: admin-settings.php:2673, admin-settings.php:2706
 msgid "Find out why this custom post type is not registered"
 msgstr ""
 
-#: admin-settings.php:2655
+#: admin-settings.php:2673
 msgid "Find out why this CPT is not registered."
 msgstr ""
 
-#: admin-settings.php:2659, admin-settings.php:2974
+#: admin-settings.php:2677, admin-settings.php:2992
 msgid "This site-wide custom post type is overwriting a custom post type registered by your network admin."
 msgstr ""
 
-#: admin-settings.php:2666, admin-settings.php:2723, admin-settings.php:2731, widgets.php:123
+#: admin-settings.php:2684, admin-settings.php:2741, admin-settings.php:2749, widgets.php:133
 msgid "Yes"
 msgstr ""
 
-#: admin-settings.php:2666, admin-settings.php:2737, widgets.php:124
+#: admin-settings.php:2684, admin-settings.php:2755, widgets.php:134
 msgid "No"
 msgstr ""
 
-#: admin-settings.php:2686
+#: admin-settings.php:2704
 msgid "No, because this %s is inactive."
 msgstr ""
 
-#: admin-settings.php:2686
+#: admin-settings.php:2704
 msgid "Activate this custom post type"
 msgstr ""
 
-#: admin-settings.php:2686
+#: admin-settings.php:2704
 msgid "Activate this CPT"
 msgstr ""
 
-#: admin-settings.php:2688
+#: admin-settings.php:2706
 msgid "No, because this %s is not registered."
 msgstr ""
 
-#: admin-settings.php:2688, admin-settings.php:2692, admin-settings.php:2694, admin-settings.php:2704
+#: admin-settings.php:2706, admin-settings.php:2710, admin-settings.php:2712, admin-settings.php:2722
 msgid "Find out why"
 msgstr ""
 
-#: admin-settings.php:2692
+#: admin-settings.php:2710
 msgid "This %s is not registered due to a taxonomy conflict."
 msgstr ""
 
-#: admin-settings.php:2692, admin-settings.php:2694, admin-settings.php:2704
+#: admin-settings.php:2710, admin-settings.php:2712, admin-settings.php:2722
 msgid "Find out why this %s is not registered"
 msgstr ""
 
-#: admin-settings.php:2694
+#: admin-settings.php:2712
 msgid "This %s is not registered due to a post type conflict."
 msgstr ""
 
-#: admin-settings.php:2704
+#: admin-settings.php:2722
 msgid "Yes, but there is a post type conflict."
 msgstr ""
 
-#: admin-settings.php:2716
+#: admin-settings.php:2734
 msgid "Yes, but there might be a terms conflict."
 msgstr ""
 
-#: admin-settings.php:2716
+#: admin-settings.php:2734
 msgid "Learn more"
 msgstr ""
 
-#: admin-settings.php:2724
+#: admin-settings.php:2742
 msgid "This %1$s is %2$sprogrammatically registered%3$s."
 msgstr ""
 
-#: admin-settings.php:2826
+#: admin-settings.php:2844
 msgid "All user roles"
 msgstr ""
 
-#: admin-settings.php:2873
+#: admin-settings.php:2891
 msgid "Deleting your custom post type %1$2DOES NOT%2$s delete the actual posts. They'll be waiting for you if you decide to register this post type again. Just make sure you use the same name."
 msgstr ""
 
-#: admin-settings.php:2874
+#: admin-settings.php:2892
 msgid "However, there is no \"undo\" and, once you click \"Delete\", all of your settings will be gone."
 msgstr ""
 
-#: admin-settings.php:2976
+#: admin-settings.php:2994
 msgid "This custom post type is probably setup in your theme, or another plugin, but you can still register it for use as a %s. You cannot, however, manage the actual custom post type. Sorry, but that's up to the plugin and/or theme."
 msgstr ""
 
-#: admin-settings.php:3011
+#: admin-settings.php:3029
 msgid "This custom post type is currently inactive."
 msgstr ""
 
-#: admin-settings.php:3020
+#: admin-settings.php:3038
 msgid "This custom post type is not registered because the built-in WordPress post type, '%1$s' is already registered under the name '%2$s'. Sorry, but WordPress wins on this one. You'll have to change the post type name if you want to get '%3$s' up and running."
 msgstr ""
 
-#: admin-settings.php:3025
+#: admin-settings.php:3043
 msgid "This custom post type is not registered because another custom post type with the same name already exists. This other custom post type is probably setup in your theme or another plugin. %1$sCheck out the 'Manage Your Other Custom Post Types'%2$s to see what else has been registered."
 msgstr ""
 
-#: admin-settings.php:3055
+#: admin-settings.php:3073
 msgid "This custom post type's %1$s is not attached to the %2$s custom post types because they are not active/registered. If you would like this %3$s to work, please activate/register said post types."
 msgstr ""
 
-#: admin-settings.php:3059
+#: admin-settings.php:3077
 msgid "This custom post type's %1$s is not attached to the '%2$s' custom post type because it is not active/registered. If you would like this %3$s to work, please activate/register said post type."
 msgstr ""
 
-#: admin-settings.php:3071
+#: admin-settings.php:3089
 msgid "Did this %1$s used to be registered as a taxonomy? I found some taxonomy terms stored in your database that could conflict with your %2$s terms. %3$s are not stored in the database in the same manner as taxonomies so when taxonomy and %4$s terms exist under the same name, term queries can get confused and sometimes return incorrect results."
 msgstr ""
 
-#: admin-settings.php:3071
+#: admin-settings.php:3089
 msgid "Delete the conflicting taxonomy terms for the '%1$s' %2$s"
 msgstr ""
 
-#: admin-settings.php:3071
+#: admin-settings.php:3089
 msgid "Delete the conflicting taxonomy terms"
 msgstr ""
 
-#: admin-settings.php:3071
+#: admin-settings.php:3089
 msgid "Learn how to manually delete your conflicting terms"
 msgstr ""
 
-#: admin-settings.php:3075
+#: admin-settings.php:3093
 msgid "This custom post type is being programmatically registered as a %1$s, which overrides any settings defined below. %2$sCheck out the %3$s documentation%4$s to learn more."
 msgstr ""
 
-#: admin-settings.php:3079
+#: admin-settings.php:3097
 msgid "This custom post type is registered and working."
 msgstr ""
 
-#: admin.php:104
+#: admin.php:111
 msgid "Since \"%1$s\" is a registered %2$s, you manage it's \"terms\" by managing the posts created under the custom post type \"%3$s\". So go ahead... %4$smanage the posts%5$s."
 msgstr ""
 
-#: admin.php:108
+#: admin.php:116
 msgid "Since \"%1$s\" is a registered %2$s, you manage it's \"terms\" by managing the posts created under the custom post type \"%3$s\". Unfortunately, you don't have permission to edit these posts. Sorry. If this is a mistake, contact your administrator."
 msgstr ""
 
-#: admin.php:108
+#: admin.php:116
 msgid "Go to the dashboard"
 msgstr ""
 
-#: admin.php:142
+#: admin.php:151
 msgid "The term you are trying to add does not exist. %s terms, a.k.a posts, must already exist to be available for selection."
 msgstr ""
 
-#: admin.php:143
+#: admin.php:152
 msgid "Add a term"
 msgstr ""
 
-#: admin.php:144
+#: admin.php:153
 msgid "Add the term"
 msgstr ""
 
-#: admin.php:145
+#: admin.php:154
 msgid "Kind of silly to create a relationship between a post and itself, eh?"
 msgstr ""
 
-#: admin.php:146
+#: admin.php:155
 msgid "This relationship already exists."
 msgstr ""
 
-#: admin.php:147
+#: admin.php:156
 msgid "Close"
 msgstr ""
 
-#: admin.php:156
+#: admin.php:169
 msgid "There are no %s selected."
 msgstr ""
 
-#: admin.php:612
+#: admin.php:675
 msgid "Add"
 msgstr ""
 
-#: admin.php:685
+#: admin.php:717
+msgid "No %s are selected"
+msgstr ""
+
+#: admin.php:752
 msgid "Most Used"
 msgstr ""
 
-#: admin.php:810
+#: admin.php:892
 msgid "more"
 msgstr ""
 
-#: admin.php:811
+#: admin.php:893
 msgid "less"
 msgstr ""
 
-#: admin.php:975
+#: admin.php:1073
 msgid "View all %s"
 msgstr ""
 
@@ -1671,55 +1675,55 @@ msgstr ""
 msgid "This post type object and taxonomy are not allowed to have a relationship."
 msgstr ""
 
-#: manager.php:1024
+#: manager.php:1075
 msgid "Search %s"
 msgstr ""
 
-#: manager.php:1025
+#: manager.php:1076
 msgid "Popular %s"
 msgstr ""
 
-#: manager.php:1026
+#: manager.php:1077
 msgid "All %s"
 msgstr ""
 
-#: manager.php:1027, manager.php:1028
+#: manager.php:1078, manager.php:1079
 msgid "Parent %s"
 msgstr ""
 
-#: manager.php:1029
+#: manager.php:1080
 msgid "Edit %s"
 msgstr ""
 
-#: manager.php:1030
+#: manager.php:1081
 msgid "View %s"
 msgstr ""
 
-#: manager.php:1031
+#: manager.php:1082
 msgid "Update %s"
 msgstr ""
 
-#: manager.php:1032
+#: manager.php:1083
 msgid "Add New %s"
 msgstr ""
 
-#: manager.php:1033
+#: manager.php:1084
 msgid "New %s Name"
 msgstr ""
 
-#: manager.php:1034
+#: manager.php:1085
 msgid "Separate %s with commas"
 msgstr ""
 
-#: manager.php:1035
+#: manager.php:1086
 msgid "Add or remove %s"
 msgstr ""
 
-#: manager.php:1036
+#: manager.php:1087
 msgid "Choose from the most used %s"
 msgstr ""
 
-#: manager.php:1037
+#: manager.php:1088
 msgid "No %s found."
 msgstr ""
 
@@ -1727,26 +1731,26 @@ msgstr ""
 msgid "%s Tag Cloud"
 msgstr ""
 
-#: widgets.php:111
+#: widgets.php:121
 msgid "Title:"
 msgstr ""
 
-#: widgets.php:113
+#: widgets.php:123
 msgid "Taxonomy:"
 msgstr ""
 
-#: widgets.php:121
+#: widgets.php:131
 msgid "Show tag cloud if empty:"
 msgstr ""
 
-#: widgets.php:126
+#: widgets.php:136
 msgid "The term links to:"
 msgstr ""
 
-#: widgets.php:128
+#: widgets.php:138
 msgid "Term archive page"
 msgstr ""
 
-#: widgets.php:129
+#: widgets.php:139
 msgid "%s post page"
 msgstr ""

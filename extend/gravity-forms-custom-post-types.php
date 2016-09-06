@@ -17,14 +17,17 @@
  */ 
 add_action( 'gform_post_submission', 'custom_post_type_onomies_gform_post_submission_save_taxonomies', 10, 2);
 function custom_post_type_onomies_gform_post_submission_save_taxonomies( $entry, $form ) {
+
 	// Check if the class exists and the submission contains a WordPress post
     if ( class_exists( 'GFCPTAddon1_5' ) && isset ( $entry['post_id'] ) ) {
     	$GFCPTAddon1_5 = new GFCPTAddon1_5();
     	foreach( $form['fields'] as &$field ) {
-    		if ( $taxonomy = $GFCPTAddon1_5->get_field_taxonomy( $field ) )
-    			custom_post_type_onomies_gform_post_submission_save_taxonomy_field( $field, $entry, $taxonomy );
+    		if ( $taxonomy = $GFCPTAddon1_5->get_field_taxonomy( $field ) ) {
+			    custom_post_type_onomies_gform_post_submission_save_taxonomy_field( $field, $entry, $taxonomy );
+		    }
     	}
     }
+
 }
 
 /*
@@ -33,25 +36,42 @@ function custom_post_type_onomies_gform_post_submission_save_taxonomies( $entry,
  */
 function custom_post_type_onomies_gform_post_submission_save_taxonomy_field( &$field, $entry, $taxonomy ) {
 	global $cpt_onomies_manager, $cpt_onomy;
-	// make sure the taxonomy is a registered CPT-onomy
+
+	// Make sure the taxonomy is a registered CPT-onomy
 	if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
+
 		if ( array_key_exists( 'type', $field ) && $field[ 'type' ] == 'checkbox' ) {
 			$term_ids = array();
+
 			foreach ( $field[ 'inputs' ] as $input ) {
 				$term_id = (int) $entry[ (string) $input[ 'id' ] ];
-                if ( $term_id > 0 )
-                	$term_ids[] = $term_id;
+                if ( $term_id > 0 ) {
+	                $term_ids[] = $term_id;
+                }
             }
-            if ( ! empty ( $term_ids ) )
-            	$cpt_onomy->wp_set_object_terms( $entry[ 'post_id' ], $term_ids, $taxonomy, true );
+
+            if ( ! empty ( $term_ids ) ) {
+	            $cpt_onomy->wp_set_object_terms( $entry['post_id'], $term_ids, $taxonomy, true );
+            }
+
         } else if ( array_key_exists( 'type', $field ) && $field[ 'type' ] == 'text' ) {
+
         	$terms = $entry[ $field[ 'id' ] ];
-            if ( ! empty( $terms ) )
-            	$cpt_onomy->wp_set_post_terms( $entry[ 'post_id' ], $terms, $taxonomy );
+
+			if ( ! empty( $terms ) ) {
+				$cpt_onomy->wp_set_post_terms( $entry['post_id'], $terms, $taxonomy );
+			}
+
         } else {
+
         	$term_id = (int) $entry[ $field[ 'id' ] ];
-        	if ( $term_id > 0 )
-        		$cpt_onomy->wp_set_object_terms( $entry[ 'post_id' ], $term_id, $taxonomy, true );
+
+			if ( $term_id > 0 ) {
+				$cpt_onomy->wp_set_object_terms( $entry['post_id'], $term_id, $taxonomy, true );
+			}
+
         }
+        
 	}
+
 }

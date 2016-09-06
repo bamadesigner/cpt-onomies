@@ -339,9 +339,13 @@ class CPT_onomies_Admin_Settings {
 										
 		$attention_cpt_onomy = ( ! $this->is_network_admin && ! $inactive_cpt && $should_be_cpt_onomy && ( $attention_cpt || ! $is_registered_cpt_onomy ) ) ? true : false;
 		
-		// If attention doesn't already need to be paid to the CPT-onomy, check to see if it has any plain taxonomy terms assigned to it
-		// i.e. there used to be a taxononmy with this name that needs to have some terms removed
-		// If we have conflicting terms, then this CPT-onomy needs attention.
+		/**
+		 * If attention doesn't already need to be paid to the CPT-onomy,
+		 * check to see if it has any plain taxonomy terms assigned to it
+		 * i.e. there used to be a taxononmy with this name that needs to
+		 * have some terms removed If we have conflicting terms, then this
+		 * CPT-onomy needs attention.
+		 */
 		if ( ! $this->is_network_admin
 			&& ! $attention_cpt_onomy
 			&& ( $conflicting_terms_count = $this->get_conflicting_taxonomy_terms_count( $post_type ) )
@@ -539,8 +543,10 @@ class CPT_onomies_Admin_Settings {
 	public function update_network_plugin_options_custom_post_types() {
 		global $cpt_onomies_manager;
 		
-		// Makes sure we're in the network admin saving the
-		// network admin options for CPT-onomies
+		/**
+		 * Makes sure we're in the network admin saving the
+		 * network admin options for CPT-onomies.
+		 */
 		if ( current_user_can( $this->manage_options_capability )
 			&& check_admin_referer( 'siteoptions' )
 			&& isset( $_POST[ 'save_cpt_onomies_changes' ] ) ) {
@@ -558,9 +564,11 @@ class CPT_onomies_Admin_Settings {
 				// Update settings
 				update_site_option( 'custom_post_type_onomies_custom_post_types', $custom_post_types );
 				
-				// Flushing the rewrite rules helps take care of pesky
-				// rewrite rules not changing when permalinks or other
-				// rewrite settings are tweaked.
+				/**
+				 * Flushing the rewrite rules helps take care of pesky
+				 * rewrite rules not changing when permalinks or other
+				 * rewrite settings are tweaked.
+				 */
 				flush_rewrite_rules( false );
 				
 				// If no errors, then show general message
@@ -607,9 +615,11 @@ class CPT_onomies_Admin_Settings {
 			// Validate settings
 			$custom_post_types = $this->validate_plugin_options_custom_post_types( $custom_post_types, $saved_post_types );
 			
-			// Flushing the rewrite rules helps take care of pesky
-			// rewrite rules not changing when permalinks or other
-			// rewrite settings are tweaked.
+			/**
+			 * Flushing the rewrite rules helps take care of pesky
+			 * rewrite rules not changing when permalinks or other
+			 * rewrite settings are tweaked.
+			 */
 			flush_rewrite_rules( false );
 			
 		}
@@ -675,8 +685,10 @@ class CPT_onomies_Admin_Settings {
 					// Will be the name and key for storing data
 					$store_name = NULL;
 					
-					// If no original name (new) and new name is empty OR already exists,
-					// take the label and create a name
+					/**
+					 * If no original name (new) and new name is empty
+					 * OR already exists, take the label and create a name.
+					 */
 					if ( empty( $original_name ) && ( empty( $new_name ) || ( ! empty( $new_name ) && array_key_exists( $new_name, $saved_custom_post_types ) ) ) ) {
 					
 						// Convert spaces to underscores first
@@ -731,8 +743,11 @@ class CPT_onomies_Admin_Settings {
 														
 						}
 						
-						// If both original and new name exist and new is different from original
-						// then remove info with original name and save under new name
+						/**
+						 * If both original and new name exist and new is
+						 * different from original then remove info with
+						 * original name and save under new name.
+						 */
 						else if ( ! empty( $original_name ) && ! empty( $new_name ) && $new_name != $original_name ) {
 							
 							// Remove original name
@@ -850,9 +865,11 @@ class CPT_onomies_Admin_Settings {
 			// Sort custom post types (alphabetically) by post type
 			ksort( $saved_other_post_types );
 			
-			// Flushing the rewrite rules helps take care of pesky
-			// rewrite rules not changing when permalinks or other
-			// rewrite settings are tweaked.
+			/**
+			 * Flushing the rewrite rules helps take care of pesky
+			 * rewrite rules not changing when permalinks or other
+			 * rewrite settings are tweaked.
+			 */
 			flush_rewrite_rules( false );
 			
 			return $saved_other_post_types;
@@ -904,8 +921,10 @@ class CPT_onomies_Admin_Settings {
 			// Do not include nav menu items or revisions
 			$do_not_add_to_post_type_data = array( 'nav_menu_item', 'revision' );
 			
-			// in network admin, only showing network CPTs registered by CPT-onomies 
-			// AND remaining builtin post types (posts and pages)
+			/**
+			 * In network admin, only showing network CPTs registered
+			 * by CPT-onomies AND remaining builtin post types (posts and pages).
+			 */
 			if ( $this->is_network_admin ) {
 			
 				// Combine saved custom post type data with remaining builtin post types (posts and pages)
@@ -1512,7 +1531,7 @@ class CPT_onomies_Admin_Settings {
 					);					
 				}
 				
-				// hides setting if more than 10 sites
+				// Hides setting if more than 10 sites
 				$cpt_properties->site_registration = array(
 					'site_registration' => (object) array(
 						'label' => __( 'Register this Custom Post Type on a Site-by-Site Basis', 'cpt-onomies' ),
@@ -1872,7 +1891,7 @@ class CPT_onomies_Admin_Settings {
 							// Remove the setting
 							unset( $cpt_onomies_manager->user_settings[ 'network_custom_post_types' ][ $CPT ][ 'deactivate' ] );
 							
-							//update database
+							// Update the database
 							update_site_option( 'custom_post_type_onomies_custom_post_types', $cpt_onomies_manager->user_settings[ 'network_custom_post_types' ] );
 												
 							// Redirect
@@ -2042,8 +2061,7 @@ class CPT_onomies_Admin_Settings {
 		// About this Plugin
 		add_meta_box( 'custom-post-type-onomies-about-mb', __( 'About this Plugin', 'cpt-onomies' ), array( $this, 'print_plugin_options_meta_box' ), $this->options_page, 'side', 'core', 'about' );
 													
-		// Add meta boxes for options page
-		// boxes just for the edit screen
+		// Add meta boxes for the edit screen
 		if ( $new || $edit ) {
 			
 			// Save	

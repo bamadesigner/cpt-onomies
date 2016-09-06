@@ -40,12 +40,15 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 	 */
 	function widget( $args, $instance ) {
 		global $cpt_onomies_manager, $cpt_onomy;
+
 		extract( $args );
+
 		if ( isset( $instance[ 'taxonomy' ] ) ) {
 			$current_taxonomy = $instance[ 'taxonomy' ];
+
 			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $current_taxonomy ) ) {
 			
-				// get tag cloud
+				// Get tag cloud
 				$tag_cloud = $cpt_onomy->wp_tag_cloud( apply_filters( 'widget_tag_cloud_args', array(
 					'taxonomy' => $current_taxonomy,
 					'echo' => false,
@@ -53,21 +56,28 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 					)
 				));
 				
-				// if empty, and they dont' want to show if empty, then don't show
+				// If empty, and they dont' want to show if empty, then don't show
 				if ( $instance[ 'show_if_empty' ] || ( ! $instance[ 'show_if_empty' ] && ! empty( $tag_cloud ) ) ) {
 				
-					if ( ! empty( $instance[ 'title' ] ) )
-						$title = $instance[ 'title' ];
+					if ( ! empty( $instance[ 'title' ] ) ) {
+						$title = $instance['title'];
+					}
+
 					else {
 						$tax = get_taxonomy( $current_taxonomy );
 						$title = $tax->labels->name;
 					}						
+
 					$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 					
 					echo $before_widget;
-					if ( $title )
+
+					if ( $title ) {
 						echo $before_title . $title . $after_title;
+					}
+
 					echo '<div class="tagcloud">' . $tag_cloud . "</div>\n";
+
 					echo $after_widget;
 					
 				}

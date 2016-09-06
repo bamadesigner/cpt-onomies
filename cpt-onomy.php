@@ -521,7 +521,7 @@ class CPT_TAXONOMY {
 	 * This function mimics the WordPress function get_term_children()
 	 * because we cannot hook into the function without receiving errors.
 	 *
-	 * As of Wordpress 3.3.2, CPT-onomies will work with get_term_children()
+	 * As of WordPress 3.3.2, CPT-onomies will work with get_term_children()
 	 * but I'm not a fan of how WordPress stores the children ids in an option. 
 	 * 
 	 * @since 1.0
@@ -1310,22 +1310,22 @@ class CPT_TAXONOMY {
 				
 		// Fix arguments for get_posts vs. get_terms
 				
-		// Wordpress supported orderby - 'count', 'name', 'slug', 'none', 'id' - (still need to add support for 'term_group')
+		// WordPress supported orderby - 'count', 'name', 'slug', 'none', 'id' - (still need to add support for 'term_group')
 		if ( strtolower( $orderby ) == 'none' || strtolower( $orderby ) == 'id' )
 			$orderby = 'id';
 		else if ( ! in_array( strtolower( $orderby ), array( 'count', 'slug', 'term_group' ) ) )
 			$orderby = 'title'; //Default is 'name'/'title'
 		
-		// Wordpress supported order - 'asc' and 'desc' (default is asc)
+		// WordPress supported order - 'asc' and 'desc' (default is asc)
 		$order = ( isset( $order ) && ( in_array( strtolower( $order ), array( 'asc', 'desc' ) ) ) ) ? strtolower( $order ) : 'asc';
 		
-		// numberposts (default is -1)
+		// Default is -1
 		$numberposts = ( isset( $number ) && is_numeric( $number ) && ( $number > 0 ) ) ? $number : -1;
 		
-		// offset (default is 0)
+		// Default is 0
 		$offset = ( isset( $offset ) && is_numeric( $offset ) && ( $offset > 0 ) ) ? $offset : 0;
 		
-		// Wordpress supported fields - 'all', 'ids', 'names' (default is all)
+		// WordPress supported fields - 'all', 'ids', 'names' (default is all)
 		if ( in_array( strtolower( $fields ), array( 'ids', 'names', 'id=>parent' ) ) ) $fields = strtolower( $fields );
 		else $fields = 'all';
 		
@@ -1676,7 +1676,7 @@ class CPT_TAXONOMY {
 				
 			case 'names':
 
-				// get posts
+				// Get the posts
 				$cpt_posts = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_title
 					FROM {$wpdb->posts} wpposts 
 					INNER JOIN {$wpdb->postmeta} wpmeta ON

@@ -89,16 +89,25 @@ Here's an example of the filter. More information, check out the "Help" tab in t
 `<?php
 add_filter( 'custom_post_type_onomies_meta_box_format', 'my_website_custom_post_type_onomies_meta_box_format', 1, 3 );
 function my_website_custom_post_type_onomies_meta_box_format( $format, $taxonomy, $post_type ) {
-   // when editing a post with the post type 'movies',
-   // we want to assign the 'actors' CPT-onomy terms with an autocomplete box
-   if ( $post_type == 'movies' && $taxonomy == 'actors' )
+
+   /**
+    * When editing a post with the post type 'movies',
+    * we want to assign the 'actors' CPT-onomy terms with an autocomplete box.
+    */
+   if ( $post_type == 'movies' && $taxonomy == 'actors' ) {
       return 'autocomplete';
-   // no matter the post type, we want to assign the 'actors' CPT-onomy terms with a select dropdown
-   elseif ( $taxonomy == 'actors' )
+   }
+
+   // No matter the post type, we want to assign the 'actors' CPT-onomy terms with a select dropdown
+   elseif ( $taxonomy == 'actors' ) {
       return 'dropdown';
-   // no matter the post type, we want to assign the 'directors' CPT-onomy terms with a checklist
-   elseif ( $taxonomy == 'directors' )
+   }
+
+   // No matter the post type, we want to assign the 'directors' CPT-onomy terms with a checklist
+   elseif ( $taxonomy == 'directors' ) {
       return 'checklist';
+   }
+
    // WordPress filters must always return a value
    return $format;
 }
