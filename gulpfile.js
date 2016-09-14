@@ -62,7 +62,7 @@ gulp.task('translate', function () {
 });
 
 // "Sniff" the code for PHP standards
-gulp.task('codesniff', function () {
+gulp.task('sniff', function () {
     return gulp.src('**/*.php')
         // Validate files using PHP Code Sniffer
         .pipe(phpcs({

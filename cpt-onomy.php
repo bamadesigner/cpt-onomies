@@ -19,11 +19,11 @@ class CPT_TAXONOMY {
 	public function __construct() {
 		
 		// Function filters
-		add_filter( 'get_terms', array( &$this, 'get_terms' ), 1, 3 );
-		add_filter( 'wp_get_object_terms', array( &$this, 'wp_get_object_terms' ), 1, 4 );
+		add_filter( 'get_terms', array( $this, 'get_terms' ), 1, 3 );
+		add_filter( 'wp_get_object_terms', array( $this, 'wp_get_object_terms' ), 1, 4 );
 		
 		// Other filters
-		add_filter( 'get_terms_args', array( &$this, 'adjust_get_terms_args' ), 1, 2 );
+		add_filter( 'get_terms_args', array( $this, 'adjust_get_terms_args' ), 1, 2 );
 		
 	}
 	public function CPT_TAXONOMY() { $this->__construct(); }
@@ -1168,21 +1168,25 @@ class CPT_TAXONOMY {
 		 * This function only processes registered CPT-onomies.
 		 * If this is a normal taxonomy, then use the WordPress function.
 		 */
-		if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) )
+		if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 			return get_the_term_list( $id, $taxonomy, $before, $sep, $after );
+		}
 			
 		$terms = get_the_terms( $id, $taxonomy );
 	
-		if ( is_wp_error( $terms ) )
+		if ( is_wp_error( $terms ) ) {
 			return $terms;
+		}
 	
-		if ( empty( $terms ) )
+		if ( empty( $terms ) ) {
 			return false;
+		}
 	
 		foreach ( $terms as $term ) {
 			$link = $this->get_term_link( $term, $taxonomy );
-			if ( is_wp_error( $link ) )
+			if ( is_wp_error( $link ) ) {
 				return $link;
+			}
 			$term_links[] = '<a href="' . $link . '" rel="tag">' . $term->name . '</a>';
 		}
 		

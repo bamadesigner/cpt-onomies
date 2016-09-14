@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name:     CPT-onomies: Using Custom Post Types as Taxonomies
  * Plugin URI:      http://wordpress.org/plugins/cpt-onomies/

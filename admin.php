@@ -33,40 +33,40 @@ class CPT_ONOMIES_ADMIN {
 		if ( is_admin() ) {
 		
 			// If the user visits edit-tags.php to manage the terms, we set them straight
-			add_action( 'admin_init', array( &$this, 'deny_edit_tags' ) );
+			add_action( 'admin_init', array( $this, 'deny_edit_tags' ) );
 						
 			// Register all of the admin scripts
-			add_action( 'admin_enqueue_scripts', array( &$this, 'admin_register_styles_and_scripts' ), 10 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_register_styles_and_scripts' ), 10 );
 			
 			// Returns wp_object_terms()
-			add_action( 'wp_ajax_custom_post_type_onomy_get_wp_object_terms', array( &$this, 'ajax_get_wp_object_terms' ) );
+			add_action( 'wp_ajax_custom_post_type_onomy_get_wp_object_terms', array( $this, 'ajax_get_wp_object_terms' ) );
 			
 			// Checks to see if term exists
-			add_action( 'wp_ajax_custom_post_type_onomy_check_if_term_exists', array( &$this, 'ajax_check_if_term_exists' ) );
+			add_action( 'wp_ajax_custom_post_type_onomy_check_if_term_exists', array( $this, 'ajax_check_if_term_exists' ) );
 									
 			// Add CPT-onomy "edit" meta boxes
-			add_action( 'add_meta_boxes', array( &$this, 'add_cpt_onomy_meta_boxes' ), 10, 2 );
+			add_action( 'add_meta_boxes', array( $this, 'add_cpt_onomy_meta_boxes' ), 10, 2 );
 			
 			// Takes care of autocomplete meta boxes
-			add_action( 'wp_ajax_custom_post_type_onomy_meta_box_autocomplete_callback', array( &$this, 'ajax_meta_box_autocomplete_callback' ) );
+			add_action( 'wp_ajax_custom_post_type_onomy_meta_box_autocomplete_callback', array( $this, 'ajax_meta_box_autocomplete_callback' ) );
 									
 			// Runs when any post is saved
-			add_action( 'save_post', array( &$this, 'save_post' ), 10, 2 );
+			add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 
 			// Runs when any post is deleted
-			add_action( 'delete_post', array( &$this, 'delete_post' ) );
+			add_action( 'delete_post', array( $this, 'delete_post' ) );
 															
 			// Bulk/quick edit
-			add_action( 'bulk_edit_custom_box', array( &$this, 'bulk_quick_edit_custom_box' ), 100, 2 );
-			add_action( 'quick_edit_custom_box', array( &$this, 'bulk_quick_edit_custom_box' ), 100, 2 );
-			add_action( 'wp_ajax_custom_post_type_onomy_get_cpt_onomy_terms_include_term_ids', array( &$this, 'ajax_get_cpt_onomy_terms_include_term_ids' ) );
-			add_action( 'wp_ajax_custom_post_type_onomy_get_cpt_onomy_terms_exclude_term_ids', array( &$this, 'ajax_get_cpt_onomy_terms_exclude_term_ids' ) );
-			add_action( 'wp_ajax_custom_post_type_onomy_populate_bulk_quick_edit', array( &$this, 'ajax_get_wp_object_terms' ) );
-			add_action( 'wp_ajax_custom_post_type_onomy_save_bulk_edit', array( &$this, 'ajax_save_bulk_edit' ) );
-			add_action( 'wp_ajax_custom_post_type_onomy_quick_edit_populate_custom_columns', array( &$this, 'ajax_quick_edit_populate_custom_columns' ) );
+			add_action( 'bulk_edit_custom_box', array( $this, 'bulk_quick_edit_custom_box' ), 100, 2 );
+			add_action( 'quick_edit_custom_box', array( $this, 'bulk_quick_edit_custom_box' ), 100, 2 );
+			add_action( 'wp_ajax_custom_post_type_onomy_get_cpt_onomy_terms_include_term_ids', array( $this, 'ajax_get_cpt_onomy_terms_include_term_ids' ) );
+			add_action( 'wp_ajax_custom_post_type_onomy_get_cpt_onomy_terms_exclude_term_ids', array( $this, 'ajax_get_cpt_onomy_terms_exclude_term_ids' ) );
+			add_action( 'wp_ajax_custom_post_type_onomy_populate_bulk_quick_edit', array( $this, 'ajax_get_wp_object_terms' ) );
+			add_action( 'wp_ajax_custom_post_type_onomy_save_bulk_edit', array( $this, 'ajax_save_bulk_edit' ) );
+			add_action( 'wp_ajax_custom_post_type_onomy_quick_edit_populate_custom_columns', array( $this, 'ajax_quick_edit_populate_custom_columns' ) );
 			
 			// Add column filters
-			add_action( 'restrict_manage_posts', array( &$this, 'restrict_manage_posts' ) );
+			add_action( 'restrict_manage_posts', array( $this, 'restrict_manage_posts' ) );
 			
 			/**
 			 * Add custom admin columns.
@@ -74,15 +74,15 @@ class CPT_ONOMIES_ADMIN {
 			 * >= 3.5 - it allows you to remove "show_admin_column" column via filter
 			 * < 3.5 - backwards compatibility for a little while - adds column
 			 */
-			add_filter( 'manage_pages_columns', array( &$this, 'add_cpt_onomy_admin_column' ), 100, 1 );
-			add_filter( 'manage_posts_columns', array( &$this, 'add_cpt_onomy_admin_column' ), 100, 2 );
+			add_filter( 'manage_pages_columns', array( $this, 'add_cpt_onomy_admin_column' ), 100, 1 );
+			add_filter( 'manage_posts_columns', array( $this, 'add_cpt_onomy_admin_column' ), 100, 2 );
 			
 			// Define sortable columns
-			add_action( 'load-edit.php', array( &$this, 'add_cpt_onomy_admin_sortable_columns_filter' ) );
+			add_action( 'load-edit.php', array( $this, 'add_cpt_onomy_admin_sortable_columns_filter' ) );
 			
 			// Edit custom admin columns for version < 3.5 - backwards compatibility for a little while
-			add_action( 'manage_pages_custom_column', array( &$this, 'edit_cpt_onomy_admin_column' ), 10, 2 );
-			add_action( 'manage_posts_custom_column', array( &$this, 'edit_cpt_onomy_admin_column' ), 10, 2 );
+			add_action( 'manage_pages_custom_column', array( $this, 'edit_cpt_onomy_admin_column' ), 10, 2 );
+			add_action( 'manage_posts_custom_column', array( $this, 'edit_cpt_onomy_admin_column' ), 10, 2 );
 				
 		}
 			
@@ -567,7 +567,7 @@ class CPT_ONOMIES_ADMIN {
 					$meta_box_title = isset( $tax->meta_box_title ) && ! empty( $tax->meta_box_title ) ? $tax->meta_box_title : $tax->label;
 					
 					// Add the meta box					
-					add_meta_box( 'custom-post-type-onomies-' . $taxonomy, apply_filters( 'custom_post_type_onomies_meta_box_title', $meta_box_title, $taxonomy, $post_type ), array( &$this, 'print_cpt_onomy_meta_box' ), $post_type, 'side', 'core', array( 'taxonomy' => $taxonomy ) );
+					add_meta_box( 'custom-post-type-onomies-' . $taxonomy, apply_filters( 'custom_post_type_onomies_meta_box_title', $meta_box_title, $taxonomy, $post_type ), array( $this, 'print_cpt_onomy_meta_box' ), $post_type, 'side', 'core', array( 'taxonomy' => $taxonomy ) );
 					
 				}
 				
@@ -1241,7 +1241,7 @@ class CPT_ONOMIES_ADMIN {
 	public function add_cpt_onomy_admin_sortable_columns_filter() {
 		global $current_screen;
 		if ( $current_screen && isset( $current_screen->id ) )
-			add_filter( "manage_{$current_screen->id}_sortable_columns", array( &$this, 'add_cpt_onomy_admin_sortable_columns' ) );
+			add_filter( "manage_{$current_screen->id}_sortable_columns", array( $this, 'add_cpt_onomy_admin_sortable_columns' ) );
 	}
 	
 	/**
@@ -1393,7 +1393,7 @@ class CPTonomy_Walker_Terms_Checklist extends Walker {
 			}
 
 			$cb_args = array_merge( array( &$output, $element, $depth ), $args );
-			call_user_func_array( array( &$this, 'start_el' ), $cb_args );
+			call_user_func_array( array( $this, 'start_el' ), $cb_args );
 	
 			$id = $element->$id_field;
 	
@@ -1407,7 +1407,7 @@ class CPTonomy_Walker_Terms_Checklist extends Walker {
 
 						// Start the child delimiter
 						$cb_args = array_merge( array( &$output, $depth ), $args );
-						call_user_func_array( array( &$this, 'start_lvl' ), $cb_args );
+						call_user_func_array( array( $this, 'start_lvl' ), $cb_args );
 
 					}
 
@@ -1421,13 +1421,13 @@ class CPTonomy_Walker_Terms_Checklist extends Walker {
 
 				// End the child delimiter
 				$cb_args = array_merge( array( &$output, $depth ), $args );
-				call_user_func_array( array( &$this, 'end_lvl' ), $cb_args );
+				call_user_func_array( array( $this, 'end_lvl' ), $cb_args );
 
 			}
 	
 			// End this element
 			$cb_args = array_merge( array( &$output, $element, $depth ), $args );
-			call_user_func_array( array( &$this, 'end_el' ), $cb_args );
+			call_user_func_array( array( $this, 'end_el' ), $cb_args );
 			
 		}
 	}

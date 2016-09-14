@@ -179,13 +179,13 @@ class CPT_onomies_Admin_Settings {
 		}
 			
 		// First check both the taxonomy and terms tables together
-		$terms_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} term_tax INNER JOIN {$wpdb->terms} terms ON terms.term_id = term_tax.term_id WHERE term_tax.taxonomy = '{$post_type}' GROUP BY term_tax.term_id" );
+		$terms_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} term_tax INNER JOIN {$wpdb->terms} terms ON terms.term_id = term_tax.term_id WHERE term_tax.taxonomy = %s GROUP BY term_tax.term_id", $post_type ) );
 		if ( $terms_count > 0 ) {
 			return $terms_count;
 		}
 
 		// Then check just the taxonomy table
-		$terms_count = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE taxonomy = '{$post_type}'" );
+		$terms_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE taxonomy = %s", $post_type ) );
 		if ( $terms_count > 0 ) {
 			return $terms_count;
 		}
@@ -2888,7 +2888,7 @@ class CPT_onomies_Admin_Settings {
 					$edit = $_REQUEST[ 'edit' ];
 					$delete_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'delete' => $edit, '_wpnonce' => wp_create_nonce( 'delete-cpt-' . $edit ) ), $this->admin_url ), 'delete-cpt-' . $edit );
 					?>
-                    <p><?php printf( __( 'Deleting your custom post type %1$2DOES NOT%2$s delete the actual posts. They\'ll be waiting for you if you decide to register this post type again. Just make sure you use the same name.', 'cpt-onomies' ), '<strong>', '</strong>' ); ?></p>
+                    <p><?php printf( __( 'Deleting your custom post type %1$sDOES NOT%2$s delete the actual posts. They\'ll be waiting for you if you decide to register this post type again. Just make sure you use the same name.', 'cpt-onomies' ), '<strong>', '</strong>' ); ?></p>
                     <p><strong><?php _e( 'However, there is no "undo" and, once you click "Delete", all of your settings will be gone.', 'cpt-onomies' ); ?></p>
                     <a class="delete_cpt_onomy_custom_post_type button" href="<?php echo $delete_url; ?>" title="<?php esc_attr_e( 'Delete this custom post type', 'cpt-onomies' ); ?>"><?php _e( 'Delete this custom post type', 'cpt-onomies' ); ?></a><?php
 	                break;

@@ -27,7 +27,7 @@ class CPT_ONOMIES_MANAGER {
 	public $user_settings = array(
 		'network_custom_post_types'	=> array(),
 		'custom_post_types'			=> array(),
-		'other_custom_post_types'	=> array()
+		'other_custom_post_types'	=> array(),
 	);
 	
 	/**
@@ -60,24 +60,24 @@ class CPT_ONOMIES_MANAGER {
 		$this->user_settings[ 'other_custom_post_types' ] = ( $other_custom_post_types = get_option( 'custom_post_type_onomies_other_custom_post_types' ) ) ? $other_custom_post_types : array();
 				
 		// Register custom query vars
-		add_filter( 'query_vars', array( &$this, 'register_custom_query_vars' ) );
+		add_filter( 'query_vars', array( $this, 'register_custom_query_vars' ) );
 		
 		// Revert the query vars
-		add_action( 'parse_request', array( &$this, 'revert_query_vars' ), 100 );
+		add_action( 'parse_request', array( $this, 'revert_query_vars' ), 100 );
 		
 		// Manage user capabilities
-		add_filter( 'user_has_cap', array( &$this, 'user_has_term_capabilities' ), 10, 3 );
+		add_filter( 'user_has_cap', array( $this, 'user_has_term_capabilities' ), 10, 3 );
 		
 		// Tweak the query
-		add_filter( 'request', array( &$this, 'change_query_vars' ) );
-		add_action( 'pre_get_posts', array( &$this, 'add_cpt_onomy_term_queried_object' ), 1 );
-		add_filter( 'posts_clauses', array( &$this, 'posts_clauses' ), 100, 2 );
+		add_filter( 'request', array( $this, 'change_query_vars' ) );
+		add_action( 'pre_get_posts', array( $this, 'add_cpt_onomy_term_queried_object' ), 1 );
+		add_filter( 'posts_clauses', array( $this, 'posts_clauses' ), 100, 2 );
 		
 		// Clean up the query
-		add_action( 'pre_get_posts', array( &$this, 'clean_get_posts_terms_query' ), 100 );
+		add_action( 'pre_get_posts', array( $this, 'clean_get_posts_terms_query' ), 100 );
 		
 		// Register custom post types and taxonomies
-		add_action( 'init', array( &$this, 'register_custom_post_types_and_taxonomies' ), 100 );
+		add_action( 'init', array( $this, 'register_custom_post_types_and_taxonomies' ), 100 );
 		
 	}
 	public function CPT_ONOMIES_MANAGER() { $this->__construct(); }
@@ -116,6 +116,7 @@ class CPT_ONOMIES_MANAGER {
 	 */
 	public function change_query_vars( $query ) {
 		global $cpt_onomy, $pagenow, $post_type;
+
 		if ( isset( $query[ 'cpt_onomy_archive' ] ) && $query[ 'cpt_onomy_archive' ] ) {
 		
 			// Make sure CPT-onomy AND term exists, otherwise, why bother
@@ -177,6 +178,7 @@ class CPT_ONOMIES_MANAGER {
 		}
 		// For filtering by CPT-onomy on admin edit posts screen
 		else if ( is_admin()  && $pagenow == 'edit.php' && isset( $post_type ) ) {
+
 			foreach( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
 				if ( isset( $_REQUEST[ $taxonomy ] ) && ! empty( $_REQUEST[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) )  {
 									
@@ -193,6 +195,7 @@ class CPT_ONOMIES_MANAGER {
 
 				}
 			}
+
 		}	
 		return $query;
 	}
@@ -364,7 +367,7 @@ class CPT_ONOMIES_MANAGER {
 	 * @since 1.0.3
 	 * @uses $wpdb, $cpt_onomy
 	 * @param array $clauses - the clauses variables already created by WordPress
-	 * @param WP_Query object $query - all of the query info
+	 * @param WP_Query $query - all of the query info
 	 * @return array - the clauses info after it has been filtered
 	 */
 	public function posts_clauses( $clauses, $query ) {
@@ -380,10 +383,13 @@ class CPT_ONOMIES_MANAGER {
 		if ( ( $taxonomies = $query->get( 'orderby' ) )
 			&& ( $post_type = $query->get( 'post_type' ) ) ) {
 				
-			// First, validate the CPT-onomy - could be multiple as array
-			// Make sure everyone is an array
-			if ( ! is_array( $taxonomies ) )
+			/**
+			 * First, validate the CPT-onomy - could be multiple as array.
+			 * Make sure everyone is an array.
+			 */
+			if ( ! is_array( $taxonomies ) ) {
 				$taxonomies = explode( ',', $taxonomies );
+			}
 				
 			// Holds valid CPT-onomies
 			$valid_cpt_onomies = array();
@@ -404,8 +410,10 @@ class CPT_ONOMIES_MANAGER {
 					
 				} else {
 					
-					// Check against each post type
-					// Let it through if it passes at least one test
+					/**
+					 * Check against each post type.
+					 * Let it through if it passes at least one test.
+					 */
 					foreach( $post_type as $pt ) {
 					
 						// Check against post type
@@ -437,10 +445,11 @@ class CPT_ONOMIES_MANAGER {
 						LEFT OUTER JOIN {$wpdb->posts} cpt_onomy_order_{$tax_index}_posts ON cpt_onomy_order_{$tax_index}_posts.ID = cpt_onomy_order_{$tax_index}_pm.meta_value
 						AND cpt_onomy_order_{$tax_index}_posts.post_type = '{$taxonomy}'";
 					
-					// Orderby each CPT-onomy
+					// Order by each CPT-onomy
 					if ( $new_orderby ) {
 						$new_orderby .= ', ';
 					}
+
 					$new_orderby .= "GROUP_CONCAT( cpt_onomy_order_{$tax_index}_posts.post_title ORDER BY cpt_onomy_order_{$tax_index}_posts.post_title ASC )" . ( ( isset( $query->query[ 'order' ] ) && strcasecmp( $query->query[ 'order' ], 'desc' ) == 0 ) ? ' DESC' : ' ASC' ) . ( ! empty( $clauses[ 'orderby' ] ) ? ', ' : ' ' ) . $clauses[ 'orderby' ];
 						
 				}

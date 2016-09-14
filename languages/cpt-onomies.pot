@@ -1528,7 +1528,7 @@ msgid "All user roles"
 msgstr ""
 
 #: admin-settings.php:2891
-msgid "Deleting your custom post type %1$2DOES NOT%2$s delete the actual posts. They'll be waiting for you if you decide to register this post type again. Just make sure you use the same name."
+msgid "Deleting your custom post type %1$sDOES NOT%2$s delete the actual posts. They'll be waiting for you if you decide to register this post type again. Just make sure you use the same name."
 msgstr ""
 
 #: admin-settings.php:2892
@@ -1651,7 +1651,7 @@ msgstr ""
 msgid "Empty Term"
 msgstr ""
 
-#: cpt-onomy.php:149, cpt-onomy.php:536, cpt-onomy.php:573, cpt-onomy.php:1978
+#: cpt-onomy.php:149, cpt-onomy.php:536, cpt-onomy.php:573, cpt-onomy.php:1982
 msgid "Invalid Taxonomy"
 msgstr ""
 
@@ -1667,63 +1667,63 @@ msgstr ""
 msgid "Use commas instead of %s to separate excluded categories."
 msgstr ""
 
-#: cpt-onomy.php:1988
+#: cpt-onomy.php:1992
 msgid "You are not allowed to assign terms for this taxonomy."
 msgstr ""
 
-#: cpt-onomy.php:1996
+#: cpt-onomy.php:2000
 msgid "This post type object and taxonomy are not allowed to have a relationship."
 msgstr ""
 
-#: manager.php:1075
+#: manager.php:1084
 msgid "Search %s"
 msgstr ""
 
-#: manager.php:1076
+#: manager.php:1085
 msgid "Popular %s"
 msgstr ""
 
-#: manager.php:1077
+#: manager.php:1086
 msgid "All %s"
 msgstr ""
 
-#: manager.php:1078, manager.php:1079
+#: manager.php:1087, manager.php:1088
 msgid "Parent %s"
 msgstr ""
 
-#: manager.php:1080
+#: manager.php:1089
 msgid "Edit %s"
 msgstr ""
 
-#: manager.php:1081
+#: manager.php:1090
 msgid "View %s"
 msgstr ""
 
-#: manager.php:1082
+#: manager.php:1091
 msgid "Update %s"
 msgstr ""
 
-#: manager.php:1083
+#: manager.php:1092
 msgid "Add New %s"
 msgstr ""
 
-#: manager.php:1084
+#: manager.php:1093
 msgid "New %s Name"
 msgstr ""
 
-#: manager.php:1085
+#: manager.php:1094
 msgid "Separate %s with commas"
 msgstr ""
 
-#: manager.php:1086
+#: manager.php:1095
 msgid "Add or remove %s"
 msgstr ""
 
-#: manager.php:1087
+#: manager.php:1096
 msgid "Choose from the most used %s"
 msgstr ""
 
-#: manager.php:1088
+#: manager.php:1097
 msgid "No %s found."
 msgstr ""
 
