@@ -1119,7 +1119,7 @@ class CPT_ONOMIES_ADMIN {
 	 * If a CPT-onomy is attached to a post type, the plugin adds a column
 	 * to the post type's edit screen which lists each post's assigned terms.
 	 *
-	 * As of version 1.4.0, removed the backwards compatibility
+	 * As of version 1.3.5, removed the backwards compatibility
 	 * but keeping this function so we can keep the filters in action.
 	 *
 	 * You can remove the column by returning false to the

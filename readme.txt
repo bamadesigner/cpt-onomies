@@ -3,8 +3,8 @@ Contributors: bamadesigner
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=bamadesigner%40gmail%2ecom&lc=US&item_name=Rachel%20Carden%20%28CPT%2donomies%29&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 Tags: custom post type, custom, post, post type, types, tax, taxonomy, taxonomies, cpt-onomy, cpt-onomies, cptonomies, custom post type taxonomies, custom post type as taxonomy, custom post types as taxonomies, relationships, relate, multisite
 Requires at least: 3.1
-Tested up to: 4.1.1
-Stable tag: 1.3.4
+Tested up to: 4.6.1
+Stable tag: 1.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,6 +135,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Changelog ==
 
 = 1.3.5 =
+* Fixes plugin to work with 4.6.1
 * Removed all the of the constants the plugin defined so be sure to remove any dependencies on them
 
 = 1.3.4 =
@@ -259,6 +260,7 @@ If FAQ didn't cover your problem, refer to the following resources:
 == Upgrade Notice ==
 
 = 1.3.5 =
+* Fixes plugin to work with 4.6.1
 * Removed all the of the constants the plugin defined so be sure to remove any dependencies on them
 
 = 1.3.4 =

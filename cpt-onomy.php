@@ -135,7 +135,7 @@ class CPT_TAXONOMY {
 	 * Whenever get_the_terms() is called, we need to
 	 * clear the cache that WordPress stores.
 	 *
-	 * @since   1.4.0
+	 * @since   1.3.5
 	 * @param   array|WP_Error $terms    List of attached terms, or WP_Error on failure.
 	 * @param   int            $post_id  Post ID.
 	 * @param   string         $taxonomy Name of the taxonomy.
@@ -1652,7 +1652,7 @@ class CPT_TAXONOMY {
 	  * Retrieves the terms associated with the given object(s), in the supplied taxonomies.
 	  *
 	  * This function is applied to the filter 'get_object_terms'.
-	  * Used to be applied to 'wp_get_object_terms' filter. Updated in v1.4.0.
+	  * Used to be applied to 'wp_get_object_terms' filter. Updated in v1.3.5.
 	  *
 	  * Do not call this function on its own, instead use the core WordPress function: wp_get_object_terms().
 	  *
