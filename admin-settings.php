@@ -51,8 +51,13 @@ class CPT_onomies_Admin_Settings {
 		
 		if ( is_admin() ) {
 		
-			// Lets us know if we're dealing with a multisite and on the network admin page
-			// Also, defines admin url and capability for users to be able to edit options
+			/**
+			 * Lets us know if we're dealing with a multisite
+			 * and on the network admin page.
+			 *
+			 * Also, defines admin url and capability for users
+			 * to be able to edit options.
+			 */
 			if ( is_multisite() && is_network_admin() ) {
 				
 				$this->is_network_admin = true;
@@ -165,10 +170,10 @@ class CPT_onomies_Admin_Settings {
 	 * Returns the count of any still existing taxonomy terms
 	 * under the same name as a current CPT-onomy.
 	 *
-	 * @since 1.3.4
-	 * @uses $wpdb
-	 * @param string - the CPT-onomy's name, aka post type
-	 * @return int|false - number of conflicting terms assigned to a CPT-onomy's matching taxonomy or false, if none exist
+	 * @since   1.3.4
+	 * @uses    $wpdb
+	 * @param   string - the CPT-onomy's name, aka post type
+	 * @return  int|false - number of conflicting terms assigned to a CPT-onomy's matching taxonomy or false, if none exist
 	 */
 	private function get_conflicting_taxonomy_terms_count( $post_type ) {
 		global $wpdb;
@@ -197,10 +202,10 @@ class CPT_onomies_Admin_Settings {
 	 * Deletes any still existing taxonomy terms
 	 * under the same name as a current CPT-onomy.
 	 *
-	 * @since 1.3.4
-	 * @uses $wpdb
-	 * @param string - the CPT-onomy's name, aka post type
-	 * @return int|false - the number of terms that were deleted, or false if no terms were deleted
+	 * @since   1.3.4
+	 * @uses    $wpdb
+	 * @param   string - the CPT-onomy's name, aka post type
+	 * @return  int|false - the number of terms that were deleted, or false if no terms were deleted
 	 */
 	private function delete_conflicting_taxonomy_terms( $post_type ) {
 		global $wpdb;
@@ -247,9 +252,9 @@ class CPT_onomies_Admin_Settings {
 	 * Used to be named 'detect_custom_post_type_new_edit_other'.
 	 * Renamed in 1.3.1
 	 *
-	 * @since 1.1, renamed in 1.3.1
-	 * @uses $cpt_onomies_manager
-	 * @return array of 'new', 'edit' and 'other' values
+	 * @since   1.1, renamed in 1.3.1
+	 * @uses    $cpt_onomies_manager
+	 * @return  array of 'new', 'edit' and 'other' values
 	 */	
 	private function detect_settings_page_variables() {
 		global $cpt_onomies_manager;
@@ -314,9 +319,9 @@ class CPT_onomies_Admin_Settings {
 	 * to troubleshoot/validate network-registered custom post types so, with the exception
 	 * being inactive, all error messages are disabled for now.
 	 *
-	 * @since 1.2
-	 * @uses $cpt_onomies_manager, $blog_id
-	 * @return array of 'inactive_cpt', 'is_registered_cpt', 'overwrote_network_cpt',
+	 * @since   1.2
+	 * @uses    $cpt_onomies_manager, $blog_id
+	 * @return  array of 'inactive_cpt', 'is_registered_cpt', 'overwrote_network_cpt',
 	 *		'is_registered_cpt_onomy', 'programmatic_cpt_onomy', 'should_be_cpt_onomy',
 	 *		'attention_cpt' and 'attention_cpt_onomy'
 	 */
@@ -390,13 +395,12 @@ class CPT_onomies_Admin_Settings {
 	 */
 	public function ajax_print_network_sites() {
 		$network_blogs = $this->get_network_sites();
-		if ( ! is_multisite() ) {
-			?><p><?php _e( 'You are not running a WordPress multisite and therefore only have one site/blog with a blog ID of 1.', 'cpt-onomies' ); ?></p><?php
-		} else if ( is_multisite() && ! $network_blogs ) {
-			?><p><?php echo sprintf( __( 'You are running a WordPress multisite but there seems to have been a problem retrieving your site information. If the problem persists, %1$svisit your "Sites" page%2$s for more information.', 'cpt-onomies' ), '<a href="' . esc_url( network_admin_url( 'sites.php' ) ) . '">', '</a>' ); ?></p><?php
-		}
-		else {
-			?><table id="thickbox-network-sites" cellpadding="0" cellspacing="0" border="0">
+		if ( ! is_multisite() ) { ?>
+			<p><?php _e( 'You are not running a WordPress multisite and therefore only have one site/blog with a blog ID of 1.', 'cpt-onomies' ); ?></p>
+		<?php } else if ( is_multisite() && ! $network_blogs ) { ?>
+			<p><?php echo sprintf( __( 'You are running a WordPress multisite but there seems to have been a problem retrieving your site information. If the problem persists, %1$svisit your "Sites" page%2$s for more information.', 'cpt-onomies' ), '<a href="' . esc_url( network_admin_url( 'sites.php' ) ) . '">', '</a>' ); ?></p>
+		<?php } else { ?>
+			<table id="thickbox-network-sites" cellpadding="0" cellspacing="0" border="0">
 				<thead>
 					<tr>
 						<th class="blog_id">Blog ID</th>
@@ -413,8 +417,8 @@ class CPT_onomies_Admin_Settings {
 						</tr><?php
 					}
 				?></tbody>
-			</table><?php
-		}
+			</table>
+		<?php }
 		die();
 	}
 	
@@ -434,14 +438,18 @@ class CPT_onomies_Admin_Settings {
 	 */
 	public function ajax_validate_plugin_options_if_post_type_exists() {
 		global $cpt_onomies_manager;
+
+		// Get post type info
 		$custom_post_type_onomies_is_network_admin = ( isset( $_POST[ 'custom_post_type_onomies_is_network_admin' ] ) && $_POST[ 'custom_post_type_onomies_is_network_admin' ] ) ? true : false;
 		$original_custom_post_type_name = ( isset( $_POST[ 'original_custom_post_type_onomies_cpt_name' ] ) && ! empty( $_POST[ 'original_custom_post_type_onomies_cpt_name' ] ) ) ? $_POST[ 'original_custom_post_type_onomies_cpt_name' ] : NULL;
 		$custom_post_type_name = ( isset( $_POST[ 'custom_post_type_onomies_cpt_name' ] ) && ! empty( $_POST[ 'custom_post_type_onomies_cpt_name' ] ) ) ? $_POST[ 'custom_post_type_onomies_cpt_name' ] : NULL;
+
 		if ( ( ( ! empty( $original_custom_post_type_name ) && ! empty( $custom_post_type_name ) && $custom_post_type_name != $original_custom_post_type_name ) || ( empty( $original_custom_post_type_name ) && ! empty( $custom_post_type_name ) ) ) && ( ( $custom_post_type_onomies_is_network_admin && array_key_exists( $custom_post_type_name, $cpt_onomies_manager->user_settings[ 'network_custom_post_types' ] ) ) || ( ! $custom_post_type_onomies_is_network_admin && ( ( post_type_exists( $custom_post_type_name ) && ( ! $cpt_onomies_manager->is_registered_network_cpt( $custom_post_type_name ) ) ) || array_key_exists( $custom_post_type_name, $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) ) ) ) ) {
 			echo false;
 		} else {
 			echo 'true';
 		}
+
 		die();
 	}
 	
@@ -452,15 +460,14 @@ class CPT_onomies_Admin_Settings {
 	 *
 	 * This function is invoked by the action 'wp_ajax_custom_post_type_onomy_update_edit_custom_post_type_closed_edit_tables'.
 	 *
-	 * @since 1.0
-	 * @uses $user_ID
+	 * @since   1.0
+	 * @uses    $user_ID
 	 */
 	public function ajax_update_plugin_options_edit_custom_post_type_closed_edit_tables() {
 		global $user_ID;
 		
 		// Get the table we're editing
 		$edit_table = ( isset( $_POST[ 'custom_post_type_onomies_edit_table' ] ) && ! empty( $_POST[ 'custom_post_type_onomies_edit_table' ] ) ) ? $_POST[ 'custom_post_type_onomies_edit_table' ] : NULL;
-		
 		if ( $edit_table ) {
 			
 			$show = $_POST[ 'custom_post_type_onomies_edit_table_show' ];
@@ -505,8 +512,8 @@ class CPT_onomies_Admin_Settings {
 	 *
 	 * This function is invoked by the action 'wp_ajax_custom_post_type_onomy_update_edit_custom_post_type_dismiss'.
 	 *
-	 * @since 1.3
-	 * @uses $user_ID
+	 * @since   1.3
+	 * @uses    $user_ID
 	 */
 	public function ajax_update_plugin_options_edit_custom_post_type_closed_dismiss() {
 		global $user_ID;
@@ -537,8 +544,8 @@ class CPT_onomies_Admin_Settings {
 	 *
 	 * This function is invoked by the action 'update_wpmu_options'.
 	 *
-	 * @since 1.3
-	 * @uses $cpt_onomies_manager
+	 * @since   1.3
+	 * @uses    $cpt_onomies_manager
 	 */	
 	public function update_network_plugin_options_custom_post_types() {
 		global $cpt_onomies_manager;
@@ -597,10 +604,10 @@ class CPT_onomies_Admin_Settings {
 	 * If saving the "edit" options page and a new custom post type is added,
 	 * the function will edit the redirect to show new CPT.
 	 *
-	 * @since 1.0, name changed in 1.3
-	 * @uses $cpt_onomies_manager
-	 * @param array $custom_post_types - the custom post type setting that is being updated
-	 * @return array - validated custom post type information
+	 * @since   1.0, name changed in 1.3
+	 * @uses    $cpt_onomies_manager
+	 * @param   array $custom_post_types - the custom post type setting that is being updated
+	 * @return  array - validated custom post type information
 	 */
 	public function update_plugin_options_custom_post_types( $custom_post_types ) {
 		global $cpt_onomies_manager;
@@ -632,10 +639,10 @@ class CPT_onomies_Admin_Settings {
 	/**
 	 * This function validates custom post type settings.
 	 * 
-	 * @since 1.3
-	 * @param array $custom_post_types - the custom post type settings that are being validated
-	 * @param array $saved_custom_post_types - the original custom post type settings
-	 * @return array - validated custom post type settings
+	 * @since   1.3
+	 * @param   array $custom_post_types - the custom post type settings that are being validated
+	 * @param   array $saved_custom_post_types - the original custom post type settings
+	 * @return  array - validated custom post type settings
 	 */
 	public function validate_plugin_options_custom_post_types( $custom_post_types, $saved_custom_post_types = array() ) {
 		if ( current_user_can( $this->manage_options_capability ) && ! empty( $custom_post_types ) ) {
@@ -832,10 +839,10 @@ class CPT_onomies_Admin_Settings {
 	 *
 	 * If the "other" custom post type no longer exists, it deletes the settings from the DB.
 	 *
-	 * @since 1.0, name changed in 1.3
-	 * @uses $cpt_onomies_manager
-	 * @param array $other_custom_post_types - the other custom post type setting that is being updated
-	 * @return array - validated custom post type information
+	 * @since   1.0, name changed in 1.3
+	 * @uses    $cpt_onomies_manager
+	 * @param   array $other_custom_post_types - the other custom post type setting that is being updated
+	 * @return  array - validated custom post type information
 	 */
 	public function update_validate_plugin_options_other_custom_post_types( $other_custom_post_types ) {
 		global $cpt_onomies_manager;
@@ -890,10 +897,10 @@ class CPT_onomies_Admin_Settings {
 	 * As of version 1.2, you can customize yours settings by removing options
 	 * and setting default property values using various filters.
 	 *
-	 * @since 1.0
-	 * @uses $cpt_onomies_manager
-	 * @param string $post_type_being_edited - the custom post type that's being edited. NULL if creating a new custom post type.
-	 * @return object - the custom post type properties
+	 * @since   1.0
+	 * @uses    $cpt_onomies_manager
+	 * @param   string $post_type_being_edited - the custom post type that's being edited. NULL if creating a new custom post type.
+	 * @return  object - the custom post type properties
 	 * @filters 'custom_post_type_onomies_attach_to_post_type_property_include_post_type' - $post_type_to_include, $post_type_being_edited
 	 *		'custom_post_type_onomies_taxonomies_property_include_taxonomy' - $taxonomy, $post_type_being_edited
 	 *		'custom_post_type_onomies_restrict_user_capabilities_property_include_user_role' - $user_role, $post_type_being_edited
@@ -901,6 +908,7 @@ class CPT_onomies_Admin_Settings {
 	 */
 	public function get_plugin_options_page_cpt_properties( $post_type_being_edited = NULL ) {
 		global $cpt_onomies_manager;
+
 		if ( current_user_can( $this->manage_options_capability ) ) {
 		
 			// Retrieve saved custom post type data
@@ -1517,8 +1525,11 @@ class CPT_onomies_Admin_Settings {
 				),
 			);
 			
-			// If network admin, add site registration data
-			// Otherwise, remove array item.
+			/**
+			 * If network admin, add site registration data.
+			 *
+			 * Otherwise, remove array item.
+			 */
 			if ( ! $this->is_network_admin ) {
 				unset( $cpt_properties->site_registration );
 			} else {
@@ -1967,8 +1978,10 @@ class CPT_onomies_Admin_Settings {
 					
 				}
 			
+			}
+
 			// Delete "conflicting" taxonomy terms
-			} else if ( isset( $_REQUEST[ 'delete_conflicting_terms' ] ) ) {
+			else if ( isset( $_REQUEST[ 'delete_conflicting_terms' ] ) ) {
 				
 				// Which taxonomy's terms are we deleting?
 				$taxonomy = $_REQUEST[ 'delete_conflicting_terms' ];
@@ -2108,11 +2121,12 @@ class CPT_onomies_Admin_Settings {
 	 *
 	 * This function is invoked by the action 'admin_menu'.
 	 *
-	 * @since 1.0
-	 * @uses $cpt_onomies_manager
+	 * @since   1.0
+	 * @uses    $cpt_onomies_manager
 	 */
 	public function print_plugin_options_page() {
 		global $cpt_onomies_manager;
+
 		if ( current_user_can( $this->manage_options_capability ) ) {
 			
 			/*
@@ -2149,8 +2163,12 @@ class CPT_onomies_Admin_Settings {
 
 				?></h2><?php
                 
-                // Print settings errors
-                // Regular site settings pages take care of this for us, so only needed on network admin
+                /**
+                 * Print settings errors.
+                 *
+                 * Regular site settings pages take care of this for us,
+                 * so only needed on network admin
+                 */
                 if ( $this->is_network_admin ) {
 	                settings_errors();
                 }
@@ -2161,9 +2179,7 @@ class CPT_onomies_Admin_Settings {
 					$label = NULL;
 					
 					if ( $new ) {
-						
 						$label = __( 'Creating a New Custom Post Type', 'cpt-onomies' );
-						
 					} else {
 					
 						$cpt_key_to_check = $edit;
@@ -2264,19 +2280,15 @@ class CPT_onomies_Admin_Settings {
 
 				// Add "deleted conflicting terms" message
 				else if ( isset( $_REQUEST[ 'deleted_conflicting_terms' ] ) ) {
-					
 					$message = __( 'The conflicting taxonomy terms have been deleted!', 'cpt-onomies' );
-					
 				}
 				
 				// Display message
-				if ( $message ) {
-				
-					?><div id="message" class="<?php echo $message_class; ?>">
+				if ( $message ) { ?>
+					<div id="message" class="<?php echo $message_class; ?>">
 						<p><?php echo $message; ?></p>
-					</div><?php
-					
-				}
+					</div>
+				<?php }
 				
 				// Output form, nonce, action, and option_page fields
 				$print_form = ( $new || $edit ) ? true : false;
@@ -2317,7 +2329,8 @@ class CPT_onomies_Admin_Settings {
 						
 				}
 				
-				?><div id="poststuff">
+				?>
+				<div id="poststuff">
 					<div id="post-body" class="metabox-holder columns-2">
 
 						<div id="postbox-container-1" class="postbox-container">
@@ -2354,7 +2367,8 @@ class CPT_onomies_Admin_Settings {
 
 		            <br class="clear" />
 
-				</div> <!-- #poststuff --><?php
+				</div> <!-- #poststuff -->
+				<?php
 					
 				if ( $print_form ) {
 					?></form><?php
@@ -2745,15 +2759,11 @@ class CPT_onomies_Admin_Settings {
 
 															// This means it's registered and all is well
 															else {
-																
 																_e( 'Yes', 'cpt-onomies' );
-																
 															}
 															
 														} else {
-															
 															_e( 'No', 'cpt-onomies' );
-															
 														}
 														
 													?></td><?php
@@ -2885,8 +2895,11 @@ class CPT_onomies_Admin_Settings {
 					
 				// Delete CPT Meta Box
 				case 'delete_custom_post_type':
+
+					// Define some info
 					$edit = $_REQUEST[ 'edit' ];
 					$delete_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'delete' => $edit, '_wpnonce' => wp_create_nonce( 'delete-cpt-' . $edit ) ), $this->admin_url ), 'delete-cpt-' . $edit );
+
 					?>
                     <p><?php printf( __( 'Deleting your custom post type %1$sDOES NOT%2$s delete the actual posts. They\'ll be waiting for you if you decide to register this post type again. Just make sure you use the same name.', 'cpt-onomies' ), '<strong>', '</strong>' ); ?></p>
                     <p><strong><?php _e( 'However, there is no "undo" and, once you click "Delete", all of your settings will be gone.', 'cpt-onomies' ); ?></p>
@@ -3186,13 +3199,13 @@ class CPT_onomies_Admin_Settings {
 	 * 'custom_post_type_onomies_default_property_value' filter which passes two paramters:
 	 * the $property_key and the $property_parent_key.
 	 *
-	 * @since 1.0
-	 * @uses $cpt_onomies_manager
-	 * @param $cpt_key - the name for the custom post type we're editing
-	 * @param $CPT - saved information for the custom post type we're editing
-	 * @param object $property - info pulled from $this->get_plugin_options_page_cpt_properties() about this specific field
-	 * @param string $property_key - name for property so information can be pulled from $property_info object.
-	 * @param string $property_parent_key - allows for pulling property info from within an array.
+	 * @since   1.0
+	 * @uses    $cpt_onomies_manager
+	 * @param   $cpt_key - the name for the custom post type we're editing
+	 * @param   $CPT - saved information for the custom post type we're editing
+	 * @param   object $property - info pulled from $this->get_plugin_options_page_cpt_properties() about this specific field
+	 * @param   string $property_key - name for property so information can be pulled from $property_info object.
+	 * @param   string $property_parent_key - allows for pulling property info from within an array.
 	 * @filters 'custom_post_type_onomies_default_property_value' - $property_key, $property_parent_key
 	 */
 	public function print_plugin_options_edit_custom_post_type_field( $cpt_key, $CPT, $property, $property_key, $property_parent_key=NULL ) {
@@ -3315,13 +3328,11 @@ class CPT_onomies_Admin_Settings {
 					?><table class="<?php echo $property->type; ?>" cellpadding="0" cellspacing="0" border="0"><?php
 					
 						// If no data is available, which could happen via filter, displays message
-						if ( ! isset( $property->data ) || empty( $property->data ) ) {
-						
-							?><tr>
-								<td><strong>There are no options available for selection.</strong></td>
-							</tr><?php
-						
-						} else {
+						if ( ! isset( $property->data ) || empty( $property->data ) ) { ?>
+							<tr>
+								<td><strong><?php _e( 'There are no options available for selection.', 'cpt-onomies' ); ?></strong></td>
+							</tr>
+						<?php } else {
 						
 							$td = 1;
 							$index = 1;

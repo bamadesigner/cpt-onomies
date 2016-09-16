@@ -3,8 +3,9 @@
 global $wpdb;
 
 // If uninstall not called from the WordPress exit
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) )
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit();
+}
 	
 // Delete individual site options and postmeta
 $blogs = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM " . $wpdb->blogs . " ORDER BY blog_id", NULL ) );

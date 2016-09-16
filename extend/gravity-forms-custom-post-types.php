@@ -20,12 +20,15 @@ function custom_post_type_onomies_gform_post_submission_save_taxonomies( $entry,
 
 	// Check if the class exists and the submission contains a WordPress post
     if ( class_exists( 'GFCPTAddon1_5' ) && isset ( $entry['post_id'] ) ) {
+
     	$GFCPTAddon1_5 = new GFCPTAddon1_5();
-    	foreach( $form['fields'] as &$field ) {
+
+	    foreach( $form['fields'] as &$field ) {
     		if ( $taxonomy = $GFCPTAddon1_5->get_field_taxonomy( $field ) ) {
 			    custom_post_type_onomies_gform_post_submission_save_taxonomy_field( $field, $entry, $taxonomy );
 		    }
     	}
+
     }
 
 }

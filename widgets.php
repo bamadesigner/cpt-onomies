@@ -33,10 +33,10 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 	 * As of 1.1, you are allowed to select whether you want the
 	 * term to link to the archive page or the actual post.
 	 * 
-	 * @since 1.0
-	 * @uses $cpt_onomies_manager, $cpt_onomy
-	 * @param array $args - arguments to customize the widget
-	 * @param array $instance - the widget's saved information
+	 * @since   1.0
+	 * @uses    $cpt_onomies_manager, $cpt_onomy
+	 * @param   array $args - arguments to customize the widget
+	 * @param   array $instance - the widget's saved information
 	 */
 	function widget( $args, $instance ) {
 		global $cpt_onomies_manager, $cpt_onomy;
@@ -61,9 +61,7 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 				
 					if ( ! empty( $instance[ 'title' ] ) ) {
 						$title = $instance['title'];
-					}
-
-					else {
+					} else {
 						$tax = get_taxonomy( $current_taxonomy );
 						$title = $tax->labels->name;
 					}						
@@ -90,9 +88,9 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 	/**
 	 * This function updates the widget's settings.
 	 * 
-	 * @since 1.0
-	 * @param array $new_instance - new settings to overwrite old settings
-	 * @param array $old_instance - old settings
+	 * @since   1.0
+	 * @param   array $new_instance - new settings to overwrite old settings
+	 * @param   array $old_instance - old settings
 	 */
 	function update( $new_instance, $old_instance ) {
 		$instance[ 'title' ] = strip_tags( stripslashes( $new_instance[ 'title' ] ) );
@@ -108,15 +106,17 @@ class WP_Widget_CPTonomy_Tag_Cloud extends WP_Widget {
 	 * As of 1.1, you are allowed to select whether you want the
 	 * term to link to the archive page or the actual post.
 	 * 
-	 * @since 1.0
-	 * @uses $cpt_onomies_manager
-	 * @param $instance - widget settings
+	 * @since   1.0
+	 * @uses    $cpt_onomies_manager
+	 * @param   $instance - widget settings
 	 */
 	function form( $instance ) {
 		global $cpt_onomies_manager;
+
 		$defaults = array( 'show_if_empty' => 1, 'term_link' => 'view' );
 		$instance = wp_parse_args( $instance, $defaults );
 		$current_taxonomy = ( ! empty( $instance[ 'taxonomy' ] ) && $cpt_onomies_manager->is_registered_cpt_onomy( $instance[ 'taxonomy' ] ) ) ? $instance[ 'taxonomy' ] : NULL;
+
 		?>
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'cpt-onomies' ) ?></label>
 		<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php if ( isset( $instance[ 'title' ] ) ) { echo esc_attr( $instance[ 'title' ] ); } ?>" /></p>

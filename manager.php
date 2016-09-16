@@ -88,9 +88,9 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * This function is applied to the filter 'query_vars'.
 	 *
-	 * @since 1.0
-	 * @param array $vars - the query variables already created by WordPress
-	 * @return array - the filtered query variables 
+	 * @since   1.0
+	 * @param   array $vars - the query variables already created by WordPress
+	 * @return  array - the filtered query variables
 	 */
 	public function register_custom_query_vars( $vars ) {
 		array_push( $vars, 'cpt_onomy_archive' );
@@ -109,10 +109,10 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * This function is applied to the filter 'request'.
 	 * 	 
-	 * @since 1.0
-	 * @uses $cpt_onomy, $pagenow, $post_type
-	 * @param array $query - the query variables already created by WordPress
-	 * @return array - the filtered query variables
+	 * @since   1.0
+	 * @uses    $cpt_onomy, $pagenow, $post_type
+	 * @param   array $query - the query variables already created by WordPress
+	 * @return  array - the filtered query variables
 	 */
 	public function change_query_vars( $query ) {
 		global $cpt_onomy, $pagenow, $post_type;
@@ -176,8 +176,9 @@ class CPT_ONOMIES_MANAGER {
 			}
 			
 		}
+
 		// For filtering by CPT-onomy on admin edit posts screen
-		else if ( is_admin()  && $pagenow == 'edit.php' && isset( $post_type ) ) {
+		else if ( is_admin() && 'edit.php' == $pagenow && isset( $post_type ) ) {
 
 			foreach( get_taxonomies( array(), 'objects' ) as $taxonomy => $tax ) {
 				if ( isset( $_REQUEST[ $taxonomy ] ) && ! empty( $_REQUEST[ $taxonomy ] ) && $this->is_registered_cpt_onomy( $taxonomy ) )  {
@@ -214,8 +215,8 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * This function is applied to the action 'parse_request'.
 	 * 	 
-	 * @since 1.2
-	 * @param array $query - the query variables already created by WordPress
+	 * @since   1.2
+	 * @param   array $query - the query variables already created by WordPress
 	 */	
 	public function revert_query_vars( $query ) {
 		if ( isset( $query->query_vars[ 'cpt_onomy_archive' ] ) && $query->query_vars[ 'cpt_onomy_archive' ] && ( isset( $query->matched_query ) && ( $matched_query = $query->matched_query ) ) ) {
@@ -246,6 +247,7 @@ class CPT_ONOMIES_MANAGER {
 					$cpt_onomy_index++;
 				}
 			}
+
 			if ( $cpt_onomy_index > 0 ) {
 
 				// If only one CPT-onomy is being queried, then we want to use its post types
@@ -319,9 +321,9 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * This function is applied to the action 'pre_get_posts'.
 	 * 	 
-	 * @since 1.0
-	 * @uses $cpt_onomy
-	 * @param array $query - the query variables already created by WordPress
+	 * @since   1.0
+	 * @uses    $cpt_onomy
+	 * @param   array $query - the query variables already created by WordPress
 	 */
 	public function add_cpt_onomy_term_queried_object( $query ) {
 		global $cpt_onomy;
@@ -364,11 +366,11 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * This function is invoked by the filter 'posts_clauses'.
 	 * 
-	 * @since 1.0.3
-	 * @uses $wpdb, $cpt_onomy
-	 * @param array $clauses - the clauses variables already created by WordPress
-	 * @param WP_Query $query - all of the query info
-	 * @return array - the clauses info after it has been filtered
+	 * @since   1.0.3
+	 * @uses    $wpdb, $cpt_onomy
+	 * @param   array $clauses - the clauses variables already created by WordPress
+	 * @param   WP_Query $query - all of the query info
+	 * @return  array - the clauses info after it has been filtered
 	 */
 	public function posts_clauses( $clauses, $query ) {
 		global $wpdb, $cpt_onomy;
@@ -526,6 +528,7 @@ class CPT_ONOMIES_MANAGER {
 
 				// Taxonomies
 				else {
+
 					switch ( $this_query[ 'field' ] ) {
 						case 'slug':
 						case 'name':
@@ -546,7 +549,8 @@ class CPT_ONOMIES_MANAGER {
 								WHERE taxonomy = '{$taxonomy}'
 								AND term_id IN ($terms)
 							" );
-					}					
+					}
+
 				}
 				
 				if ( 'AND' == $this_query[ 'operator' ] && count( $terms ) < count( $this_query[ 'terms' ] ) ) {
@@ -777,8 +781,8 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * This function is applied to the action 'pre_get_posts'.
 	 * 	 
-	 * @since 1.0.3
-	 * @param array $query - the query variables already created by WordPress
+	 * @since   1.0.3
+	 * @param   array $query - the query variables already created by WordPress
 	 */
 	public function clean_get_posts_terms_query( $query ) {
 		if ( isset( $query->query_vars[ 'get_cpt_onomy_terms' ] ) ) {
@@ -828,11 +832,11 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * This function is applied to the filter 'user_has_cap'.
 	 *
-	 * @since 1.0
-	 * @param array $allcaps - all of the user's preset capabilities
-	 * @param array $caps - the capabilities we're testing
-	 * @param array $args - additional arguments passed to the function
-	 * @return array - the filtered $allcaps
+	 * @since   1.0
+	 * @param   array $allcaps - all of the user's preset capabilities
+	 * @param   array $caps - the capabilities we're testing
+	 * @param   array $args - additional arguments passed to the function
+	 * @return  array - the filtered $allcaps
 	 */
 	public function user_has_term_capabilities( $allcaps, $caps, $args ) {
 		
@@ -860,8 +864,10 @@ class CPT_ONOMIES_MANAGER {
 						
 						$allow = true;
 					
+					}
+
 					// The capability is restricted to specific roles
-					} else {
+					else {
 																
 						// Get user roles to see if user has capability to assign taxonomy
 						// $args contains the user id
@@ -910,10 +916,10 @@ class CPT_ONOMIES_MANAGER {
 	 * Detects if a custom post type is overwriting a
 	 * network-registered post type registered by this plugin.
 	 * 
-	 * @since 1.3
-	 * @uses $blog_id
-	 * @param string $cpt_key - the key, or alias, for the custom post type you are checking
-	 * @return boolean - whether this custom post type is overwriting a network-registered post type registered by this plugin
+	 * @since   1.3
+	 * @uses    $blog_id
+	 * @param   string $cpt_key - the key, or alias, for the custom post type you are checking
+	 * @return  boolean - whether this custom post type is overwriting a network-registered post type registered by this plugin
 	 */
 	public function overwrote_network_cpt( $cpt_key ) {
 		global $blog_id;
@@ -941,9 +947,9 @@ class CPT_ONOMIES_MANAGER {
 	 * a network-registered custom post type, it adds the argument 'cpt_onomies_network_cpt'
 	 * and 'created_by_cpt_onomies' for testing purposes.
 	 *
-	 * @since 1.3
-	 * @param string $cpt_key - the key, or alias, for the custom post type you are checking
-	 * @return boolean - whether this custom post type is a network-registered post type registered by this plugin
+	 * @since   1.3
+	 * @param   string $cpt_key - the key, or alias, for the custom post type you are checking
+	 * @return  boolean - whether this custom post type is a network-registered post type registered by this plugin
 	 */
 	public function is_registered_network_cpt( $cpt_key ) {
 		if ( ! empty( $cpt_key ) && post_type_exists( $cpt_key ) && ( $post_type = get_post_type_object( $cpt_key ) )
@@ -959,9 +965,9 @@ class CPT_ONOMIES_MANAGER {
 	 * registered by this plugin. When this plugin registers a custom post type,
 	 * it adds the argument 'created_by_cpt_onomies' for testing purposes.
 	 *
-	 * @since 1.0
-	 * @param string $cpt_key - the key, or alias, for the custom post type you are checking
-	 * @return boolean - whether this custom post type is a post type registered by this plugin
+	 * @since   1.0
+	 * @param   string $cpt_key - the key, or alias, for the custom post type you are checking
+	 * @return  boolean - whether this custom post type is a post type registered by this plugin
 	 */
 	public function is_registered_cpt( $cpt_key ) {
 		if ( ! empty( $cpt_key ) && post_type_exists( $cpt_key ) && ( $post_type = get_post_type_object( $cpt_key ) )
@@ -979,13 +985,15 @@ class CPT_ONOMIES_MANAGER {
 	 * As of version 1.3.2, the function also allows you to test
 	 * if the CPT-onomy is registered to a specific post type.
 	 * 
-	 * @since 1.0
-	 * @param string $tax - the key, or alias, for the taxonomy you are checking
-	 * @param string $post_type - if set, checks to see is CPT-onomy AND is registered to set post type
-	 * @return boolean - whether this taxonomy is a CPT-onomy registered by this plugin (and, if post type set, registered to a specific post type)
+	 * @since   1.0
+	 * @param   string $tax - the key, or alias, for the taxonomy you are checking
+	 * @param   string $post_type - if set, checks to see is CPT-onomy AND is registered to set post type
+	 * @return  boolean - whether this taxonomy is a CPT-onomy registered by this plugin (and, if post type set, registered to a specific post type)
 	 */
 	public function is_registered_cpt_onomy( $taxonomy, $post_type = NULL ) {
-		if ( ! empty( $taxonomy ) && taxonomy_exists( $taxonomy ) ) {
+		if ( taxonomy_exists( $taxonomy ) ) {
+
+			// Get the taxonomy object
 			$tax = get_taxonomy( $taxonomy );
 			
 			/**
@@ -1015,12 +1023,12 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * As of 1.1, users can define their own CPT-onomy archive page slug.
 	 * 
-	 * @since 1.1
-	 * @author Rachel Carden (@bamadesigner)
-	 * @author Travis Smith (@wp_smith) - Thanks for your help Travis!!
-	 * @param string $taxonomy - Name of taxonomy object
-	 * @param array|string $object_type - Name of the object type for the taxonomy object
-	 * @param array|string $args - arguments used to customize the CPT-onomy
+	 * @since   1.1
+	 * @author  Rachel Carden (@bamadesigner)
+	 * @author  Travis Smith (@wp_smith) - Thanks for your help Travis!!
+	 * @param   string $taxonomy - Name of taxonomy object
+	 * @param   array|string $object_type - Name of the object type for the taxonomy object
+	 * @param   array|string $args - arguments used to customize the CPT-onomy
 	 		'label' (string)						Name of the CPT-onomy shown in the menu. Usually plural.
 	 												If not set, the custom post type's label will be used.
 	 		'labels' (array)						An array of labels for this CPT-onomy. You can see accepted values
@@ -1036,7 +1044,7 @@ class CPT_ONOMIES_MANAGER {
 	 		'restrict_user_capabilities' (array)	User roles who have capability to assign CPT-onomy terms.
 	 												If empty, ALL user roles will have the capability.
 	 												Default is array( 'administrator', 'editor', 'author' ).
-	 * @return null - Returns early if taxonomy already exists or if post type does not exist
+	 * @return  null - Returns early if taxonomy already exists or if post type does not exist
 	 */
 	public function register_cpt_onomy( $taxonomy, $object_type, $args = array() ) {
 	
@@ -1201,11 +1209,11 @@ class CPT_ONOMIES_MANAGER {
 	 * This function takes your custom post type arguments from the settings
 	 * and prepares them for registration.
 	 *
-	 * @since 1.3
-	 * @param string $cpt_key - Name of the custom post type you are registering
-	 * @param array $cpt - Custom post type settings used to mold arguments
-	 * @param array $args - Already defined arguments.
-	 * @return array of custom post type arguments, ready for registration
+	 * @since   1.3
+	 * @param   string $cpt_key - Name of the custom post type you are registering
+	 * @param   array $cpt - Custom post type settings used to mold arguments
+	 * @param   array $args - Already defined arguments.
+	 * @return  array of custom post type arguments, ready for registration
 	 */
 	public function create_custom_post_type_arguments_for_registration( $cpt_key, $cpt = array(), $args = array() ) {
 		
@@ -1460,10 +1468,10 @@ class CPT_ONOMIES_MANAGER {
 	 * This function takes the serialized string and creates/returns the proper
 	 * argument for custom post type registration.
 	 *
-	 * @since 1.3
-	 * @uses $blog_id
-	 * @param string $argument - the original argument pulled from settings
-	 * @return array of prepared argument, ready for registration
+	 * @since   1.3
+	 * @uses    $blog_id
+	 * @param   string $argument - the original argument pulled from settings
+	 * @return  array of prepared argument, ready for registration
 	 */
 	private function unserialize_network_custom_post_type_argument( $argument ) {
 		global $blog_id;
@@ -1540,8 +1548,8 @@ class CPT_ONOMIES_MANAGER {
 	 *
 	 * This function is invoked by the action 'init'.
 	 *
-	 * @since 1.0
-	 * @uses $blog_id
+	 * @since   1.0
+	 * @uses    $blog_id
 	 */
 	public function register_custom_post_types_and_taxonomies() {
 		global $blog_id;
