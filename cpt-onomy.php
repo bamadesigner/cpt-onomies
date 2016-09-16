@@ -20,10 +20,11 @@ class CPT_TAXONOMY {
 		
 		// Function filters
 		add_filter( 'get_terms', array( $this, 'get_terms' ), 1, 3 );
-		add_filter( 'wp_get_object_terms', array( $this, 'wp_get_object_terms' ), 1, 4 );
+		add_filter( 'get_object_terms', array( $this, 'get_object_terms' ), 1, 4 );
 		
 		// Other filters
 		add_filter( 'get_terms_args', array( $this, 'adjust_get_terms_args' ), 1, 2 );
+		add_filter( 'get_the_terms', array( $this, 'get_the_terms' ), 1, 3 );
 		
 	}
 	public function CPT_TAXONOMY() { $this->__construct(); }
@@ -121,6 +122,25 @@ class CPT_TAXONOMY {
 		
 		return $args;
 		
+	}
+
+	/**
+	 *
+	 * Whenever get_the_terms() is called, we need to
+	 * clear the cache that WordPress stores.
+	 *
+	 * @since   1.4.0
+	 * @param   array|WP_Error $terms    List of attached terms, or WP_Error on failure.
+	 * @param   int            $post_id  Post ID.
+	 * @param   string         $taxonomy Name of the taxonomy.
+	 * @return  array|WP_Error $terms    List of attached terms, or WP_Error on failure.
+	 */
+	public function get_the_terms( $terms, $post_id, $taxonomy ) {
+
+		// Clear the cache that WordPress adds
+		wp_cache_delete( $post_id, "{$taxonomy}_relationships" );
+
+		return $terms;
 	}
 	
 	/**
@@ -1544,37 +1564,40 @@ class CPT_TAXONOMY {
 	}
 	
 	 /**
-	 * This function hooks into WordPress wp_get_object_terms() and allows the plugin
-	 * to change what terms are retrieved for a particular object. This function is invoked 
-	 * in numerous places and is called whenever the WordPress function wp_get_object_terms() is used.
-	 *
-	 * Retrieves the terms associated with the given object(s), in the supplied taxonomies.
-	 * 
-	 * This function is applied to the filter 'wp_get_object_terms'.
-	 *
-	 * Do not call this function on its own, instead use the core WordPress function: wp_get_object_terms().
-	 *
-	 * Version 1.1 added the ability to designate terms ids to 'exclude' in the $args array.
-	 * Will only work if 'fields' is set to 'ids', 'all' or 'all_with_object_id'.
-	 * 		'exclude' - (array) Default is an empty array. An array, comma- or space-delimited string
-	 * 		of term ids to exclude in the return array.
-	 *
-	 * @since 1.0
-	 * @uses $wpdb, $cpt_onomies_manager
-	 * @param array $terms - the terms created by WordPress wp_get_object_terms() that we will now filter
-	 * @param int|array $object_ids The ID(s) of the object(s) to retrieve.
-	 * @param string|array $taxonomies The taxonomies to retrieve terms from.
-	 * @param array|string $args Change what is returned
-	 * @return array|WP_Error The requested term data or empty array if no terms found. WP_Error if $taxonomy does not exist.
-	 */
-	function wp_get_object_terms( $terms, $object_ids, $taxonomies, $args = array() ) {
+	  * This function hooks into WordPress get_object_terms() and allows the plugin
+	  * to change what terms are retrieved for a particular object. This function is invoked
+	  * in numerous places and is called whenever the WordPress function wp_get_object_terms() is used.
+	  *
+	  * Retrieves the terms associated with the given object(s), in the supplied taxonomies.
+	  *
+	  * This function is applied to the filter 'get_object_terms'.
+	  * Used to be applied to 'wp_get_object_terms' filter. Updated in v1.4.0.
+	  *
+	  * Do not call this function on its own, instead use the core WordPress function: wp_get_object_terms().
+	  *
+	  * Version 1.1 added the ability to designate terms ids to 'exclude' in the $args array.
+	  * Will only work if 'fields' is set to 'ids', 'all' or 'all_with_object_id'.
+	  * 		'exclude' - (array) Default is an empty array. An array, comma- or space-delimited string
+	  * 		of term ids to exclude in the return array.
+	  *
+	  * @since  1.0
+	  * @uses   $wpdb, $cpt_onomies_manager
+	  * @param  array $terms - An array of terms for the given object or objects.
+	  * @param  array $object_id_array - Array of object IDs for which `$terms` were retrieved.
+	  * @param  array $taxonomy_array - Array of taxonomies from which `$terms` were retrieved.
+	  * @param  array $args - An array of arguments for retrieving terms for the given
+	  *             object(s). See wp_get_object_terms() for details.
+	  * @return array|WP_Error - The requested term data or empty array, f no terms found.
+	  *             WP_Error if $taxonomy does not exist.
+	  */
+	function get_object_terms( $terms, $object_ids, $taxonomies, $args = array() ) {
 		global $wpdb, $cpt_onomies_manager;
 		
 		/**
 		 * When bulk edit, we don't want to return CPT-onomy terms
 		 * because bulk edit will add them as regular taxonomy information.
 		 */
-		if ( isset( $_REQUEST[ 'is_bulk_quick_edit' ] ) && isset( $_REQUEST[ 'bulk_edit' ] ) && $_REQUEST[ 'bulk_edit' ] == 'Update' ) {
+		if ( isset( $_REQUEST[ 'is_bulk_quick_edit' ] ) && isset( $_REQUEST[ 'bulk_edit' ] ) && 'Update' == $_REQUEST[ 'bulk_edit' ] ) {
 			return $terms;
 		}
 		
@@ -1582,12 +1605,20 @@ class CPT_TAXONOMY {
 		 * Does not support $fields = 'tt_ids' since our CPT-onomies
 		 * are not actual taxonomies and dont have taxonomy term ids.
 		 */
-		if ( $args[ 'fields' ] == 'tt_ids' ) {
+		if ( 'tt_ids' == $args[ 'fields' ] ) {
 			return $terms;
 		}
-		
-		// Clean up taxonomies
-		$taxonomies = explode( ",", preg_replace( '/([\s\'])/i', '', $taxonomies ) );
+
+		// This allows for a string with one object id or an array with multiple object ids
+		if ( ! is_array( $object_ids ) ) {
+			$object_ids = explode( ',', str_replace( ' ', '', $object_ids ) );
+		}
+		$object_ids = array_map( 'intval', $object_ids );
+
+		// Make sure we have object IDs and taxonomies
+		if ( empty( $object_ids ) || empty( $taxonomies ) ) {
+			return $terms;
+		}
 			
 		// If taxonomy name is string, convert to array
 		if ( ! is_array( $taxonomies ) ) {
@@ -1606,15 +1637,18 @@ class CPT_TAXONOMY {
 		if ( empty( $cpt_taxonomies ) ) {
 			return $terms;
 		}
-					
-		// This allows for a string with one object id or an array with multiple object ids
-		if ( ! is_array( $object_ids ) ) {
-			$object_ids = str_replace( ', ', ',', $object_ids );
-			$object_ids = explode( ',', $object_ids );
-		}
-		$object_ids = array_map( 'intval', $object_ids );
-		
-		$defaults = array( 'orderby' => 'name', 'order' => 'ASC', 'fields' => 'all' );
+
+		// Designate the defaults
+		$defaults = array(
+			'orderby'   => 'name',
+			'order'     => 'ASC',
+			'fields'    => 'all',
+			'parent'    => '',
+			'update_term_meta_cache' => true,
+			'meta_query'=> '',
+		);
+
+		// Parse arguments with the defaults
 		$args = wp_parse_args( $args, $defaults );
 		
 		/**
@@ -1630,13 +1664,14 @@ class CPT_TAXONOMY {
 			}
 			$terms = $new_terms;
 		}
-				
+
+		// I'm not sure why this runs but is pulled from wp_get_object_terms()
 		if ( count( $taxonomies ) > 1 ) {
 			
 			foreach ( $taxonomies as $index => $taxonomy ) {
 				$t = get_taxonomy( $taxonomy );
 				if ( isset( $t->args ) && is_array( $t->args ) && $args != array_merge( $args, $t->args ) ) {
-					unset($taxonomies[$index]);
+					unset( $taxonomies[ $index ] );
 					$terms = array_merge( $terms, wp_get_object_terms( $object_ids, $taxonomy, array_merge( $args, $t->args ) ) );
 				}
 			}
@@ -1725,25 +1760,23 @@ class CPT_TAXONOMY {
 				// Build the query
 				// Get object ID, term count and post info
 				$cpt_posts_query = "SELECT meta.post_id AS object_id, terms.*
-					
-					FROM {$wpdb->postmeta} meta 
-	
-						INNER JOIN {$wpdb->posts} terms 
-							ON terms.ID = meta.meta_value 
-							AND terms.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "')
-							AND terms.post_status = 'publish'";
+					FROM {$wpdb->postmeta} meta
+					INNER JOIN {$wpdb->posts} terms 
+						ON terms.ID = meta.meta_value 
+						AND terms.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "')
+						AND terms.post_status = 'publish'";
 							
-						// Exclude certain "terms"
-						if ( ! empty( $exclude ) ) {
-							$cpt_posts_query .= " AND terms.ID NOT IN ( " . implode( ',', $exclude ) . " )";
-						}
+					// Exclude certain "terms"
+					if ( ! empty( $exclude ) ) {
+						$cpt_posts_query .= " AND terms.ID NOT IN ( " . implode( ',', $exclude ) . " )";
+					}
 							
-					$cpt_posts_query .= " WHERE meta.meta_key = %s
-						AND meta.post_id IN (" . implode( ',', $object_ids ) . ")";
+				$cpt_posts_query .= " WHERE meta.meta_key = %s AND meta.post_id IN (" . implode( ',', $object_ids ) . ")";
 				
 				// Get the posts
 				$cpt_posts = $wpdb->get_results( $wpdb->prepare( $cpt_posts_query, CPT_ONOMIES_POSTMETA_KEY ) );
 
+				// If we have posts...
 				if ( ! empty( $cpt_posts ) ) {
 
 					// Get the count for all of the CPT-onomy terms
@@ -1847,29 +1880,37 @@ class CPT_TAXONOMY {
 		if ( in_array( $args['fields'], array( 'ids', 'names', 'slugs' ) ) ) {
 			sort( $terms );
 		} else {
+
 			switch( $args['orderby'] ) {
+
 				case 'id':
 					usort( $terms, 'cpt_onomies_sort_cpt_onomy_term_by_term_id' );
 					break;
+
 				case 'name':
 				case 'title':
 					usort( $terms, 'cpt_onomies_sort_cpt_onomy_term_by_name' );
 					break;
+
 				case 'count':
 					usort( $terms, 'cpt_onomies_sort_cpt_onomy_term_by_count' );
 					break;
+
 				case 'slug':
 					usort( $terms, 'cpt_onomies_sort_cpt_onomy_term_by_slug' );
 					break;
+
 				case 'term_group':
 					break;
+
 				case 'term_order':
 					break;
 			}
+
 		}
 			
 		// Sort order
-		if ( strtolower( $args['order'] ) == 'desc' ) {
+		if ( 'desc' == strtolower( $args['order'] ) ) {
 			$terms = array_reverse( $terms );
 		}
 				
