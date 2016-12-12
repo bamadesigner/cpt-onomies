@@ -687,6 +687,9 @@ class CPT_ONOMIES_ADMIN {
 			 */
 			$exclude_term_ids = $this->get_cpt_onomy_terms_exclude_term_ids( $taxonomy, $post_type, $post->ID );
 			
+			// Get ALL info and then extract IDs because of ID conflict with regular taxonomies
+			$selected_terms = wp_get_object_terms( $post->ID, $taxonomy );
+
 			// Add field for testing "editability" when we save the information
 			?><input type="hidden" name="assign_cpt_onomies_<?php echo $taxonomy; ?>_rel" value="1" /><?php
 	        
@@ -719,9 +722,6 @@ class CPT_ONOMIES_ADMIN {
 					break;
 				
 				case 'dropdown':
-										
-					// Get ALL info and then extract IDs because of ID conflict with regular taxonomies
-					$selected_terms = wp_get_object_terms( $post->ID, $taxonomy );
 																				
 					// We only need the first term for a dropdown
 					$selected_term = $selected_terms ? array_shift( $selected_terms )->term_id : 0;
@@ -779,6 +779,7 @@ class CPT_ONOMIES_ADMIN {
 					
 				case 'checklist':
 				default:
+					$selected_terms = wp_list_pluck( $selected_terms, 'term_id' );
 					?>
 					<div id="taxonomy-<?php echo $taxonomy; ?>" class="categorydiv cpt_onomies">
 						<ul id="<?php echo $taxonomy; ?>-tabs" class="category-tabs">
@@ -794,7 +795,7 @@ class CPT_ONOMIES_ADMIN {
 				
 						<div id="<?php echo $taxonomy; ?>-all" class="tabs-panel">
 							<ul id="<?php echo $taxonomy; ?>checklist" class="list:<?php echo $taxonomy?> categorychecklist form-no-clear">
-								<?php wp_terms_checklist( $post->ID, array( 'taxonomy' => $taxonomy, 'popular_cats' => $popular_ids, 'walker' => new CPTonomy_Walker_Terms_Checklist() ) ); ?>
+								<?php wp_terms_checklist( $post->ID, array( 'taxonomy' => $taxonomy, 'popular_cats' => $popular_ids, 'selected_cats' => $selected_terms, 'walker' => new CPTonomy_Walker_Terms_Checklist() ) ); ?>
 							</ul>
 						</div>
 					</div>
