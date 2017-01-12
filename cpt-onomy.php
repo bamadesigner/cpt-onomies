@@ -1383,6 +1383,10 @@ class CPT_TAXONOMY {
 		$defaults = array( 'show_count' => false );
 		$args = wp_parse_args( $args, $defaults );
 		
+		if (!empty($args["object_ids"])) {
+		    return $this->get_object_terms($terms, $args["object_ids"], $taxonomies);
+		}
+		
 		/**
 		 * Since 'fields' = 'count' will cause get_terms to 'return'
 		 * before we can filter, the adjust_get_terms_args() filter
