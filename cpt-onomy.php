@@ -1384,6 +1384,17 @@ class CPT_TAXONOMY {
 		$args = wp_parse_args( $args, $defaults );
 		
 		/**
+		 * WP 4.7 introduced a hidden API `object_ids`, used 
+		 * internally by WordPress.
+		 *
+		 * Following assumes other args are not being used when
+		 * `object_ids` is passed.
+		 */
+		if (!empty($args["object_ids"])) {
+		    return $this->get_object_terms($terms, $args["object_ids"], $cpt_taxonomies);
+		}
+		
+		/**
 		 * Since 'fields' = 'count' will cause get_terms to 'return'
 		 * before we can filter, the adjust_get_terms_args() filter
 		 * changes 'count' to 'ids' and adds a custom count argument.
