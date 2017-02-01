@@ -1686,7 +1686,7 @@ class CPT_TAXONOMY {
 		 * Does not support $fields = 'tt_ids' since our CPT-onomies
 		 * are not actual taxonomies and dont have taxonomy term ids.
 		 */
-		if ( 'tt_ids' == $args[ 'fields' ] ) {
+		if ( !empty( $args['fields'] ) && 'tt_ids' == $args[ 'fields' ] ) {
 			return $terms;
 		}
 
