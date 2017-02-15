@@ -77,7 +77,7 @@ class CPT_onomies_Admin_Settings {
 			}
 			
 			// Will show thickbox of network site information
-			$this->thickbox_network_sites = $this->is_network_admin ? ( ' <a href="' . add_query_arg( array( 'action' => 'custom_post_type_onomy_get_network_sites' ), admin_url( 'admin-ajax.php' ) ) . '" class="thickbox" title="' . ( ( $network_name = get_site_option( 'site_name' ) ) ? $network_name : 'Sites' ) . '">' . __( 'View Network Site Information', 'cpt-onomies' ) . '</a>' ) : NULL;
+			$this->thickbox_network_sites = $this->is_network_admin ? ( ' <a href="' . add_query_arg( array( 'action' => 'custom_post_type_onomy_get_network_sites' ), admin_url( 'admin-ajax.php' ) ) . '" class="thickbox" title="' . ( ( $network_name = get_site_option( 'site_name' ) ) ? $network_name : 'Sites' ) . '">' . __( 'View Network Site Information', 'cpt-onomies' ) . '</a>' ) : null;
 			
 			// Adds a settings link to the plugins page
 			add_filter( 'network_admin_plugin_action_links_' . CPT_ONOMIES_PLUGIN_FILE, array( $this, 'add_plugin_action_links' ), 10, 4 );
@@ -213,7 +213,7 @@ class CPT_onomies_Admin_Settings {
 		// First, we need terms info for this particular taxonomy
 		if ( $terms_info = $wpdb->get_results( "SELECT term_id, term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE taxonomy = '{$post_type}'" ) ) {
 		
-			foreach( $terms_info as $term ) {
+			foreach ( $terms_info as $term ) {
 				
 				// Delete the term
 				$wpdb->delete( $wpdb->terms, array( 'term_id' => $term->term_id ), array( '%d' ) );
@@ -266,7 +266,7 @@ class CPT_onomies_Admin_Settings {
 		if ( $edit = ( ! $new && isset( $_REQUEST[ 'edit' ] ) ) ? strtolower( $_REQUEST[ 'edit' ] ) : false ) {
 			
 			// Check to see if CPT exists in settings
-			foreach( array( 'edit' ) as $cpt_key_to_check ) {
+			foreach ( array( 'edit' ) as $cpt_key_to_check ) {
 				if ( ${$cpt_key_to_check} ) {
 			
 					// For network settings
@@ -380,9 +380,9 @@ class CPT_onomies_Admin_Settings {
 	 */
 	public function get_network_sites() {
 		global $wpdb;
-		$network_blogs = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM " . $wpdb->blogs . " WHERE archived IN ( 0, '0' ) ORDER BY blog_id", NULL ) );
+		$network_blogs = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM " . $wpdb->blogs . " WHERE archived IN ( 0, '0' ) ORDER BY blog_id", null ) );
 		$network_blogs_details = array();
-		foreach( $network_blogs as $this_blog_id ) {
+		foreach ( $network_blogs as $this_blog_id ) {
 			$network_blogs_details[ $this_blog_id ] = get_blog_details( $this_blog_id );
 		}
 		return $network_blogs_details;
@@ -397,7 +397,7 @@ class CPT_onomies_Admin_Settings {
 		$network_blogs = $this->get_network_sites();
 		if ( ! is_multisite() ) { ?>
 			<p><?php _e( 'You are not running a WordPress multisite and therefore only have one site/blog with a blog ID of 1.', 'cpt-onomies' ); ?></p>
-		<?php } else if ( is_multisite() && ! $network_blogs ) { ?>
+		<?php } elseif ( is_multisite() && ! $network_blogs ) { ?>
 			<p><?php echo sprintf( __( 'You are running a WordPress multisite but there seems to have been a problem retrieving your site information. If the problem persists, %1$svisit your "Sites" page%2$s for more information.', 'cpt-onomies' ), '<a href="' . esc_url( network_admin_url( 'sites.php' ) ) . '">', '</a>' ); ?></p>
 		<?php } else { ?>
 			<table id="thickbox-network-sites" cellpadding="0" cellspacing="0" border="0">
@@ -409,7 +409,7 @@ class CPT_onomies_Admin_Settings {
 					</tr>
 				</thead>
 				<tbody><?php
-					foreach( $network_blogs as $this_blog_id => $this_blog ) {
+					foreach ( $network_blogs as $this_blog_id => $this_blog ) {
 						?><tr>
 							<td><?php echo $this_blog->blog_id; ?></td>
 							<td><a href="<?php echo get_admin_url( $this_blog_id ); ?>" target="_blank"><?php echo $this_blog->blogname; ?></a></td>
@@ -441,8 +441,8 @@ class CPT_onomies_Admin_Settings {
 
 		// Get post type info
 		$custom_post_type_onomies_is_network_admin = ( isset( $_POST[ 'custom_post_type_onomies_is_network_admin' ] ) && $_POST[ 'custom_post_type_onomies_is_network_admin' ] ) ? true : false;
-		$original_custom_post_type_name = ( isset( $_POST[ 'original_custom_post_type_onomies_cpt_name' ] ) && ! empty( $_POST[ 'original_custom_post_type_onomies_cpt_name' ] ) ) ? $_POST[ 'original_custom_post_type_onomies_cpt_name' ] : NULL;
-		$custom_post_type_name = ( isset( $_POST[ 'custom_post_type_onomies_cpt_name' ] ) && ! empty( $_POST[ 'custom_post_type_onomies_cpt_name' ] ) ) ? $_POST[ 'custom_post_type_onomies_cpt_name' ] : NULL;
+		$original_custom_post_type_name = ( isset( $_POST[ 'original_custom_post_type_onomies_cpt_name' ] ) && ! empty( $_POST[ 'original_custom_post_type_onomies_cpt_name' ] ) ) ? $_POST[ 'original_custom_post_type_onomies_cpt_name' ] : null;
+		$custom_post_type_name = ( isset( $_POST[ 'custom_post_type_onomies_cpt_name' ] ) && ! empty( $_POST[ 'custom_post_type_onomies_cpt_name' ] ) ) ? $_POST[ 'custom_post_type_onomies_cpt_name' ] : null;
 
 		if ( ( ( ! empty( $original_custom_post_type_name ) && ! empty( $custom_post_type_name ) && $custom_post_type_name != $original_custom_post_type_name ) || ( empty( $original_custom_post_type_name ) && ! empty( $custom_post_type_name ) ) ) && ( ( $custom_post_type_onomies_is_network_admin && array_key_exists( $custom_post_type_name, $cpt_onomies_manager->user_settings[ 'network_custom_post_types' ] ) ) || ( ! $custom_post_type_onomies_is_network_admin && ( ( post_type_exists( $custom_post_type_name ) && ( ! $cpt_onomies_manager->is_registered_network_cpt( $custom_post_type_name ) ) ) || array_key_exists( $custom_post_type_name, $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) ) ) ) ) {
 			echo false;
@@ -467,7 +467,7 @@ class CPT_onomies_Admin_Settings {
 		global $user_ID;
 		
 		// Get the table we're editing
-		$edit_table = ( isset( $_POST[ 'custom_post_type_onomies_edit_table' ] ) && ! empty( $_POST[ 'custom_post_type_onomies_edit_table' ] ) ) ? $_POST[ 'custom_post_type_onomies_edit_table' ] : NULL;
+		$edit_table = ( isset( $_POST[ 'custom_post_type_onomies_edit_table' ] ) && ! empty( $_POST[ 'custom_post_type_onomies_edit_table' ] ) ) ? $_POST[ 'custom_post_type_onomies_edit_table' ] : null;
 		if ( $edit_table ) {
 			
 			$show = $_POST[ 'custom_post_type_onomies_edit_table_show' ];
@@ -491,9 +491,9 @@ class CPT_onomies_Admin_Settings {
 			}
 
 			// We need to make sure its removed from the array
-			else if ( ! empty( $saved_option ) && in_array( $edit_table, $saved_option ) ) {
+			elseif ( ! empty( $saved_option ) && in_array( $edit_table, $saved_option ) ) {
 				
-				foreach( $saved_option as $key => $value ) {
+				foreach ( $saved_option as $key => $value ) {
 					if ( $value == $edit_table ) {
 						unset( $saved_option[ $key ] );
 					}
@@ -517,7 +517,7 @@ class CPT_onomies_Admin_Settings {
 	 */
 	public function ajax_update_plugin_options_edit_custom_post_type_closed_dismiss() {
 		global $user_ID;
-		$dismiss_id = ( isset( $_POST[ 'custom_post_type_onomies_dismiss_id' ] ) && ! empty( $_POST[ 'custom_post_type_onomies_dismiss_id' ] ) ) ? $_POST[ 'custom_post_type_onomies_dismiss_id' ] : NULL;
+		$dismiss_id = ( isset( $_POST[ 'custom_post_type_onomies_dismiss_id' ] ) && ! empty( $_POST[ 'custom_post_type_onomies_dismiss_id' ] ) ) ? $_POST[ 'custom_post_type_onomies_dismiss_id' ] : null;
 		if ( $dismiss_id ) {
 
 			// Get set option
@@ -648,12 +648,12 @@ class CPT_onomies_Admin_Settings {
 		if ( current_user_can( $this->manage_options_capability ) && ! empty( $custom_post_types ) ) {
 		
 			// If set, will redirect settings page to show specified custom post type
-			$redirect_cpt = NULL;
+			$redirect_cpt = null;
 			
-			foreach( $custom_post_types as $cpt_key => $cpt ) {
+			foreach ( $custom_post_types as $cpt_key => $cpt ) {
 			
 				// Sanitize the data
-				foreach( $cpt as $key => $data ) {
+				foreach ( $cpt as $key => $data ) {
 					if ( ! is_array( $data ) ) {
 						$cpt[ $key ] = strip_tags( $data );
 					}
@@ -662,9 +662,9 @@ class CPT_onomies_Admin_Settings {
 				// Maximum is 20 characters. Can only contain lowercase, alphanumeric characters and underscores
 				$valid_name_preg_test = '/([^a-z0-9\_])/i';
 				
-				$original_name = ( isset( $cpt[ 'original_name' ] ) && ! empty( $cpt[ 'original_name' ] ) && strlen( $cpt[ 'original_name' ] ) <= 20 && ! preg_match( $valid_name_preg_test, $cpt[ 'original_name' ] ) ) ? strtolower( $cpt[ 'original_name' ] ) : NULL;
-				$new_name = ( isset( $cpt[ 'name' ] ) && ! empty( $cpt[ 'name' ] ) && strlen( $cpt[ 'name' ] ) <= 20 && ! preg_match( $valid_name_preg_test, $cpt[ 'name' ] ) ) ? strtolower( $cpt[ 'name' ] ) : NULL;
-				$label = ( isset( $cpt[ 'label' ] ) && ! empty( $cpt[ 'label' ] ) ) ? $cpt[ 'label' ] : NULL;
+				$original_name = ( isset( $cpt[ 'original_name' ] ) && ! empty( $cpt[ 'original_name' ] ) && strlen( $cpt[ 'original_name' ] ) <= 20 && ! preg_match( $valid_name_preg_test, $cpt[ 'original_name' ] ) ) ? strtolower( $cpt[ 'original_name' ] ) : null;
+				$new_name = ( isset( $cpt[ 'name' ] ) && ! empty( $cpt[ 'name' ] ) && strlen( $cpt[ 'name' ] ) <= 20 && ! preg_match( $valid_name_preg_test, $cpt[ 'name' ] ) ) ? strtolower( $cpt[ 'name' ] ) : null;
+				$label = ( isset( $cpt[ 'label' ] ) && ! empty( $cpt[ 'label' ] ) ) ? $cpt[ 'label' ] : null;
 				
 				// If no valid name or label, why bother so remove the data
 				if ( empty( $original_name ) && empty( $new_name ) && empty( $label ) ) {
@@ -690,7 +690,7 @@ class CPT_onomies_Admin_Settings {
 					}
 						
 					// Will be the name and key for storing data
-					$store_name = NULL;
+					$store_name = null;
 					
 					/**
 					 * If no original name (new) and new name is empty
@@ -716,7 +716,7 @@ class CPT_onomies_Admin_Settings {
 						}
 
 						// The name was empty so we made one up
-						else if ( empty( $new_name ) ) {
+						elseif ( empty( $new_name ) ) {
 							add_settings_error( CPT_ONOMIES_OPTIONS_PAGE . '-custom-post-types', 'custom-post-type-onomies-custom-post-types-error', sprintf( __( 'You did not provide a "name" for your custom post type so %1$s just made one up. If "%2$s" doesn\'t work for you, then make sure you edit the name property below.', 'cpt-onomies' ), 'CPT-onomies', $store_name ), 'error' );
 						}
 
@@ -734,13 +734,13 @@ class CPT_onomies_Admin_Settings {
 						}
 							
 						// If no new name and original name exists then save under original name
-						else if ( empty( $new_name ) && ! empty( $original_name ) ) {
+						elseif ( empty( $new_name ) && ! empty( $original_name ) ) {
 							$store_name = $original_name;
 						}
 							
 						// If both original and new name exist and new is different from original
 						// BUT new name already exists elsewhere
-						else if ( ! empty( $original_name ) && ! empty( $new_name ) && $new_name != $original_name && array_key_exists( $new_name, $saved_custom_post_types ) ) {
+						elseif ( ! empty( $original_name ) && ! empty( $new_name ) && $new_name != $original_name && array_key_exists( $new_name, $saved_custom_post_types ) ) {
 							
 							// Store under original name
 							$store_name = $original_name;
@@ -755,7 +755,7 @@ class CPT_onomies_Admin_Settings {
 						 * different from original then remove info with
 						 * original name and save under new name.
 						 */
-						else if ( ! empty( $original_name ) && ! empty( $new_name ) && $new_name != $original_name ) {
+						elseif ( ! empty( $original_name ) && ! empty( $new_name ) && $new_name != $original_name ) {
 							
 							// Remove original name
 							if ( array_key_exists( $original_name, $saved_custom_post_types ) ) {
@@ -802,7 +802,7 @@ class CPT_onomies_Admin_Settings {
 					// Must be numeric
 					if ( isset( $cpt[ 'menu_position' ] ) && ! empty( $cpt[ 'menu_position' ] ) && is_numeric( $cpt[ 'menu_position' ] ) ) {
 						$cpt['menu_position'] = intval( $cpt['menu_position'] );
-					} else if ( isset( $cpt[ 'menu_position' ] ) && ! empty( $cpt[ 'menu_position' ] ) ) {
+					} elseif ( isset( $cpt[ 'menu_position' ] ) && ! empty( $cpt[ 'menu_position' ] ) ) {
 						unset( $cpt['menu_position'] );
 					}
 					
@@ -856,13 +856,13 @@ class CPT_onomies_Admin_Settings {
 					
 			// Save information
 			if ( ! empty( $other_custom_post_types ) ) {
-				foreach( $other_custom_post_types as $cpt_key => $cpt ) {
+				foreach ( $other_custom_post_types as $cpt_key => $cpt ) {
 					$saved_other_post_types[ $cpt_key ] = $cpt;
 				}
 			}
 			
 			// Post types that no longer exist are removed from the settings
-			foreach( $saved_other_post_types as $cpt_key => $cpt ) {
+			foreach ( $saved_other_post_types as $cpt_key => $cpt ) {
 				$post_type_exists = post_type_exists( $cpt_key );
 				if ( ! $post_type_exists || ( $post_type_exists && ( $cpt_onomies_manager->is_registered_cpt( $cpt_key ) ) ) ) {
 					unset( $saved_other_post_types[ $cpt_key ] );
@@ -899,14 +899,14 @@ class CPT_onomies_Admin_Settings {
 	 *
 	 * @since   1.0
 	 * @uses    $cpt_onomies_manager
-	 * @param   string $post_type_being_edited - the custom post type that's being edited. NULL if creating a new custom post type.
+	 * @param   string $post_type_being_edited - the custom post type that's being edited. null if creating a new custom post type.
 	 * @return  object - the custom post type properties
 	 * @filters 'custom_post_type_onomies_attach_to_post_type_property_include_post_type' - $post_type_to_include, $post_type_being_edited
 	 *		'custom_post_type_onomies_taxonomies_property_include_taxonomy' - $taxonomy, $post_type_being_edited
 	 *		'custom_post_type_onomies_restrict_user_capabilities_property_include_user_role' - $user_role, $post_type_being_edited
 	 *		'custom_post_type_onomies_supports_property_include_support' - $support, $post_type_being_edited
 	 */
-	public function get_plugin_options_page_cpt_properties( $post_type_being_edited = NULL ) {
+	public function get_plugin_options_page_cpt_properties( $post_type_being_edited = null ) {
 		global $cpt_onomies_manager;
 
 		if ( current_user_can( $this->manage_options_capability ) ) {
@@ -919,7 +919,7 @@ class CPT_onomies_Admin_Settings {
 					$saved_custom_post_type_data = $cpt_onomies_manager->user_settings['network_custom_post_types'];
 				}
 
-			} else if ( isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) ) {
+			} elseif ( isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) ) {
 				$saved_custom_post_type_data = $cpt_onomies_manager->user_settings['custom_post_types'];
 			}
 				
@@ -936,7 +936,7 @@ class CPT_onomies_Admin_Settings {
 			if ( $this->is_network_admin ) {
 			
 				// Combine saved custom post type data with remaining builtin post types (posts and pages)
-				foreach( array_merge( get_post_types( array( '_builtin' => true ), 'objects' ), $saved_custom_post_type_data ) as $cpt_key => $cpt ) {
+				foreach ( array_merge( get_post_types( array( '_builtin' => true ), 'objects' ), $saved_custom_post_type_data ) as $cpt_key => $cpt ) {
 					$cpt = (object) $cpt;
 					if ( ! empty( $cpt_key ) && ! in_array( $cpt_key, $do_not_add_to_post_type_data ) ) {
 					
@@ -946,10 +946,10 @@ class CPT_onomies_Admin_Settings {
 						}
 							
 						// Make sure label exists
-						$label = NULL;
+						$label = null;
 						if ( isset( $cpt->labels ) && isset( $cpt->labels->name ) && ! empty( $cpt->labels->name ) ) {
 							$label = $cpt->labels->name;
-						} else if ( isset( $cpt->label ) && ! empty( $cpt->label ) ) {
+						} elseif ( isset( $cpt->label ) && ! empty( $cpt->label ) ) {
 							$label = $cpt->label;
 						}
 							
@@ -966,7 +966,7 @@ class CPT_onomies_Admin_Settings {
 				
 			} else {
 			
-				foreach( get_post_types( array(), 'objects' ) as $cpt_key => $cpt ) {
+				foreach ( get_post_types( array(), 'objects' ) as $cpt_key => $cpt ) {
 					if ( ! empty( $cpt_key ) && ! in_array( $cpt_key, $do_not_add_to_post_type_data ) && ! empty( $cpt->labels->name ) ) {
 				
 						$attach_to_post_type_data[ $cpt_key ] = (object) array(
@@ -980,7 +980,7 @@ class CPT_onomies_Admin_Settings {
 			}
 			
 			// Get deactivated post types created by plugin
-			foreach( $saved_custom_post_type_data as $cpt_key => $cpt ) {
+			foreach ( $saved_custom_post_type_data as $cpt_key => $cpt ) {
 				if ( isset( $cpt[ 'deactivate' ] ) && $cpt[ 'deactivate' ] ) {
 					if ( ! array_key_exists( $cpt_key, $attach_to_post_type_data ) ) {
 						$attach_to_post_type_data[ $cpt_key ] = (object) array(
@@ -996,12 +996,12 @@ class CPT_onomies_Admin_Settings {
 				$stored_attach_to_post_type = array();
 				if ( isset( $saved_custom_post_type_data ) && array_key_exists( $post_type_being_edited, $saved_custom_post_type_data ) && isset( $saved_custom_post_type_data[ $post_type_being_edited ][ 'attach_to_post_type' ] ) ) {
 					$stored_attach_to_post_type = $saved_custom_post_type_data[ $post_type_being_edited ]['attach_to_post_type'];
-				} else if ( ! $this->is_network_admin && isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) && array_key_exists( $post_type_being_edited, $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) && isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $post_type_being_edited ][ 'attach_to_post_type' ] ) ) {
+				} elseif ( ! $this->is_network_admin && isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) && array_key_exists( $post_type_being_edited, $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) && isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $post_type_being_edited ][ 'attach_to_post_type' ] ) ) {
 					$stored_attach_to_post_type = $cpt_onomies_manager->user_settings['other_custom_post_types'][ $post_type_being_edited ]['attach_to_post_type'];
 				}
 				
 				if ( ! empty( $stored_attach_to_post_type ) ) {
-					foreach( $stored_attach_to_post_type as $cpt_key ) {
+					foreach ( $stored_attach_to_post_type as $cpt_key ) {
 						if ( ! array_key_exists( $cpt_key, $attach_to_post_type_data ) ) {
 							$attach_to_post_type_data[ $cpt_key ] = (object) array(
 								'label' => sprintf( __( '%1$s %2$snot registered%3$s', 'cpt-onomies' ), "'" . $cpt_key . "'", '<span class="gray"><em>(', ')</em></span>' ),
@@ -1013,8 +1013,8 @@ class CPT_onomies_Admin_Settings {
 			}
 			
 			// This filter allows you to remove particular post types from the list
-			foreach( $attach_to_post_type_data as $cpt_key => $cpt ) {
-				if ( ! apply_filters( 'custom_post_type_onomies_' . ( $this->is_network_admin ? 'network_admin_' : NULL ) . 'attach_to_post_type_property_include_post_type', true, $cpt_key, $post_type_being_edited ) ) {
+			foreach ( $attach_to_post_type_data as $cpt_key => $cpt ) {
+				if ( ! apply_filters( 'custom_post_type_onomies_' . ( $this->is_network_admin ? 'network_admin_' : null ) . 'attach_to_post_type_property_include_post_type', true, $cpt_key, $post_type_being_edited ) ) {
 					unset( $attach_to_post_type_data[ $cpt_key ] );
 				}
 			}
@@ -1024,7 +1024,7 @@ class CPT_onomies_Admin_Settings {
 			
 			// Gather taxonomy data to use in properties
 			$taxonomy_data = array();
-			foreach( get_taxonomies( array(), 'objects' ) as $value => $tax ) {
+			foreach ( get_taxonomies( array(), 'objects' ) as $value => $tax ) {
 
 				// Do not include link categories or nav menu stuff
 				if ( ! empty( $value ) && apply_filters( 'custom_post_type_onomies_taxonomies_property_include_taxonomy', true, $value, $post_type_being_edited ) && ! in_array( $value, array( 'link_category', 'nav_menu' ) ) && ! $cpt_onomies_manager->is_registered_cpt_onomy( $value ) && ! empty( $tax->labels->name ) ) {
@@ -1087,8 +1087,8 @@ class CPT_onomies_Admin_Settings {
 					),
 				);
 
-			foreach( $cpt_supports_data as $support => $support_info ) {
-				if ( ! apply_filters( 'custom_post_type_onomies_' . ( $this->is_network_admin ? 'network_admin_' : NULL ) . 'supports_property_include_support', true, $support, $post_type_being_edited ) ) {
+			foreach ( $cpt_supports_data as $support => $support_info ) {
+				if ( ! apply_filters( 'custom_post_type_onomies_' . ( $this->is_network_admin ? 'network_admin_' : null ) . 'supports_property_include_support', true, $support, $post_type_being_edited ) ) {
 					unset( $cpt_supports_data[ $support ] );
 				}
 			}
@@ -1135,7 +1135,7 @@ class CPT_onomies_Admin_Settings {
 						'attach_to_post_type' => (object) array(
 							'label' => __( 'Attach to Post Types', 'cpt-onomies' ),
 							'type' => 'checkbox',
-							'description' => sprintf( __( 'This setting allows you to use your custom post type in the same manner as a taxonomy, using your post titles as the terms. This is what we call a "%1$s". You can attach this %2$s to to any post type and assign posts just as you would assign taxonomy terms.', 'cpt-onomies' ), 'CPT-onomy', 'CPT-onomy' ) . ( $this->is_network_admin ? ' <strong>This will register the CPT-onomy on each individual site and not across the network.</strong>' : NULL ) . ' <strong><span class="red">' . sprintf( __( 'A post type must be checked in order to register this custom post type as a %s.', 'cpt-onomies' ), 'CPT-onomy' ) . '</span></strong>',
+							'description' => sprintf( __( 'This setting allows you to use your custom post type in the same manner as a taxonomy, using your post titles as the terms. This is what we call a "%1$s". You can attach this %2$s to to any post type and assign posts just as you would assign taxonomy terms.', 'cpt-onomies' ), 'CPT-onomy', 'CPT-onomy' ) . ( $this->is_network_admin ? ' <strong>This will register the CPT-onomy on each individual site and not across the network.</strong>' : null ) . ' <strong><span class="red">' . sprintf( __( 'A post type must be checked in order to register this custom post type as a %s.', 'cpt-onomies' ), 'CPT-onomy' ) . '</span></strong>',
 							'data' => $attach_to_post_type_data
 						),
 						'meta_box_title' => (object) array(
@@ -1189,10 +1189,10 @@ class CPT_onomies_Admin_Settings {
 							'message' => $this->is_network_admin ? array(
 								'dismiss' => 'restrict_user_capabilities_network_message',
 								'text' => '<strong>' . __( 'This setting is a little trickier in the network admin to allow for maximum customization.', 'cpt-onomies' ) . '</strong> ' . sprintf( __( 'If you want to define user roles network wide, just enter the user roles separated by a comma: %1$s. If you want to define user roles for a specific site, prefix the user roles with the blog ID: %2$s. For multiple sites, separate each site definition with a semicolon: %3$s. To combine network and site definitions, simply separate with a semicolon: %4$s. In this scenario, the site definitions will not overwrite, but merge with, the network definition. If you would like the site definition to overwrite the network definition, add %5$s to the end of your site definition: %6$s.', 'cpt-onomies' ), '<em>administrator, editor</em>', '<em>2: administrator, editor</em>', '<em>2: administrator, editor; 3: administrator</em>', '<em>administrator; 2: author, editor; 3: contributor</em>', '":overwrite"', '<em>administrator; 2: author, editor: overwrite; 3: contributor</em>' ) . $this->thickbox_network_sites
-								) : NULL,
-							'description' => sprintf( __( 'This setting allows you to grant specific user roles the capability, or permission, to assign term relationships for this %s.', 'cpt-onomies' ), 'CPT-onomy' ) . ( ( $this->is_network_admin ) ? ' <strong>' . __( 'Visit the "Help" tab for instructions.', 'cpt-onomies' ) . '</strong>' : NULL ) . ' <strong><span class="red">' . __( 'If no user roles are defined, then all user roles will have permission.', 'cpt-onomies' ) . '</span></strong>',
+								) : null,
+							'description' => sprintf( __( 'This setting allows you to grant specific user roles the capability, or permission, to assign term relationships for this %s.', 'cpt-onomies' ), 'CPT-onomy' ) . ( ( $this->is_network_admin ) ? ' <strong>' . __( 'Visit the "Help" tab for instructions.', 'cpt-onomies' ) . '</strong>' : null ) . ' <strong><span class="red">' . __( 'If no user roles are defined, then all user roles will have permission.', 'cpt-onomies' ) . '</span></strong>',
 							'default' => $this->is_network_admin ? 'administrator, editor, author' : array( 'administrator', 'editor', 'author' ),
-							'data' => $this->is_network_admin ? NULL : $user_data					
+							'data' => $this->is_network_admin ? null : $user_data					
 						),
 					),
 				),
@@ -1305,9 +1305,9 @@ class CPT_onomies_Admin_Settings {
 							'message'       => $this->is_network_admin ? array(
 								'dismiss'   => 'taxonomies_network_message',
 								'text'      => '<strong>' . __( 'This setting is a little trickier in the network admin to allow for maximum customization.', 'cpt-onomies' ) . '</strong> ' . sprintf( __( 'If you want to define taxonomies network wide, just enter the taxonomy names separated by a comma: %1$s. If you want to define taxonomies for a specific site, prefix the taxonomy names with the blog ID: %2$s. For multiple sites, separate each site definition with a semicolon: %3$s. To combine network and site definitions, simply separate with a semicolon: %4$s. In this scenario, the site definitions will not overwrite, but merge with, the network definition. If you would like the site definition to overwrite the network definition, add %5$s to the end of your site definition: %6$s.', 'cpt-onomies' ), '<em>category, post_tag</em>', '<em>2: category, post_tag</em>', '<em>2: category, post_tag; 3: category</em>', '<em>category; 2: post_tag; 3: post_format</em>', '":overwrite"', '<em>category; 2: post_tag: overwrite; 3: post_tag, post_format</em>' ) . $this->thickbox_network_sites
-								) : NULL,
-							'description'   => sprintf( __( 'This setting allows you to add support for pre-existing, registered %s taxonomies.', 'cpt-onomies' ), '<strong>non-CPT-onomy</strong>' ) . ( ( $this->is_network_admin ) ? ' <strong>' . __( 'Visit the "Help" tab for instructions.', 'cpt-onomies' ) . '</strong>' : NULL ),
-							'data'          => $this->is_network_admin ? NULL : $taxonomy_data
+								) : null,
+							'description'   => sprintf( __( 'This setting allows you to add support for pre-existing, registered %s taxonomies.', 'cpt-onomies' ), '<strong>non-CPT-onomy</strong>' ) . ( ( $this->is_network_admin ) ? ' <strong>' . __( 'Visit the "Help" tab for instructions.', 'cpt-onomies' ) . '</strong>' : null ),
+							'data'          => $this->is_network_admin ? null : $taxonomy_data
 						),
 						'show_ui' => (object) array(
 							'label'         => __( 'Show UI', 'cpt-onomies' ),
@@ -1536,7 +1536,7 @@ class CPT_onomies_Admin_Settings {
 			
 				$network_blogs = $this->get_network_sites();
 				$network_blogs_data = array();
-				foreach( $network_blogs as $this_blog_id => $this_blog ) {
+				foreach ( $network_blogs as $this_blog_id => $this_blog ) {
 					$network_blogs_data[ $this_blog_id ] = (object) array(
 						'label' => $this_blog->blogname,
 					);					
@@ -1568,7 +1568,7 @@ class CPT_onomies_Admin_Settings {
 	 * @since 1.0
 	 */	
 	public function add_plugin_options_styles() {
-		wp_enqueue_style( 'custom-post-type-onomies-admin-options', plugins_url( 'assets/css/admin-options.min.css', __FILE__ ), array( 'thickbox' ), NULL );
+		wp_enqueue_style( 'custom-post-type-onomies-admin-options', plugins_url( 'assets/css/admin-options.min.css', __FILE__ ), array( 'thickbox' ), null );
 	}
 	
 	/**
@@ -1581,8 +1581,8 @@ class CPT_onomies_Admin_Settings {
 	public function add_plugin_options_scripts() {
 		
 		// Plugin scripts
-		wp_enqueue_script( 'custom-post-type-onomies-admin-options', plugins_url( 'assets/js/admin-options.min.js', __FILE__ ), array( 'jquery', 'thickbox' ), NULL, true );
-		wp_enqueue_script( 'custom-post-type-onomies-admin-options-validate', plugins_url( 'assets/js/admin-options-validate.min.js', __FILE__ ), array( 'jquery', 'jquery-form-validation' ), NULL, true );
+		wp_enqueue_script( 'custom-post-type-onomies-admin-options', plugins_url( 'assets/js/admin-options.min.js', __FILE__ ), array( 'jquery', 'thickbox' ), null, true );
+		wp_enqueue_script( 'custom-post-type-onomies-admin-options-validate', plugins_url( 'assets/js/admin-options-validate.min.js', __FILE__ ), array( 'jquery', 'jquery-form-validation' ), null, true );
 		
 		// Need this script for the metaboxes to work correctly
 		wp_enqueue_script( 'post' );
@@ -1645,7 +1645,7 @@ class CPT_onomies_Admin_Settings {
 					return;
 				}
 			
-			} else if ( $screen->id != $this->options_page ) {
+			} elseif ( $screen->id != $this->options_page ) {
 				return;
 			}
 			
@@ -1911,7 +1911,7 @@ class CPT_onomies_Admin_Settings {
 							
 						}
 											
-					} else if ( isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) && array_key_exists( $CPT, $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) ) {
+					} elseif ( isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) && array_key_exists( $CPT, $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) ) {
 							
 						// Remove the setting
 						unset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ][ $CPT ][ 'deactivate' ] );
@@ -1933,7 +1933,7 @@ class CPT_onomies_Admin_Settings {
 				}
 				
 			// Delete the CPT
-			} else if ( isset( $_REQUEST[ 'delete' ] ) ) {
+			} elseif ( isset( $_REQUEST[ 'delete' ] ) ) {
 				
 				$CPT = $_REQUEST[ 'delete' ];
 				
@@ -1957,7 +1957,7 @@ class CPT_onomies_Admin_Settings {
 							
 						}
 						
-					} else if ( isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) && array_key_exists( $CPT, $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) ) {
+					} elseif ( isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) && array_key_exists( $CPT, $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) ) {
 						
 						// Remove from settings
 						unset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ][ $CPT ] );
@@ -1981,7 +1981,7 @@ class CPT_onomies_Admin_Settings {
 			}
 
 			// Delete "conflicting" taxonomy terms
-			else if ( isset( $_REQUEST[ 'delete_conflicting_terms' ] ) ) {
+			elseif ( isset( $_REQUEST[ 'delete_conflicting_terms' ] ) ) {
 				
 				// Which taxonomy's terms are we deleting?
 				$taxonomy = $_REQUEST[ 'delete_conflicting_terms' ];
@@ -1998,7 +1998,7 @@ class CPT_onomies_Admin_Settings {
 				}
 				
 				// Build the redirect URL
-				$redirect_url = add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => $taxonomy, 'other' => ( isset( $_REQUEST[ 'other' ] ) && $_REQUEST[ 'other' ] ? '1' : NULL ) ), $this->admin_url );
+				$redirect_url = add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => $taxonomy, 'other' => ( isset( $_REQUEST[ 'other' ] ) && $_REQUEST[ 'other' ] ? '1' : null ) ), $this->admin_url );
 							
 				if ( $delete_success ) {
 					$redirect_url = add_query_arg( array( 'deleted_conflicting_terms' => '1' ), $redirect_url );
@@ -2145,7 +2145,7 @@ class CPT_onomies_Admin_Settings {
 				// Create the properties tab
 				$tabs[ 'properties' ] = (object) array(
 					'title'		=> __( 'Custom Post Type Properties', 'cpt-onomies' ),
-					'link'		=> esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => ( $new ? 'new' : $edit ), 'other' => ( $other ? '1' : NULL ) ), $this->admin_url ) ),
+					'link'		=> esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => ( $new ? 'new' : $edit ), 'other' => ( $other ? '1' : null ) ), $this->admin_url ) ),
 					'active'	=> true
 				);
 				
@@ -2176,7 +2176,7 @@ class CPT_onomies_Admin_Settings {
 				if ( $new || $edit ) {
 					
 					// Define the label
-					$label = NULL;
+					$label = null;
 					
 					if ( $new ) {
 						$label = __( 'Creating a New Custom Post Type', 'cpt-onomies' );
@@ -2194,7 +2194,7 @@ class CPT_onomies_Admin_Settings {
 						
 							if ( $other && ( $post_type_object_label = get_post_type_object( $cpt_key_to_check )->label ) ) {
 								$label = $post_type_object_label;
-							} else if ( isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) && isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ][ $cpt_key_to_check ] ) && isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ][ $cpt_key_to_check ][ 'label' ] ) ) {
+							} elseif ( isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ] ) && isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ][ $cpt_key_to_check ] ) && isset( $cpt_onomies_manager->user_settings[ 'custom_post_types' ][ $cpt_key_to_check ][ 'label' ] ) ) {
 								$label = $cpt_onomies_manager->user_settings['custom_post_types'][ $cpt_key_to_check ]['label'];
 							}
 								
@@ -2213,7 +2213,7 @@ class CPT_onomies_Admin_Settings {
 						}
 						
 						// Don't include tab name in URL, for now, considering there's only one tab
-						foreach( $tabs as $tab_key => $this_tab ) {
+						foreach ( $tabs as $tab_key => $this_tab ) {
 							?><a href="<?php echo $this_tab->link; ?>" class="nav-tab<?php echo ( $this_tab->active ) ? ' nav-tab-active' : ''; ?>"><?php echo $this_tab->title; ?></a><?php
 						}
 						
@@ -2227,7 +2227,7 @@ class CPT_onomies_Admin_Settings {
 				}
 				
 				// Setup message to display
-				$message = NULL;
+				$message = null;
 				
 				// What's the message class? - updated by default
 				$message_class = 'updated';
@@ -2238,10 +2238,10 @@ class CPT_onomies_Admin_Settings {
 				}
 
 				// Add activated message
-				else if ( isset( $_REQUEST[ 'cptactivated' ] ) ) {
+				elseif ( isset( $_REQUEST[ 'cptactivated' ] ) ) {
 					
 					$activated_cpt = strtolower( $_REQUEST[ 'cptactivated' ] );
-					$label = NULL;
+					$label = null;
 					if ( $this->is_network_admin ) {
 
 						if ( isset( $cpt_onomies_manager->user_settings[ 'network_custom_post_types' ] ) && array_key_exists( $activated_cpt, $cpt_onomies_manager->user_settings[ 'network_custom_post_types' ] ) && isset( $cpt_onomies_manager->user_settings[ 'network_custom_post_types' ][ $activated_cpt ][ 'label' ] ) ) {
@@ -2265,10 +2265,10 @@ class CPT_onomies_Admin_Settings {
 				}
 
 				// Add "delete conflicting terms" error message
-				else if ( isset( $_REQUEST[ 'delete_conflicting_terms_error' ] ) ) {
+				elseif ( isset( $_REQUEST[ 'delete_conflicting_terms_error' ] ) ) {
 					
 					// Build the refresh URL
-					$refresh_url = add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => $edit, 'other' => ( $other ? '1' : NULL ) ), $this->admin_url );
+					$refresh_url = add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => $edit, 'other' => ( $other ? '1' : null ) ), $this->admin_url );
 					
 					// Build the message
 					$message = sprintf( __( 'There seems to have been an error deleting the conflicting taxonomy terms. Please %1$srefresh the page%2$s and try again. If the problem persists, %3$sthe %4$s documentation%5$s might help.', 'cpt-onomies' ), '<a href="' . $refresh_url . '">', '</a>', '<a href="http://wpdreamer.com/plugins/cpt-onomies/documentation/incorrect-query-results/#remove-conflicting-taxonomy-terms" target="_blank">', 'CPT-onomies', '</a>' );
@@ -2279,7 +2279,7 @@ class CPT_onomies_Admin_Settings {
 				}
 
 				// Add "deleted conflicting terms" message
-				else if ( isset( $_REQUEST[ 'deleted_conflicting_terms' ] ) ) {
+				elseif ( isset( $_REQUEST[ 'deleted_conflicting_terms' ] ) ) {
 					$message = __( 'The conflicting taxonomy terms have been deleted!', 'cpt-onomies' );
 				}
 				
@@ -2395,7 +2395,7 @@ class CPT_onomies_Admin_Settings {
 		
 		if ( current_user_can( $this->manage_options_capability ) ) {
 			
-			switch( $metabox[ 'args' ] ) {
+			switch ( $metabox[ 'args' ] ) {
 					
 				// Add New CPT Meta Box
 				case 'add_new_custom_post_type':
@@ -2489,14 +2489,14 @@ class CPT_onomies_Admin_Settings {
 								// Get the post type information
 								$post_type_objects = get_post_types( array( '_builtin' => false ), 'objects' );
 
-								foreach( $post_type_objects as $post_type => $CPT ) {
+								foreach ( $post_type_objects as $post_type => $CPT ) {
 
 									if ( $cpt_onomies_manager->is_registered_cpt( $post_type ) ) {
 										unset( $post_type_objects[ $post_type ] );
 									}
 
 									// Gather the plugin settings
-									else if ( is_array( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) && array_key_exists( $post_type, $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) ) {
+									elseif ( is_array( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) && array_key_exists( $post_type, $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) ) {
 
 										if ( isset( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $post_type ][ 'attach_to_post_type' ] ) && ! empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $post_type ][ 'attach_to_post_type' ] ) ) {
 											$post_type_objects[ $post_type ]->attach_to_post_type = $cpt_onomies_manager->user_settings['other_custom_post_types'][ $post_type ]['attach_to_post_type'];
@@ -2558,7 +2558,7 @@ class CPT_onomies_Admin_Settings {
 	                                </tr>
 	                            <?php }
 								else {
-									foreach( $post_type_objects as $post_type => $CPT ) {
+									foreach ( $post_type_objects as $post_type => $CPT ) {
 										
 		                                if ( ! is_object( $CPT ) ) {
 		                                	$CPT = (object) $CPT;
@@ -2566,7 +2566,7 @@ class CPT_onomies_Admin_Settings {
 
 										if ( ! empty( $post_type ) && ( ! isset( $CPT->name ) || empty( $CPT->name ) ) ) {
 											$CPT->name = $post_type;
-										} else if ( empty( $post_type ) && isset( $CPT->name ) && ! empty( $CPT->name ) ) {
+										} elseif ( empty( $post_type ) && isset( $CPT->name ) && ! empty( $CPT->name ) ) {
 											$post_type = $CPT->name;
 										}
 										
@@ -2584,14 +2584,14 @@ class CPT_onomies_Admin_Settings {
 											// Check to see if attached post types exist
 											$attach_to_post_type_not_exist = array();
 											if ( ! empty( $CPT->attach_to_post_type ) ) {
-												foreach( $CPT->attach_to_post_type as $attached ) {
+												foreach ( $CPT->attach_to_post_type as $attached ) {
 													if ( ! post_type_exists( $attached ) ) {
 														$attach_to_post_type_not_exist[] = $attached;
 													}
 												}
 											}
 											
-											$message = NULL;
+											$message = null;
 											if ( $attention_cpt ) {
 												
 												// Builtin conflict
@@ -2604,7 +2604,7 @@ class CPT_onomies_Admin_Settings {
 													$message = sprintf( esc_attr__( 'The custom post type, "%s", is not registered because another custom post type with the same name already exists. This other custom post type is probably setup in your theme or another plugin. Check out the \'Manage Your Other Custom Post Types\' section to see what else has been registered.', 'cpt-onomies' ), $CPT->label );
 												}
 											
-											} else if ( ! $is_registered_cpt_onomy && $should_be_cpt_onomy ) {
+											} elseif ( ! $is_registered_cpt_onomy && $should_be_cpt_onomy ) {
 											
 												if ( taxonomy_exists( $post_type ) ) {
 													$message = sprintf( esc_attr__( 'This custom post type\'s %1$s is not registered because another taxonomy with the same name already exists. If you would like this %2$s to work, please remove the conflicting taxonomy.', 'cpt-onomies' ), 'CPT-onomy', 'CPT-onomy' );
@@ -2615,16 +2615,16 @@ class CPT_onomies_Admin_Settings {
 											}
 
 											// This means this CPT-onomy is registered but not for ALL of its assigned custom post types
-											else if ( $is_registered_cpt_onomy && $attach_to_post_type_not_exist && count( $attach_to_post_type_not_exist ) != count( $CPT->attach_to_post_type ) ) {
+											elseif ( $is_registered_cpt_onomy && $attach_to_post_type_not_exist && count( $attach_to_post_type_not_exist ) != count( $CPT->attach_to_post_type ) ) {
 											
 												if ( count( $attach_to_post_type_not_exist ) > 1 ) {
-													$attach_to_post_type_not_exist_string = NULL;
+													$attach_to_post_type_not_exist_string = null;
 
-													foreach( $attach_to_post_type_not_exist as $not_exist_index => $not_exist ) {
+													foreach ( $attach_to_post_type_not_exist as $not_exist_index => $not_exist ) {
 
 														if ( $not_exist_index == ( count( $attach_to_post_type_not_exist ) - 1 ) ) {
 															$attach_to_post_type_not_exist_string .= ' and ';
-														} else if ( $not_exist_index > 0 ) {
+														} elseif ( $not_exist_index > 0 ) {
 															$attach_to_post_type_not_exist_string .= ', ';
 														}
 
@@ -2646,7 +2646,7 @@ class CPT_onomies_Admin_Settings {
 
 											if ( $inactive_cpt ) {
 												$tr_classes[] = 'inactive';
-											} else if ( $attention_cpt ) {
+											} elseif ( $attention_cpt ) {
 												$tr_classes[] = 'attention';
 											}
 
@@ -2655,7 +2655,7 @@ class CPT_onomies_Admin_Settings {
 												<td class="label"><?php
 													
 													// Edit url
-													$edit_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => $post_type, 'other' => ( $other ? '1' : NULL ) ), $this->admin_url ) );
+													$edit_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => $post_type, 'other' => ( $other ? '1' : null ) ), $this->admin_url ) );
 													
 													// Activate url
 													$activate_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'activate' => $post_type, '_wpnonce' => wp_create_nonce( 'activate-cpt-' . $post_type ) ), $this->admin_url ), 'activate-cpt-' . $post_type );
@@ -2664,7 +2664,7 @@ class CPT_onomies_Admin_Settings {
 													$delete_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'delete' => $post_type, '_wpnonce' => wp_create_nonce( 'delete-cpt-' . $post_type ) ), $this->admin_url ), 'delete-cpt-' . $post_type );
 													
 													// View url
-													$view_url = ! $this->is_network_admin ? esc_url( add_query_arg( array( 'post_type' => $post_type ), admin_url( 'edit.php' ) ) ) : NULL;
+													$view_url = ! $this->is_network_admin ? esc_url( add_query_arg( array( 'post_type' => $post_type ), admin_url( 'edit.php' ) ) ) : null;
 													
 													?><span class="label"><a href="<?php echo $edit_url; ?>"><?php echo $CPT->label; ?></a></span>
 													<div class="row-actions">
@@ -2687,7 +2687,7 @@ class CPT_onomies_Admin_Settings {
 															echo '<span class="message"><a class="show_cpt_message" href="' . $edit_url . '" title="' . esc_attr__( 'Find out why this custom post type is not registered', 'cpt-onomies' ) . '" alt="' . $message . '">' . __( 'Find out why this CPT is not registered.', 'cpt-onomies' ) . '</a></span>';
 														}
 															
-														else if ( $overwrote_network_cpt ) {
+														elseif ( $overwrote_network_cpt ) {
 															echo '<span class="message">' . __( 'This site-wide custom post type is overwriting a custom post type registered by your network admin.', 'cpt-onomies' ) . '</span>';
 														}
 
@@ -2704,9 +2704,9 @@ class CPT_onomies_Admin_Settings {
 
 													if ( $attention_cpt && $attention_cpt_onomy ) {
 														$td_registered_classes[] = 'attention';
-													} else if ( $attention_cpt_onomy ) {
+													} elseif ( $attention_cpt_onomy ) {
 														$td_registered_classes[] = 'error';
-													} else if ( $is_registered_cpt_onomy ) {
+													} elseif ( $is_registered_cpt_onomy ) {
 														$td_registered_classes[] = 'working';
 													}
 
@@ -2716,7 +2716,7 @@ class CPT_onomies_Admin_Settings {
 														
 															if ( $inactive_cpt ) {
 																echo sprintf( __( 'No, because this %s is inactive.', 'cpt-onomies' ), 'CPT' ) . '<br /><a href="' . $activate_url . '" title="' . esc_attr__( 'Activate this custom post type', 'cpt-onomies' ) . '">' . __( 'Activate this CPT', 'cpt-onomies' ) . '</a>';
-															} else if ( $attention_cpt ) {
+															} elseif ( $attention_cpt ) {
 																echo sprintf( __( 'No, because this %s is not registered.', 'cpt-onomies' ), 'CPT' ) . '<br /><a class="show_cpt_message" href="' . $edit_url . '" title="' . esc_attr__( 'Find out why this custom post type is not registered', 'cpt-onomies' ) . '" alt="' . $message . '">' . __( 'Find out why', 'cpt-onomies' ) . '</a>';
 															} else {
 															
@@ -2731,14 +2731,14 @@ class CPT_onomies_Admin_Settings {
 														}
 
 														// This means this CPT-onomy is registered but not for ALL of its assigned custom post types
-														else if ( $is_registered_cpt_onomy && $attach_to_post_type_not_exist && count( $attach_to_post_type_not_exist ) != count( $CPT->attach_to_post_type ) ) {
+														elseif ( $is_registered_cpt_onomy && $attach_to_post_type_not_exist && count( $attach_to_post_type_not_exist ) != count( $CPT->attach_to_post_type ) ) {
 															
 															echo sprintf( __( 'Yes, but there is a post type conflict.', 'cpt-onomies' ), 'CPT-onomy' ) . '<br /><a class="show_cpt_message" href="' . $edit_url . '" title="' . sprintf( esc_attr__( 'Find out why this %s is not registered', 'cpt-onomies' ), 'CPT-onomy' ) . '" alt="' . $message . '">' . __( 'Find out why', 'cpt-onomies' ) . '</a>';
 														
 														}
 
 														// If the CPT-onomy is registered...
-														else if ( $is_registered_cpt_onomy ) {
+														elseif ( $is_registered_cpt_onomy ) {
 															
 															// This means there might be a conflict with conflicting taxonomy terms
 															if ( ! $this->is_network_admin
@@ -2750,7 +2750,7 @@ class CPT_onomies_Admin_Settings {
 															}
 
 															// This means the CPT-onomy was registered outside the plugin
-															else if ( $programmatic_cpt_onomy ) {
+															elseif ( $programmatic_cpt_onomy ) {
 															
 																_e( 'Yes', 'cpt-onomies' );
 																echo '<br /><em><span class="gray not-bold">' . sprintf( __( 'This %1$s is %2$sprogrammatically registered%3$s.', 'cpt-onomies' ), 'CPT-onomy', '<a href="http://wpdreamer.com/plugins/cpt-onomies/documentation/register_cpt_onomy/" target="_blank">', '</a>' ) . '</span></em>';
@@ -2771,12 +2771,12 @@ class CPT_onomies_Admin_Settings {
 												} ?>
 												<td class="attached_to"><?php
 												
-													$text = NULL;
+													$text = null;
 													if ( $this->is_network_admin ) {
 														if ( isset( $CPT->attach_to_post_type ) ) {														
-															foreach( $CPT->attach_to_post_type as $attached ) {
+															foreach ( $CPT->attach_to_post_type as $attached ) {
 															
-																$label = NULL;
+																$label = null;
 																if ( array_key_exists( $attached, $post_type_objects ) ) {
 
 																	// Don't show deactivated post types
@@ -2788,7 +2788,7 @@ class CPT_onomies_Admin_Settings {
 																		$label = $post_type_objects[ $attached ]['label'];
 																	}
 
-																} else if ( array_key_exists( $attached, $builtin ) ) {
+																} elseif ( array_key_exists( $attached, $builtin ) ) {
 
 																	if ( isset( $builtin[ $attached ]->label ) ) {
 																		$label = $builtin[ $attached ]->label;
@@ -2809,7 +2809,7 @@ class CPT_onomies_Admin_Settings {
 
 															if ( ( $tax = get_taxonomy( $post_type ) ) && isset( $tax->object_type ) ) {
 
-																foreach( $tax->object_type as $attached ) {
+																foreach ( $tax->object_type as $attached ) {
 
 																	if ( post_type_exists( $attached ) ) {
 																		$text .= '<a href="' . admin_url( 'edit.php?post_type=' . $attached ) . '">' . get_post_type_object( $attached )->label . '</a><br />';
@@ -2835,7 +2835,7 @@ class CPT_onomies_Admin_Settings {
 												
 													?><td class="ability"><?php
 													
-														$text = NULL;
+														$text = null;
 														if ( $is_registered_cpt_onomy ) {
 															if ( $tax = get_taxonomy( $post_type ) ) {
 															
@@ -2968,7 +2968,7 @@ class CPT_onomies_Admin_Settings {
 					// Check to see if attached post types exist
 					$attach_to_post_type_not_exist = array();
 					if ( ! empty( $CPT->attach_to_post_type ) ) {
-						foreach( $CPT->attach_to_post_type as $attached ) {
+						foreach ( $CPT->attach_to_post_type as $attached ) {
 							if ( ! post_type_exists( $attached ) ) {
 								$attach_to_post_type_not_exist[] = $attached;
 							}
@@ -2987,7 +2987,7 @@ class CPT_onomies_Admin_Settings {
 					?><div class="custom-post-type-onomies-edit-postbox"><?php
 					
 						// Create the header label
-						$label = NULL;
+						$label = null;
 						
 						// If not new, set from label property
 						if ( $new ) {
@@ -2997,20 +2997,20 @@ class CPT_onomies_Admin_Settings {
 						}
 						
 						// Set information text
-						$information = NULL;
+						$information = null;
 						
 						if ( ! $this->is_network_admin ) {
 						
 							if ( $overwrote_network_cpt ) {
 								$information = __( 'This site-wide custom post type is overwriting a custom post type registered by your network admin.', 'cpt-onomies' );
-							} else if ( $other ) {
+							} elseif ( $other ) {
 								$information = sprintf( __( 'This custom post type is probably setup in your theme, or another plugin, but you can still register it for use as a %s. You cannot, however, manage the actual custom post type. Sorry, but that\'s up to the plugin and/or theme.', 'cpt-onomies' ), 'CPT-onomy' );
 							}
 								
 						}
 							
 						// Print the header
-						?><div id="custom-post-type-onomies-edit-header"<?php echo ! empty( $information ) ? ' class="information"' : NULL; ?>>
+						?><div id="custom-post-type-onomies-edit-header"<?php echo ! empty( $information ) ? ' class="information"' : null; ?>>
 							<span class="label"><?php echo $label; ?></span>
 	                   		<?php if ( $information ) { ?>
 	                    		<span class="information"><?php echo $information; ?></span>
@@ -3029,19 +3029,19 @@ class CPT_onomies_Admin_Settings {
 							}
 								
 							// Or if it needs attention...
-							else if ( $attention_cpt || $attention_cpt_onomy || ( $is_registered_cpt_onomy && $attach_to_post_type_not_exist && count( $attach_to_post_type_not_exist ) != count( $CPT->attach_to_post_type ) ) || ( $is_registered_cpt_onomy && $programmatic_cpt_onomy ) ) {
+							elseif ( $attention_cpt || $attention_cpt_onomy || ( $is_registered_cpt_onomy && $attach_to_post_type_not_exist && count( $attach_to_post_type_not_exist ) != count( $CPT->attach_to_post_type ) ) || ( $is_registered_cpt_onomy && $programmatic_cpt_onomy ) ) {
 							
 								$edit_message_class[] = ' attention';
 								
 							}
 									                
-			                ?><div id="custom-post-type-onomies-edit-message"<?php echo $edit_message_class ? ' class="' . implode( ' ', $edit_message_class ) . '"' : NULL; ?>><?php
+			                ?><div id="custom-post-type-onomies-edit-message"<?php echo $edit_message_class ? ' class="' . implode( ' ', $edit_message_class ) . '"' : null; ?>><?php
 			                
 			                	if ( $inactive_cpt ) {
 				                	
 				                	?><p><?php _e( 'This custom post type is currently inactive.', 'cpt-onomies' ); ?></p><?php
 									
-								} else if ( $attention_cpt ) {
+								} elseif ( $attention_cpt ) {
 									
 									$builtin = get_post_types( array( '_builtin' => true ), 'objects' );
 									
@@ -3057,7 +3057,7 @@ class CPT_onomies_Admin_Settings {
 											
 									}
 									
-								} else if ( ! $is_registered_cpt_onomy && $should_be_cpt_onomy ) {
+								} elseif ( ! $is_registered_cpt_onomy && $should_be_cpt_onomy ) {
 								
 									if ( taxonomy_exists( $edit ) ) {
 										?><p><?php echo sprintf( __( 'This custom post type\'s %1$s is not registered because another taxonomy with the same name already exists. If you would like this %2$s to work, please remove the conflicting taxonomy.', 'cpt-onomies' ), 'CPT-onomy', 'CPT-onomy' ); ?></p><?php
@@ -3066,16 +3066,16 @@ class CPT_onomies_Admin_Settings {
 									}
 										
 								// This means this CPT-onomy is registered but not for ALL of its assigned custom post types
-								} else if ( $is_registered_cpt_onomy && $attach_to_post_type_not_exist && count( $attach_to_post_type_not_exist ) != count( $CPT->attach_to_post_type ) ) {
+								} elseif ( $is_registered_cpt_onomy && $attach_to_post_type_not_exist && count( $attach_to_post_type_not_exist ) != count( $CPT->attach_to_post_type ) ) {
 								
 									if ( count( $attach_to_post_type_not_exist ) > 1 ) {
 										
-										$attach_to_post_type_not_exist_string = NULL;
-										foreach( $attach_to_post_type_not_exist as $not_exist_index => $not_exist ) {
+										$attach_to_post_type_not_exist_string = null;
+										foreach ( $attach_to_post_type_not_exist as $not_exist_index => $not_exist ) {
 
 											if ( $not_exist_index == ( count( $attach_to_post_type_not_exist ) - 1 ) ) {
 												$attach_to_post_type_not_exist_string .= ' and ';
-											} else if ( $not_exist_index > 0 ) {
+											} elseif ( $not_exist_index > 0 ) {
 												$attach_to_post_type_not_exist_string .= ', ';
 											}
 
@@ -3092,16 +3092,16 @@ class CPT_onomies_Admin_Settings {
 									}
 								
 								// This means we have conflicting taxonomy terms for our CPT-onomy		
-								} else if ( ! $this->is_network_admin
+								} elseif ( ! $this->is_network_admin
 									&& $attention_cpt_onomy
 									&& ( $conflicting_terms_count = $this->get_conflicting_taxonomy_terms_count( $edit ) ) ) {
 										
 									// "Delete conflicting terms" url
-									$delete_conflicting_terms_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => $edit, 'other' => ( $other ? '1' : NULL ), 'delete_conflicting_terms' => $edit, '_wpnonce' => wp_create_nonce( 'delete-conflicting-terms-' . $edit ) ), $this->admin_url ), 'delete-conflicting-terms-' . $edit );
+									$delete_conflicting_terms_url = esc_url( add_query_arg( array( 'page' => CPT_ONOMIES_OPTIONS_PAGE, 'edit' => $edit, 'other' => ( $other ? '1' : null ), 'delete_conflicting_terms' => $edit, '_wpnonce' => wp_create_nonce( 'delete-conflicting-terms-' . $edit ) ), $this->admin_url ), 'delete-conflicting-terms-' . $edit );
 								
 									?><p><?php echo sprintf( __( 'Did this %1$s used to be registered as a taxonomy? I found some taxonomy terms stored in your database that could conflict with your %2$s terms. %3$s are not stored in the database in the same manner as taxonomies so when taxonomy and %4$s terms exist under the same name, term queries can get confused and sometimes return incorrect results.', 'cpt-onomies' ), 'CPT-onomy', 'CPT-onomy', 'CPT-onomies', 'CPT-onomy' ); ?></p><p><a class="delete-conflicting-tax-terms action button" href="<?php echo $delete_conflicting_terms_url; ?>" title="<?php echo sprintf( __( 'Delete the conflicting taxonomy terms for the \'%1$s\' %2$s', 'cpt-onomies' ), $edit, 'CPT-onomy' ); ?>"><?php _e( 'Delete the conflicting taxonomy terms', 'cpt-onomies' ); ?></a> <a href="http://wpdreamer.com/plugins/cpt-onomies/documentation/incorrect-query-results/#remove-conflicting-taxonomy-terms" target="_blank"><?php _e( 'Learn how to manually delete your conflicting terms', 'cpt-onomies' ); ?></a></p><?php
 								
-								} else if ( $is_registered_cpt_onomy && $programmatic_cpt_onomy ) {
+								} elseif ( $is_registered_cpt_onomy && $programmatic_cpt_onomy ) {
 									
 									?><p><?php echo sprintf( __( 'This custom post type is being programmatically registered as a %1$s, which overrides any settings defined below. %2$sCheck out the %3$s documentation%4$s to learn more.', 'cpt-onomies' ), 'CPT-onomy', '<a href="http://wpdreamer.com/plugins/cpt-onomies/documentation/register_cpt_onomy/" target="_blank">', 'CPT-onomy', '</a>' ); ?></p><?php
 									
@@ -3143,21 +3143,21 @@ class CPT_onomies_Admin_Settings {
 						}
 						
 						// Get the properties
-						$cpt_properties = $this->get_plugin_options_page_cpt_properties( $edit && ! empty( $edit ) ? $edit : NULL );
+						$cpt_properties = $this->get_plugin_options_page_cpt_properties( $edit && ! empty( $edit ) ? $edit : null );
 						
-						foreach( $cpt_properties as $section => $section_properties ) {
+						foreach ( $cpt_properties as $section => $section_properties ) {
 							
 							// Only show "other" sections on "other" tables
 							if ( ! $other || ( $other && isset( $section_properties->other ) && $section_properties->other ) ) {
 								
-								?><table id="custom-post-type-onomies-edit-table" class="<?php echo $section; echo in_array( $section, $show_edit_tables ) ? ' show' : NULL; ?>" cellpadding="0" cellspacing="0" border="0">
+								?><table id="custom-post-type-onomies-edit-table" class="<?php echo $section; echo in_array( $section, $show_edit_tables ) ? ' show' : null; ?>" cellpadding="0" cellspacing="0" border="0">
 									<tbody>
 		                            	<?php if ( isset( $section_properties->type ) && $section_properties->type == 'group' && isset( $section_properties->data ) ) { ?>
 		                                	<tr>
 		                                    	<td class="label"><?php echo $section_properties->label; ?></td>
 		                                        <td class="group<?php echo ( isset( $section_properties->advanced ) && $section_properties->advanced ) ? ' advanced' : ''; ?>">
 		                                        	<table cellpadding="0" cellspacing="0" border="0">
-														<?php foreach( $section_properties->data as $property_key => $property ) { ?>
+														<?php foreach ( $section_properties->data as $property_key => $property ) { ?>
 															<tr>
 																<td class="label"><?php echo $property->label; ?></td>
 																<td class="field"><?php $this->print_plugin_options_edit_custom_post_type_field( $edit, $CPT, $property, $property_key ); ?></td>
@@ -3168,7 +3168,7 @@ class CPT_onomies_Admin_Settings {
 		                                  	</tr>
 		                            	<?php }
 										else {
-											foreach( $section_properties as $property_key => $property ) {
+											foreach ( $section_properties as $property_key => $property ) {
 												?><tr>
 													<td class="label"><?php echo $property->label; ?></td>
 													<td class="field<?php echo ( isset( $property->advanced ) && $property->advanced ) ? ' advanced' : ''; ?>"><?php $this->print_plugin_options_edit_custom_post_type_field( $edit, $CPT, $property, $property_key ); ?></td>
@@ -3208,7 +3208,7 @@ class CPT_onomies_Admin_Settings {
 	 * @param   string $property_parent_key - allows for pulling property info from within an array.
 	 * @filters 'custom_post_type_onomies_default_property_value' - $property_key, $property_parent_key
 	 */
-	public function print_plugin_options_edit_custom_post_type_field( $cpt_key, $CPT, $property, $property_key, $property_parent_key=NULL ) {
+	public function print_plugin_options_edit_custom_post_type_field( $cpt_key, $CPT, $property, $property_key, $property_parent_key=null ) {
 		global $cpt_onomies_manager;
 		if ( current_user_can( $this->manage_options_capability ) ) {
 			
@@ -3232,12 +3232,12 @@ class CPT_onomies_Admin_Settings {
 
 			$field_name .= '[' . $property_key . ']';
 			
-			switch( $property->type ) {
+			switch ( $property->type ) {
 				
 				case 'group':
 					if ( isset( $property->data ) ) { ?>
                     	<table cellpadding="0" cellspacing="0" border="0">
-                        	<?php foreach( $property->data as $subproperty_key => $subproperty ) { ?>
+                        	<?php foreach ( $property->data as $subproperty_key => $subproperty ) { ?>
                             	<tr>
                                 	<td class="label"><?php echo $subproperty->label; ?></td>
 									<td class="field"><?php $this->print_plugin_options_edit_custom_post_type_field( $cpt_key, $CPT, $subproperty, $subproperty_key, $property_key ); ?></td>
@@ -3251,7 +3251,7 @@ class CPT_onomies_Admin_Settings {
 				case 'textarea':
 				
 					// Get saved value
-					$saved_property_value = NULL;
+					$saved_property_value = null;
 					
 					if ( ! $new ) {
 						
@@ -3262,20 +3262,20 @@ class CPT_onomies_Admin_Settings {
 								$saved_property_value = $property_parent[ $property_key ];
 							}
 
-						} else if ( isset( $CPT->$property_key ) ) {
+						} elseif ( isset( $CPT->$property_key ) ) {
 							$saved_property_value = $CPT->$property_key;
 						}
 					}
 					else {
 						
 						// Allows you to set default values for the properties
-						$saved_property_value = apply_filters( 'custom_post_type_onomies_' . ( $this->is_network_admin ? 'network_admin_' : NULL ) . 'default_property_value', isset( $property->default ) ? $property->default : NULL, $property_key, $property_parent_key );
+						$saved_property_value = apply_filters( 'custom_post_type_onomies_' . ( $this->is_network_admin ? 'network_admin_' : null ) . 'default_property_value', isset( $property->default ) ? $property->default : null, $property_key, $property_parent_key );
 					
 					}
 					
 					if ( is_array( $saved_property_value ) && ! empty( $saved_property_value ) ) {
 						$saved_property_value = esc_attr( strip_tags( implode( ', ', $saved_property_value ) ) );
-					} else if ( ! empty( $saved_property_value ) ) {
+					} elseif ( ! empty( $saved_property_value ) ) {
 						$saved_property_value = esc_attr( strip_tags( $saved_property_value ) );
 					}
 					
@@ -3289,7 +3289,7 @@ class CPT_onomies_Admin_Settings {
 						
 						?><input<?php echo ( isset( $property->fieldid ) ) ? ' id="' . $property->fieldid . '"' : ''; ?><?php echo ( isset( $property->validation ) ) ? ' class="' . $property->validation . '"' : ''; ?> type="text" name="<?php echo $field_name; ?>" value="<?php echo ( ! empty( $saved_property_value ) ) ? $saved_property_value : ''; ?>"<?php echo ( isset( $property->readonly ) && $property->readonly ) ? ' readonly="readonly"' : ''; ?> /><?php
 							
-					} else if ( $property->type == 'textarea' ) {
+					} elseif ( $property->type == 'textarea' ) {
 						
 						?><textarea<?php echo ( isset( $property->fieldid ) ) ? ' id="' . $property->fieldid . '"' : ''; ?><?php echo ( isset( $property->validation ) ) ? ' class="' . $property->validation . '"' : ''; ?> name="<?php echo $field_name; ?>"><?php echo ( ! empty( $saved_property_value ) ) ? $saved_property_value : ''; ?></textarea><?php
 							
@@ -3336,11 +3336,11 @@ class CPT_onomies_Admin_Settings {
 						
 							$td = 1;
 							$index = 1;
-							foreach( $property->data as $data_name => $data ) {
+							foreach ( $property->data as $data_name => $data ) {
 							
 								if ( $data_name == 'true' ) {
 									$data_name = 1;
-								} else if ( $data_name == 'false' ) {
+								} elseif ( $data_name == 'false' ) {
 									$data_name = 0;
 								}
 																	
@@ -3349,7 +3349,7 @@ class CPT_onomies_Admin_Settings {
 								}
 								
 								// Allows you to set default values for the properties			
-								$default_value = apply_filters( 'custom_post_type_onomies_' . ( $this->is_network_admin ? 'network_admin_' : NULL ) . 'default_property_value', isset( $property->default ) ? $property->default : NULL, $property_key, $property_parent_key );
+								$default_value = apply_filters( 'custom_post_type_onomies_' . ( $this->is_network_admin ? 'network_admin_' : null ) . 'default_property_value', isset( $property->default ) ? $property->default : null, $property_key, $property_parent_key );
 
 								// Make sure value is clean
 								if ( $property->type == 'checkbox' && isset( $default_value ) && ! is_array( $default_value ) ) {
@@ -3363,7 +3363,7 @@ class CPT_onomies_Admin_Settings {
 								}
 
 								// If default value is not an array
-								else if ( isset( $default_value ) && $data_name == $default_value ) {
+								elseif ( isset( $default_value ) && $data_name == $default_value ) {
 									$is_default = true;
 								}
 									
@@ -3378,24 +3378,24 @@ class CPT_onomies_Admin_Settings {
 											
 											$is_set = true;
 										
-										} else if ( isset( $property_parent[ $property_key ] ) && $data_name == $property_parent[ $property_key ] ) {
+										} elseif ( isset( $property_parent[ $property_key ] ) && $data_name == $property_parent[ $property_key ] ) {
 											
 											$is_set = true;
 											
 										}
 										
-									} else if ( isset( $CPT->$property_key ) && is_array( $CPT->$property_key ) && in_array( $data_name, $CPT->$property_key ) ) {
+									} elseif ( isset( $CPT->$property_key ) && is_array( $CPT->$property_key ) && in_array( $data_name, $CPT->$property_key ) ) {
 										
 										$is_set = true;
 									
-									} else if ( isset( $CPT->$property_key ) && $data_name == $CPT->$property_key ) {
+									} elseif ( isset( $CPT->$property_key ) && $data_name == $CPT->$property_key ) {
 										
 										$is_set = true;
 									
 									}
 
 									// If property is not set, then set to default
-									else if ( ! isset( $CPT->other ) && ! isset( $CPT->$property_key ) && $is_default ) {
+									elseif ( ! isset( $CPT->other ) && ! isset( $CPT->$property_key ) && $is_default ) {
 										
 										$is_set = true;
 									
@@ -3408,7 +3408,7 @@ class CPT_onomies_Admin_Settings {
 									 * If "other" custom post type has no settings in the database,
 									 * then its settings have not been "saved" and should therefore show the defaults.
 									 */
-									else if ( isset( $CPT->other ) && ! isset( $CPT->$property_key ) && $is_default ) {
+									elseif ( isset( $CPT->other ) && ! isset( $CPT->$property_key ) && $is_default ) {
 										
 										if ( empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ] ) || empty( $cpt_onomies_manager->user_settings[ 'other_custom_post_types' ][ $cpt_key ] ) ) {
 											$is_set = true;
@@ -3417,7 +3417,7 @@ class CPT_onomies_Admin_Settings {
 									}
 									
 								// Set the defaults
-								} else if ( $is_default ) {
+								} elseif ( $is_default ) {
 									$is_set = true;
 								}
 									
@@ -3455,7 +3455,7 @@ class CPT_onomies_Admin_Settings {
 								
 								if ( $td == 1 ) {
 									$td = 2;
-								} else if ( $td == 2 ) {
+								} elseif ( $td == 2 ) {
 									$td = 1;
 									echo '</tr>';
 								}
