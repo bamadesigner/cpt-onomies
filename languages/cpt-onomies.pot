@@ -1,4 +1,4 @@
-# Copyright (C) 2016 cpt-onomies
+# Copyright (C) 2017 cpt-onomies
 # This file is distributed under the same license as the cpt-onomies package.
 msgid ""
 msgstr ""
@@ -7,10 +7,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Rachel Carden <bamadesigner@gmail.com>\n"
 "Language-Team: Rachel Carden <bamadesigner@gmail.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: admin-settings.php:80
 msgid "View Network Site Information"
 msgstr ""
