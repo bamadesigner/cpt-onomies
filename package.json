@@ -1,6 +1,6 @@
 {
   "name": "cpt-onomies",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "A CPT-onomy is a taxonomy built from a custom post type, using the post titles as the taxonomy terms. Create custom post types using the CPT-onomies custom post type manager or use post types created by themes or other plugins.",
   "repository": {
     "type": "git",
