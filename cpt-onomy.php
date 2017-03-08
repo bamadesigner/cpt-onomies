@@ -1,6 +1,6 @@
 <?php
 
-// Instantiate the class
+// Instantiate the class.
 global $cpt_onomy;
 $cpt_onomy = new CPT_TAXONOMY();
 
@@ -38,8 +38,8 @@ class CPT_TAXONOMY {
 	 *
 	 * @since   1.0
 	 * @uses    $cpt_onomies_manager
-	 * @param   array|object $object - the information for the object you are converting
-	 * @param   boolean $get_count - whether to get the term count
+	 * @param   array|object $object - the information for the object you are converting.
+	 * @param   boolean $get_count - whether to get the term count.
 	 * @return  array|object - the information for the term you have created.
 	 */
 	private function convert_object_to_cpt_onomy_term( $object, $get_count = true ) {
@@ -98,8 +98,8 @@ class CPT_TAXONOMY {
 	 *
 	 * @since   1.0.2
 	 * @uses    $cpt_onomies_manager
-	 * @param   array $args - original get_terms() arguments
-	 * @param   array $taxonomies - the taxonomies we're getting terms from
+	 * @param   array $args - original get_terms() arguments.
+	 * @param   array $taxonomies - the taxonomies we're getting terms from.
 	 * @return  array - the filtered $args
 	 */
 	public function adjust_get_terms_args( $args, $taxonomies ) {
@@ -153,7 +153,7 @@ class CPT_TAXONOMY {
 	 * @uses $cpt_onomies_manager
 	 * @param int|object $term If integer, will get from database. If object will apply filters and return $term.
 	 * @param string $taxonomy Taxonomy name that $term is part of.
-	 * @param string $output Constant OBJECT, ARRAY_A, or ARRAY_N
+	 * @param string $output Constant OBJECT, ARRAY_A, or ARRAY_N.
 	 * @param string $filter Optional, default is raw or no WordPress defined filter will applied.
 	 * @return mixed|null|WP_Error Term Row from database. Will return null if $term is empty. If taxonomy does not
 	 * 		exist then WP_Error will be returned.
@@ -184,18 +184,25 @@ class CPT_TAXONOMY {
 			wp_cache_add( $term->term_id, $term, $taxonomy );
 			$_term = $term;
 		} else {
+
 			if ( is_object( $term ) ) {
 				$term = $term->term_id;
 			}
+
 			if ( ! $term = (int) $term ) {
 				return $null;
 			}
+
 			if ( ! $_term = wp_cache_get( $term, $taxonomy ) ) {
+
 				$_term = $this->convert_object_to_cpt_onomy_term( get_post( $term ) );
+
 				if ( ! $_term ) {
 					return $null;
 				}
+
 				wp_cache_add( $term, $_term, $taxonomy );
+
 			}
 		}
 
@@ -222,12 +229,12 @@ class CPT_TAXONOMY {
 	 *
 	 * @since   1.0
 	 * @uses    $wpdb, $cpt_onomies_manager
-	 * @param   string $field Either 'slug', 'name', or 'id'
-	 * @param   string|int $value Search for this term value
-	 * @param   string $taxonomy Taxonomy Name
-	 * @param   string $output Constant OBJECT, ARRAY_A, or ARRAY_N
+	 * @param   string $field Either 'slug', 'name', or 'id'.
+	 * @param   string|int $value Search for this term value.
+	 * @param   string $taxonomy Taxonomy Name.
+	 * @param   string $output Constant OBJECT, ARRAY_A, or ARRAY_N.
 	 * @param   string $filter Optional, default is raw or no WordPress defined filter will applied.
-	 * @param   int $parent allows to get a term by its parent's term id
+	 * @param   int $parent allows to get a term by its parent's term id.
 	 * @return  mixed Term Row from database. Will return false if $taxonomy does not exist or $term was not found.
 	 */
 	public function get_term_by( $field, $value, $taxonomy, $output = OBJECT, $filter = 'raw', $parent = 0 ) {
@@ -246,7 +253,7 @@ class CPT_TAXONOMY {
 		}
 
 		if ( $parent > 0 ) {
-			$parent = " AND wpposts.post_parent = {$parent}";
+			$parent = $wpdb->prepare( ' AND wpposts.post_parent = %d', $parent );
 		} else {
 			$parent = null;
 		}
@@ -259,22 +266,22 @@ class CPT_TAXONOMY {
 				return false;
 			}
 
-			// Get eligible post types
+			// Get eligible post types.
 			$eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array();
 
-			// Find term and term count
-			$query = "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN ('" . implode( "','", $eligible_post_types ) . "') WHERE wpcountmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = '{$taxonomy}' AND wpposts.post_name = '{$value}' and wpposts.post_status = 'publish'" . $parent;
+			// Find term and term count.
+			$query = $wpdb->prepare( "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN (%s) WHERE wpcountmeta.meta_key = %s AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = %s AND wpposts.post_name = %s and wpposts.post_status = 'publish'", implode( "','", $eligible_post_types, CPT_ONOMIES_POSTMETA_KEY, $taxonomy, $value ) );
 
 		} elseif ( 'name' == $field ) {
 
-			// Assume already escaped
+			// Assume already escaped.
 			$value = stripslashes( $value );
 
-			// Get eligible post types
+			// Get eligible post types.
 			$eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array();
 
-			// Find term and term count
-			$query = "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN ('" . implode( "','", $eligible_post_types ) . "') WHERE wpcountmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = '{$taxonomy}' AND wpposts.post_title = '{$value}' and wpposts.post_status = 'publish'" . $parent;
+			// Find term and term count.
+			$query = $wpdb->prepare( "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN (%s) WHERE wpcountmeta.meta_key = %s AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = %s AND wpposts.post_title = %s and wpposts.post_status = 'publish'", implode( "','", $eligible_post_types, CPT_ONOMIES_POSTMETA_KEY, $taxonomy, $value ) );
 
 		} else {
 
@@ -288,25 +295,25 @@ class CPT_TAXONOMY {
 
 		}
 
-		// Get the term
-		$term = $wpdb->get_row( $query );
+		// Get the term.
+		$term = $wpdb->get_row( $query . $parent );
 
 		if ( ! $term ) {
 			return false;
 		}
 
-		// Save the term count and remove from $term before conversion
+		// Save the term count and remove from $term before conversion.
 		$term_count = $term->count;
 		unset( $term->count );
 
-		// Dont get the count, we'll add from before
+		// Dont get the count, we'll add from before.
 		$term = $this->convert_object_to_cpt_onomy_term( $term, false );
 
 		if ( ! $term ) {
 			return false;
 		}
 
-		// Add count
+		// Add count.
 		$term->count = $term_count;
 
 		wp_cache_add( $term->term_id, $term, $taxonomy );
@@ -334,8 +341,8 @@ class CPT_TAXONOMY {
 	 * 'get_terms_args' that allows CPT-onomies to work with wp_count_terms() was
 	 * added in 3.1 so everyone is sent to the WordPress function.
 	 *
-	 * @param   string $taxonomy Taxonomy name
-	 * @param   array|string $args Overwrite defaults. See get_terms()
+	 * @param   string $taxonomy Taxonomy name.
+	 * @param   array|string $args Overwrite defaults. See get_terms().
 	 * @return  int How many terms are in $taxonomy
 	 */
 	public function wp_count_terms( $taxonomy, $args = array() ) {
@@ -343,54 +350,54 @@ class CPT_TAXONOMY {
 	}
 
 	/**
-	 * Returns an array of term counts for a specific
-	 * CPT-onomy indexed by the term ID.
+	 * Returns an array of term counts for a
+	 * specific CPT-onomy indexed by the term ID.
 	 *
-	 * Stores the term counts in the WP cache to help
-	 * with query load.
+	 * Stores the term counts in the
+	 * WP cache to help with query load.
 	 *
 	 * @since 1.3.3
-	 * @param csv|string - $taxonomies - CPT-onomy names
-	 * @param csv|array - $term_ids - you can pass specific term IDs instead of all terms (will not use cache though)
+	 * @param csv|string - $taxonomies - CPT-onomy names.
+	 * @param csv|array - $term_ids - you can pass specific term IDs instead of all terms (will not use cache though).
 	 * @return array|false - array of term counts indexed by term ID or false if error
 	 */
 	private function get_terms_count( $taxonomies, $term_ids = null ) {
 		global $cpt_onomies_manager, $wpdb;
 
-		// Make sure the taxonomies is an array
+		// Make sure the taxonomies is an array.
 		if ( ! empty( $taxonomies ) && ! is_array( $taxonomies ) ) {
 			$taxonomies = explode( ',', $taxonomies );
 		}
 
-		// Make sure they are valid CPT-onomies
+		// Make sure they are valid CPT-onomies.
 		foreach ( $taxonomies as $index => $taxonomy ) {
 
 			// If it's not a valid CPT-onomy...
 			if ( ! $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 
-				// Remove this taxonomy
+				// Remove this taxonomy.
 				unset( $taxonomies[ $index ] );
 
 			}
 		}
 
-		// If we have no valid taxonomies then there's no point in continuing
+		// If we have no valid taxonomies then there's no point in continuing.
 		if ( ! $taxonomies ) {
 			return false;
 		}
 
-		// We're gonna store the term counts in an array indexed by term ID
+		// We're gonna store the term counts in an array indexed by term ID.
 		$terms_count = array();
 
-		// Make sure term IDs is an array
+		// Make sure term IDs is an array.
 		if ( ! empty( $term_ids ) && ! is_array( $term_ids ) ) {
 			$term_ids = explode( ',', $term_ids );
 		}
 
-		// This will hold taxonomies that need to be queried
+		// This will hold taxonomies that need to be queried.
 		$taxonomies_to_query = array();
 
-		// First, see if we can get from the cache
+		// First, see if we can get from the cache.
 		foreach ( $taxonomies as $taxonomy ) {
 
 			// Checking the cache...
@@ -401,7 +408,7 @@ class CPT_TAXONOMY {
 				// If we only want specific term IDs...
 				if ( ! empty( $term_ids ) ) {
 
-					// Then only get specific term IDs from the cache
+					// Then only get specific term IDs from the cache.
 					foreach ( $terms_count_from_cache as $term_id => $term_id_count ) {
 						if ( ! in_array( $term_id, $term_ids ) ) {
 							unset( $terms_count_from_cache[ $term_id ] );
@@ -409,42 +416,42 @@ class CPT_TAXONOMY {
 					}
 				}
 
-				// Add the counts from the cache
+				// Add the counts from the cache.
 				$terms_count += $terms_count_from_cache;
 
 			} else {
 
-				// We need to query this taxonomy
+				// We need to query this taxonomy.
 				$taxonomies_to_query[] = $taxonomy;
 
 			}
 		}
 
-		// These taxonomies weren't cached so we need to query the database
+		// These taxonomies weren't cached so we need to query the database.
 		if ( $taxonomies_to_query ) {
 
-			// Build an array of eligible post types for these CPT-onomies
+			// Build an array of eligible post types for these CPT-onomies.
 			$eligible_post_types = array();
 
-			// Get eligible post types for each taxonomy
+			// Get eligible post types for each taxonomy.
 			foreach ( $taxonomies_to_query as $index => $taxonomy ) {
 
-				// Get eligible post types
+				// Get eligible post types.
 				$tax_eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : null;
 
-				// If we have some, then merge with the array
+				// If we have some, then merge with the array.
 				if ( $tax_eligible_post_types ) {
 					$eligible_post_types = array_merge( $eligible_post_types, $tax_eligible_post_types );
 				}
 			}
 
-			// Make sure the eligible post types are unique
+			// Make sure the eligible post types are unique.
 			$eligible_post_types = array_unique( $eligible_post_types );
 
-			// If we have no eligible post types then there's no point in continuing
+			// If we have no eligible post types then there's no point in continuing.
 			if ( $eligible_post_types ) {
 
-				// Build the terms count query
+				// Build the terms count query.
 				$terms_count_query = "SELECT meta.meta_value AS ID, terms.post_type AS taxonomy, COUNT(meta.meta_value) AS count
 	
 					FROM {$wpdb->postmeta} meta 
@@ -454,7 +461,10 @@ class CPT_TAXONOMY {
 							AND objects.post_type IN ( '" . implode( "','", $eligible_post_types ) . "' )
 							AND objects.post_status = 'publish'";
 
-				// If we have no specific term IDs then we have to join the posts table to match taxonomy/post type
+				/*
+				 * If we have no specific term IDs then we have to
+				 * join the posts table to match taxonomy/post type.
+				 */
 				if ( empty( $term_ids ) ) {
 
 					$terms_count_query .= " INNER JOIN {$wpdb->posts} terms 
@@ -466,39 +476,39 @@ class CPT_TAXONOMY {
 
 				$terms_count_query .= ' WHERE meta.meta_key = %s';
 
-				// If we have term IDs
+				// If we have term IDs.
 				if ( ! empty( $term_ids ) ) {
 					$terms_count_query .= " AND meta.meta_value IN ( '" . implode( "','", $term_ids ) . "' )";
 				}
 
 				$terms_count_query .= ' GROUP BY meta.meta_value';
 
-				// Get term count from the database
+				// Get term count from the database.
 				if ( $terms_count_from_db = $wpdb->get_results( $wpdb->prepare( $terms_count_query, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
 
-					// If no specific term IDs, separate count by taxonomy for the cache
+					// If no specific term IDs, separate count by taxonomy for the cache.
 					$terms_count_by_taxonomy = array();
 
-					// If we have a posts count, we need to rearrange the array
+					// If we have a posts count, we need to rearrange the array.
 					foreach ( $terms_count_from_db as $terms_count_index => $terms_count_item ) {
 
-						// Get the term count
+						// Get the term count.
 						$term_count = isset( $terms_count_item->count ) && $terms_count_item->count > 0 ? $terms_count_item->count : 0;
 
-						// Store count by term ID
+						// Store count by term ID.
 						$terms_count[ $terms_count_item->ID ] = $term_count;
 
-						// Store count by taxonomy and term ID
+						// Store count by taxonomy and term ID.
 						$terms_count_by_taxonomy[ $terms_count_item->taxonomy ][ $terms_count_item->ID ] = $term_count;
 
 					}
 
-					// If no specific term IDs, set the cache
+					// If no specific term IDs, set the cache.
 					if ( empty( $term_ids ) && ! empty( $terms_count_by_taxonomy ) ) {
 
 						foreach ( $terms_count_by_taxonomy as $taxonomy => $taxonomy_terms_count ) {
 
-							// Store the terms count for this taxonomy
+							// Store the terms count for this taxonomy.
 							wp_cache_set( $taxonomy, $taxonomy_terms_count, 'cpt_onomies_terms_count' );
 
 						}
@@ -515,17 +525,17 @@ class CPT_TAXONOMY {
 	 *
 	 * @since   1.0
 	 * @uses    $wpdb, $cpt_onomies_manager
-	 * @param   int $term_id - the ID of the term you're counting
-	 * @param   string $taxonomy - the taxonomy the term belongs to
+	 * @param   int $term_id - the ID of the term you're counting.
+	 * @param   string $taxonomy - the taxonomy the term belongs to.
 	 * @return  int - the number of times a term has been assigned to an object
 	 */
 	public function get_term_count( $term_id, $taxonomy ) {
 		global $wpdb, $cpt_onomies_manager;
 
-		// Must have a term ID and be a CPT-onomy
+		// Must have a term ID and be a CPT-onomy.
 		if ( is_numeric( $term_id ) && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 
-			// We're only counting the posts who are supposed to be associated with this taxonomy
+			// We're only counting the posts who are supposed to be associated with this taxonomy.
 			if ( ( $eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array() )
 				&& ! empty( $eligible_post_types ) ) {
 
@@ -546,8 +556,8 @@ class CPT_TAXONOMY {
 	 *
 	 * @since 1.0
 	 * @uses $wpdb, $cpt_onomies_manager
-	 * @param string $term_id ID of Term to get children
-	 * @param string $taxonomy Taxonomy Name
+	 * @param string $term_id ID of Term to get children.
+	 * @param string $taxonomy Taxonomy Name.
 	 * @return array|WP_Error List of Term Objects. WP_Error returned if $taxonomy does not exist
 	 */
 	public function get_term_children( $term_id, $taxonomy ) {
@@ -585,8 +595,8 @@ class CPT_TAXONOMY {
 	 *
 	 * @since   1.1
 	 * @uses    $cpt_onomies_manager
-	 * @param   int $term_id - The ID of the term for which we'll be retrieving ancestors
-	 * @param   string $taxonomy - the taxonomy name
+	 * @param   int $term_id - The ID of the term for which we'll be retrieving ancestors.
+	 * @param   string $taxonomy - the taxonomy name.
 	 * @return  array|WP_Error List of Term Objects. WP_Error returned if $taxonomy does not exist
 	 */
 	public function get_term_ancestors( $term_id = 0, $taxonomy = '' ) {
@@ -629,8 +639,8 @@ class CPT_TAXONOMY {
 	 *
 	 * @since 1.0
 	 * @uses $wpdb, $cpt_onomies_manager
-	 * @param int|string $term The term to check
-	 * @param string $taxonomy The taxonomy name to use
+	 * @param int|string $term The term to check.
+	 * @param string $taxonomy The taxonomy name to use.
 	 * @param int $parent ID of parent term under which to confine the exists search.
 	 * @return mixed Get the term id or Term Object, if exists.
 	 */
@@ -653,14 +663,14 @@ class CPT_TAXONOMY {
 				return $this->get_term( $term, $taxonomy );
 			}
 
-			// Get term info and convert
+			// Get term info and convert.
 			$term = $this->convert_object_to_cpt_onomy_term( $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE ID = %d AND post_status = 'publish'", $term ) ) );
 
 			if ( ! $term ) {
 				return 0;
 			}
 
-			// Make sure this term belongs to a CPT-onomy
+			// Make sure this term belongs to a CPT-onomy.
 			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $term->taxonomy ) ) {
 				return $term;
 			}
@@ -683,7 +693,7 @@ class CPT_TAXONOMY {
 			return term_exists( $term, $taxonomy, $parent );
 		} elseif ( ! empty( $taxonomy ) ) {
 
-			// Check for parent
+			// Check for parent.
 			$parent = (int) $parent;
 			if ( $parent > 0 ) {
 				$parent = ' AND wp_posts.post_parent = ' . $parent;
@@ -712,7 +722,7 @@ class CPT_TAXONOMY {
 
 			if ( ! empty( $result ) && $cpt_onomies_manager->is_registered_cpt_onomy( $result->post_type ) ) {
 
-				// Save count and remove from term for conversion
+				// Save count and remove from term for conversion.
 				$term_count = $result->count;
 				unset( $result->count );
 
@@ -727,7 +737,7 @@ class CPT_TAXONOMY {
 					return 0;
 				}
 
-				// Add count
+				// Add count.
 				$term->count = $term_count;
 
 				return $term;
@@ -735,7 +745,7 @@ class CPT_TAXONOMY {
 			}
 		} else {
 
-			// Check for parent
+			// Check for parent.
 			$parent = (int) $parent;
 			if ( $parent > 0 ) {
 				$parent = ' AND post_parent = ' . $parent;
@@ -743,10 +753,10 @@ class CPT_TAXONOMY {
 				$parent = null;
 			}
 
-			// Check for name first
+			// Check for name first.
 			$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE post_title = %s {$parent} AND post_status = 'publish'", $term ) );
 
-			// Check for slug
+			// Check for slug.
 			if ( empty( $result ) ) {
 				$result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE post_name = %s {$parent} AND post_status = 'publish'", $term ) );
 			}
@@ -767,13 +777,13 @@ class CPT_TAXONOMY {
 	 * rewrite rules.
 	 *
 	 * @since 1.0
-	 * @uses $wp_rewrite, $cpt_onomies_manager
-	 * @param object|int|string $term
-	 * @param string $taxonomy (optional if $term is object)
+	 * @uses $cpt_onomies_manager
+	 * @param object|int|string $term.
+	 * @param string $taxonomy (optional if $term is object).
 	 * @return string|WP_Error HTML link to taxonomy term archive on success, WP_Error if term does not exist.
 	 */
 	public function get_term_link( $term, $taxonomy ) {
-		global $wp_rewrite, $cpt_onomies_manager;
+		global $cpt_onomies_manager;
 
 		/*
 		 * This function only processes registered CPT-onomies.
@@ -827,12 +837,12 @@ class CPT_TAXONOMY {
 				$hierarchical_slugs = array_reverse( $hierarchical_slugs );
 				$hierarchical_slugs[] = $slug;
 
-				// Replace the variables ($post_type and $term)
+				// Replace the variables ($post_type and $term).
 				$slug = implode( '/', $hierarchical_slugs );
 
 			}
 
-			// Replace the variables ($post_type and $term)
+			// Replace the variables ($post_type and $term).
 			$termlink = str_replace( array( '$post_type', '$term_slug', '$term_id' ), array( $taxonomy, $slug, $term->term_id ), $termlink );
 
 			$termlink = home_url( user_trailingslashit( $termlink, 'category' ) );
@@ -857,9 +867,9 @@ class CPT_TAXONOMY {
 	 *
 	 * @since   1.0
 	 * @uses    $cpt_onomies_manager
-	 * @param   int $term_id Term ID
-	 * @param   string $taxonomy Taxonomy
-	 * @param   string $object_type The object type
+	 * @param   int $term_id Term ID.
+	 * @param   string $taxonomy Taxonomy.
+	 * @param   string $object_type The object type.
 	 * @return  string
 	 */
 	public function get_edit_term_link( $term_id, $taxonomy, $object_type = '' ) {
@@ -912,7 +922,7 @@ class CPT_TAXONOMY {
 	 * @param string $link Optional. Link permalink format.
 	 * @param bool $in_same_cpt_onomy Optional. Whether link should be in a same CPT-onomy.
 	 * @param array|string $excluded_term_ids Optional. Array or comma-separated list of excluded term IDs.
-	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy
+	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy.
 	 */
 	function previous_post_link( $format = '&laquo; %link', $link = '%title', $in_same_cpt_onomy = false, $excluded_term_ids = '', $cpt_onomy = '' ) {
 		global $cpt_onomies_manager;
@@ -942,17 +952,17 @@ class CPT_TAXONOMY {
 	 * @param string $link Optional. Link permalink format.
 	 * @param bool $in_same_cpt_onomy Optional. Whether link should be in a same CPT-onomy.
 	 * @param array|string $excluded_term_ids Optional. Array or comma-separated list of excluded term IDs.
-	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy
+	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy.
 	 */
 	function next_post_link( $format = '%link &raquo;', $link = '%title', $in_same_cpt_onomy = false, $excluded_term_ids = '', $cpt_onomy = '' ) {
 		global $cpt_onomies_manager;
 
-		// Make sure we have a format
+		// Make sure we have a format.
 		if ( empty( $format ) ) {
 			$format = '%link &raquo;';
 		}
 
-		// If it's empty or not a valid CPT-onomy, then run the default WordPress function
+		// If it's empty or not a valid CPT-onomy, then run the default WordPress function.
 		if ( empty( $cpt_onomy ) || ! $cpt_onomies_manager->is_registered_cpt_onomy( $cpt_onomy ) ) {
 			next_post_link( $format, $link, $in_same_cpt_onomy, $excluded_term_ids );
 		} else {
@@ -975,12 +985,12 @@ class CPT_TAXONOMY {
 	 * @param   bool $in_same_cpt_onomy Optional. Whether link should be in a same CPT-onomy.
 	 * @param   array|string $excluded_term_ids Optional. Array or comma-separated list of excluded term IDs.
 	 * @param   bool $previous Optional, default is true. Whether to display link to previous or next post.
-	 * @param   string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy
+	 * @param   string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy.
 	 */
 	function adjacent_post_link( $format, $link, $in_same_cpt_onomy = false, $excluded_term_ids = '', $previous = true, $cpt_onomy = '' ) {
 		global $cpt_onomies_manager;
 
-		// If it's empty or not a valid CPT-onomy, then run the default WordPress function
+		// If it's empty or not a valid CPT-onomy, then run the default WordPress function.
 		if ( empty( $cpt_onomy ) || ! $cpt_onomies_manager->is_registered_cpt_onomy( $cpt_onomy ) ) {
 
 			adjacent_post_link( $format, $link, $in_same_cpt_onomy, $excluded_term_ids, $previous );
@@ -1034,7 +1044,7 @@ class CPT_TAXONOMY {
 	 * @param string $title Optional. Link title format.
 	 * @param bool $in_same_cpt_onomy Optional. Whether link should be in a same CPT-onomy.
 	 * @param array|string $excluded_term_ids Optional. Array or comma-separated list of excluded term IDs.
-	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy
+	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy.
 	 */
 	function prev_post_rel_link( $title = '%title', $in_same_cpt_onomy = false, $excluded_term_ids = '', $cpt_onomy = '' ) {
 		global $cpt_onomies_manager;
@@ -1057,7 +1067,7 @@ class CPT_TAXONOMY {
 	 * @param string $title Optional. Link title format.
 	 * @param bool $in_same_cpt_onomy Optional. Whether link should be in a same CPT-onomy.
 	 * @param array|string $excluded_term_ids Optional. Array or comma-separated list of excluded term IDs.
-	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy
+	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy.
 	 */
 	function next_post_rel_link( $title = '%title', $in_same_cpt_onomy = false, $excluded_term_ids = '', $cpt_onomy = '' ) {
 		global $cpt_onomies_manager;
@@ -1082,7 +1092,7 @@ class CPT_TAXONOMY {
 	 * @param bool $in_same_cpt_onomy Optional. Whether link should be in a same CPT-onomy.
 	 * @param array|string  $excluded_term_ids Optional. Array or comma-separated list of excluded term IDs.
 	 * @param bool $previous Optional, default is true. Whether to display link to previous or next post.
-	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy
+	 * @param string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy.
 	 * @return string
 	 */
 	function get_adjacent_post_rel_link( $title = '%title', $in_same_cpt_onomy = false, $excluded_term_ids = '', $previous = true, $cpt_onomy = '' ) {
@@ -1133,7 +1143,7 @@ class CPT_TAXONOMY {
 	 * @param   bool $in_same_cpt_onomy Optional. Whether post should be in a same CPT-onomy.
 	 * @param   array|string $excluded_term_ids Optional. Array or comma-separated list of excluded term IDs.
 	 * @param   bool $previous Optional. Whether to retrieve previous post.
-	 * @param   string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy
+	 * @param   string $cpt_onomy - name of the CPT-onomy for $in_same_cpt_onomy.
 	 * @return  mixed Post object if successful. Null if global $post is not set. Empty string if no corresponding post exists.
 	 */
 	function get_adjacent_post( $in_same_cpt_onomy = false, $excluded_term_ids = '', $previous = true, $cpt_onomy = '' ) {
@@ -1164,7 +1174,7 @@ class CPT_TAXONOMY {
 
 				if ( ! is_array( $excluded_term_ids ) ) {
 
-					// Back-compat, $excluded_term_ids used to be IDs separated by " and "
+					// Back-compat, $excluded_term_ids used to be IDs separated by " and ".
 					if ( strpos( $excluded_term_ids, ' and ' ) !== false ) {
 						_deprecated_argument( __FUNCTION__, '3.3', sprintf( __( 'Use commas instead of %s to separate excluded categories.', 'cpt-onomies' ), "'and'" ) );
 						$excluded_term_ids = explode( ' and ', $excluded_term_ids );
@@ -1300,8 +1310,8 @@ class CPT_TAXONOMY {
 	 *
 	 * @since 1.0
 	 * @uses $cpt_onomies_manager, $current_screen, $post
-	 * @param array $terms - the terms created by WordPress get_terms() that we will now filter
-	 * @param string|array $taxonomies - the taxonomies we're pulling terms from
+	 * @param array $terms - the terms created by WordPress get_terms() that we will now filter.
+	 * @param string|array $taxonomies - the taxonomies we're pulling terms from.
 	 * @param array $args - arguments used to customize which terms are returned (!! means its not supported... yet)
 	 		'orderby'		Default is 'name'. Can be name, count, term_group, slug or nothing
 							(will use term_id), Passing a custom value other than these will cause
@@ -1340,12 +1350,12 @@ class CPT_TAXONOMY {
 	public function get_terms( $terms, $taxonomies, $args ) {
 		global $cpt_onomies_manager, $current_screen, $post, $wpdb;
 
-		// If taxonomy name is string, convert to array
+		// If taxonomy name is string, convert to array.
 		if ( ! is_array( $taxonomies ) ) {
 			$taxonomies = array( $taxonomies );
 		}
 
-		// This function only filters registered CPT-onomies
+		// This function only filters registered CPT-onomies.
 		$cpt_taxonomies = array();
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
@@ -1353,9 +1363,20 @@ class CPT_TAXONOMY {
 			}
 		}
 
-		// This means there are no CPT-onomies so wrap things up
+		// This means there are no CPT-onomies so wrap things up.
 		if ( empty( $cpt_taxonomies ) ) {
 			return $terms;
+		}
+
+		/*
+		 * WP 4.7 introduced a hidden API 'object_ids',
+		 * used internally by WordPress.
+		 *
+		 * The following assumes other args are not
+		 * being used when 'object_ids' is passed.
+		 */
+		if ( ! empty( $args['object_ids'] ) ) {
+			return $this->get_object_terms( $terms, $args['object_ids'], $cpt_taxonomies, $args );
 		}
 
 		/*
@@ -1366,40 +1387,54 @@ class CPT_TAXONOMY {
 		$args = wp_parse_args( $args, $defaults );
 
 		/*
+		 * Fix arguments for get_posts vs. get_terms.
+		 */
+
+		/*
+		 * WordPress supported orderby:
+		 * 'count', 'name', 'slug', 'none', 'id'
+		 *
+		 * Still need to add support for 'term_group'.
+		 *
+		 * The default is 'name'/'title'.
+		 */
+		$orderby = ! empty( $args['orderby'] ) ? strtolower( $args['orderby'] ) : '';
+		if ( 'none' == $orderby || 'id' == $orderby ) {
+			$orderby = 'id';
+		} elseif ( ! $orderby || ! in_array( $orderby, array( 'count', 'slug', 'term_group' ) ) ) {
+			$orderby = 'title';
+		}
+
+		// WordPress supported order - 'asc' and 'desc' (default is asc).
+		$order = ! empty( $args['order'] ) ? strtolower( $args['order'] ) : 'asc';
+		if ( ! in_array( $order, array( 'asc', 'desc' ) ) ) {
+			$order = 'asc';
+		}
+
+		// Default is -1.
+		$number_posts = ( isset( $args['number'] ) && is_numeric( $args['number'] ) && ( $args['number'] > 0 ) ) ? $args['number'] : -1;
+
+		// Default is 0.
+		$offset = ( isset( $args['offset'] ) && is_numeric( $args['offset'] ) && ( $args['offset'] > 0 ) ) ? $args['offset'] : 0;
+
+		/*
+		 * WordPress supported fields:
+		 * 'all', 'ids', 'names'.
+		 *
+		 * The default is 'all'.
+		 */
+		$fields = ! empty( $args['fields'] ) ? strtolower( $args['fields'] ) : '';
+
+		/*
 		 * Since 'fields' = 'count' will cause get_terms to 'return'
 		 * before we can filter, the adjust_get_terms_args() filter
 		 * changes 'count' to 'ids' and adds a custom count argument.
 		 * This is included here as a backup.
 		 */
-		if ( isset( $args['fields'] ) && 'count' == $args['fields'] ) {
-			$args['fields'] = 'ids';
-			$args['cpt_onomy_get_count'] = true;
-		}
-
-		extract( $args, EXTR_SKIP );
-
-		// Fix arguments for get_posts vs. get_terms
-
-		// WordPress supported orderby - 'count', 'name', 'slug', 'none', 'id' - (still need to add support for 'term_group')
-		if ( strtolower( $orderby ) == 'none' || strtolower( $orderby ) == 'id' ) {
-			$orderby = 'id';
-		} elseif ( ! in_array( strtolower( $orderby ), array( 'count', 'slug', 'term_group' ) ) ) {
-			$orderby = 'title'; //Default is 'name'/'title'
-		}
-
-		// WordPress supported order - 'asc' and 'desc' (default is asc)
-		$order = ( isset( $order ) && ( in_array( strtolower( $order ), array( 'asc', 'desc' ) ) ) ) ? strtolower( $order ) : 'asc';
-
-		// Default is -1
-		$numberposts = ( isset( $number ) && is_numeric( $number ) && ( $number > 0 ) ) ? $number : -1;
-
-		// Default is 0
-		$offset = ( isset( $offset ) && is_numeric( $offset ) && ( $offset > 0 ) ) ? $offset : 0;
-
-		// WordPress supported fields - 'all', 'ids', 'names' (default is all)
-		if ( in_array( strtolower( $fields ), array( 'ids', 'names', 'id=>parent' ) ) ) {
-			$fields = strtolower( $fields );
-		} else {
+		if ( 'count' == $fields ) {
+			$fields = 'ids';
+			$cpt_onomy_get_count = true;
+		} elseif ( ! in_array( $fields, array( 'ids', 'names', 'id=>parent' ) ) ) {
 			$fields = 'all';
 		}
 
@@ -1417,10 +1452,10 @@ class CPT_TAXONOMY {
 			$terms = $new_terms;
 		}
 
-		// Get terms for each CPT-onomy
+		// Get terms for each CPT-onomy.
 		foreach ( $cpt_taxonomies as $taxonomy ) {
 
-			// Get the custom post type posts (which are the terms)
+			// Get the custom post type posts (which are the terms).
 			$cpt_posts = get_posts( array(
 				'get_cpt_onomy_terms'   => true,
 				'suppress_filters'      => true,
@@ -1428,17 +1463,20 @@ class CPT_TAXONOMY {
 				'post_status'           => 'publish',
 				'orderby'               => $orderby,
 				'order'                 => $order,
-				'numberposts'           => ( in_array( $orderby, array( 'id', 'title' ) ) ) ? $numberposts : -1, // We'll need all posts for other parameters for later sorting
-				'exclude'               => $exclude,
-				'include'               => $include,
-				'name'                  => $slug,
-				's'                     => $search,
-			) );
+				'numberposts'           => ( in_array( $orderby, array( 'id', 'title' ) ) ) ? $number_posts : -1, // We'll need all posts for other parameters for later sorting.
+				'exclude'               => isset( $args['exclude'] ) ? $args['exclude'] : array(),
+				'include'               => isset( $args['include'] ) ? $args['include'] : array(),
+				'name'                  => isset( $args['slug'] ) ? $args['slug'] : '',
+				's'                     => isset( $args['search'] ) ? $args['search'] : '',
+			));
 
-			// If we have posts, then we have terms
+			// If we have posts, then we have terms.
 			if ( ! empty( $cpt_posts ) ) {
 
-				// We don't want to show the current "term" if on the edit post screen in the admin
+				/*
+				 * We don't want to show the current "term"
+				 * if on the edit post screen in the admin.
+				 */
 				$current = null;
 				if ( is_admin()
 					&& $current_screen
@@ -1446,28 +1484,33 @@ class CPT_TAXONOMY {
 				    && 'edit' == $current_screen->parent_base
 				    && $current_screen->post_type == $taxonomy
 				    && isset( $post->ID ) ) {
+
 					$current = $post->ID;
+
 				}
 
-				// Store the count for the CPT-onomy's terms
+				// Store the count for the CPT-onomy's terms.
 				$cpt_posts_count = $this->get_terms_count( $taxonomy );
 
-				// Loop through the posts and setup the terms
+				// Loop through the posts and setup the terms.
 				foreach ( $cpt_posts as $this_post ) {
 
-					// Dont show current "term"
+					// Don't show current "term".
 					if ( empty( $current ) || ( ! empty( $current ) && $current != $this_post->ID ) ) {
 
-						// Dont get count when converting because we'll set it next
+						// Dont get count when converting because we'll set it next.
 						$this_term = $this->convert_object_to_cpt_onomy_term( $this_post, false );
 
-						// If no term, then continue to next post
+						// If no term, then continue to next post.
 						if ( ! $this_term ) {
 							continue;
 						}
 
-						// Assign count
+						// Assign count.
 						$this_term->count = isset( $cpt_posts_count[ $this_post->ID ] ) && $cpt_posts_count[ $this_post->ID ] > 0 ? $cpt_posts_count[ $this_post->ID ] : 0;
+
+						// Set the hide empty value.
+						$hide_empty = isset( $args['hide_empty'] ) && $args['hide_empty'];
 
 						if ( ! $hide_empty || ( $hide_empty && isset( $this_term->count ) && $this_term->count > 0 ) ) {
 
@@ -1480,7 +1523,7 @@ class CPT_TAXONOMY {
 									break;
 							}
 
-							// 'id=>parent' is a beast all its own
+							// 'id=>parent' is a beast all its own.
 							if ( 'id=>parent' == $fields ) {
 								$terms[ $this_term->term_id ] = $this_term->parent;
 							} else {
@@ -1518,7 +1561,7 @@ class CPT_TAXONOMY {
 			$manual_sort = true;
 		}
 
-		// 'id=>parent' is a beast all its own
+		// 'id=>parent' is a beast all its own.
 		if ( $manual_sort && 'id=>parent' != $fields ) {
 
 			/*
@@ -1548,13 +1591,13 @@ class CPT_TAXONOMY {
 				}
 			}
 
-			// Sort order
+			// Sort order.
 			if ( strtolower( $order ) == 'desc' ) {
 				$terms = array_reverse( $terms );
 			}
 		}
 
-		// Offset
+		// Offset.
 		if ( $offset > 0 ) {
 			$terms = array_slice( $terms, $offset );
 		}
@@ -1563,8 +1606,8 @@ class CPT_TAXONOMY {
 		 * Number of posts.
 		 * Don't limit when hierarchical.
 		 */
-		if ( $numberposts > 0 ) {
-			$terms = array_slice( $terms, 0, $numberposts );
+		if ( $number_posts > 0 ) {
+			$terms = array_slice( $terms, 0, $number_posts );
 		}
 
 		return $terms;
@@ -1576,9 +1619,9 @@ class CPT_TAXONOMY {
 	 *
 	 * @since   1.0.2
 	 * @uses    $wpdb, $cpt_onomies_manager
-	 * @param   int|array $term_ids Term id or array of term ids of terms that will be used
-	 * @param   string|array $taxonomies String of taxonomy name or Array of string values of taxonomy names
-	 * @param   array|string $args Change the order of the object_ids, either ASC or DESC
+	 * @param   int|array $term_ids Term id or array of term ids of terms that will be used.
+	 * @param   string|array $taxonomies String of taxonomy name or Array of string values of taxonomy names.
+	 * @param   array|string $args Change the order of the object_ids, either ASC or DESC.
 	 * @return  WP_Error|array If the taxonomy does not exist, then WP_Error will be returned. On success
 	 *	the array can be empty meaning that there are no $object_ids found or it will return the $object_ids found.
 	 */
@@ -1593,7 +1636,7 @@ class CPT_TAXONOMY {
 			$taxonomies = array( $taxonomies );
 		}
 
-		// This function only filters registered CPT-onomies
+		// This function only filters registered CPT-onomies.
 		$cpt_taxonomies = array();
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
@@ -1601,7 +1644,7 @@ class CPT_TAXONOMY {
 			}
 		}
 
-		// This means there are no CPT-onomies so wrap things up
+		// This means there are no CPT-onomies so wrap things up.
 		if ( empty( $cpt_taxonomies ) ) {
 			return get_objects_in_term( $term_ids, $taxonomies, $args );
 		} else {
@@ -1610,9 +1653,12 @@ class CPT_TAXONOMY {
 
 		$defaults = array( 'order' => 'ASC' );
 		$args = wp_parse_args( $args, $defaults );
-		extract( $args, EXTR_SKIP );
 
-		$order = ( 'desc' == strtolower( $order ) ) ? 'DESC' : 'ASC';
+		// WordPress supported order - 'ASC' and 'DESC' (default is ASC).
+		$order = ! empty( $args['order'] ) ? strtoupper( $args['order'] ) : 'ASC';
+		if ( ! in_array( $order, array( 'ASC', 'DESC' ) ) ) {
+			$order = 'ASC';
+		}
 
 		$term_ids = array_map( 'intval', $term_ids );
 
@@ -1644,12 +1690,12 @@ class CPT_TAXONOMY {
 	  *
 	  * @since  1.0
 	  * @uses   $wpdb, $cpt_onomies_manager
-	  * @param  array $terms - An array of terms for the given object or objects.
-	  * @param  array $object_id_array - Array of object IDs for which `$terms` were retrieved.
-	  * @param  array $taxonomy_array - Array of taxonomies from which `$terms` were retrieved.
-	  * @param  array $args - An array of arguments for retrieving terms for the given
+	  * @param  $terms - array - An array of terms for the given object or objects.
+	  * @param  $object_ids - array - Array of object IDs for which $terms were retrieved.
+	  * @param  $taxonomies - array - Array of taxonomies from which $terms were retrieved.
+	  * @param  $args - array - An array of arguments for retrieving terms for the given
 	  *             object(s). See wp_get_object_terms() for details.
-	  * @return array|WP_Error - The requested term data or empty array, f no terms found.
+	  * @return array|WP_Error - The requested term data or empty array, if no terms found.
 	  *             WP_Error if $taxonomy does not exist.
 	  */
 	function get_object_terms( $terms, $object_ids, $taxonomies, $args = array() ) {
@@ -1665,29 +1711,29 @@ class CPT_TAXONOMY {
 
 		/*
 		 * Does not support $fields = 'tt_ids' since our CPT-onomies
-		 * are not actual taxonomies and dont have taxonomy term ids.
+		 * are not actual taxonomies and do not have taxonomy term ids.
 		 */
-		if ( 'tt_ids' == $args['fields'] ) {
+		if ( ! empty( $args['fields'] ) && 'tt_ids' == $args['fields'] ) {
 			return $terms;
 		}
 
-		// This allows for a string with one object id or an array with multiple object ids
+		// This allows for a string with one object id or an array with multiple object ids.
 		if ( ! is_array( $object_ids ) ) {
 			$object_ids = explode( ',', str_replace( ' ', '', $object_ids ) );
 		}
 		$object_ids = array_map( 'intval', $object_ids );
 
-		// Make sure we have object IDs and taxonomies
+		// Make sure we have object IDs and taxonomies.
 		if ( empty( $object_ids ) || empty( $taxonomies ) ) {
 			return $terms;
 		}
 
-		// If taxonomy name is string, convert to array
+		// If taxonomy name is string, convert to array.
 		if ( ! is_array( $taxonomies ) ) {
 			$taxonomies = array( $taxonomies );
 		}
 
-		// This function only filters registered CPT-onomies
+		// This function only filters registered CPT-onomies.
 		$cpt_taxonomies = array();
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
@@ -1695,12 +1741,12 @@ class CPT_TAXONOMY {
 			}
 		}
 
-		// This means there are no CPT-onomies so wrap things up
+		// This means there are no CPT-onomies so wrap things up.
 		if ( empty( $cpt_taxonomies ) ) {
 			return $terms;
 		}
 
-		// Designate the defaults
+		// Designate the defaults.
 		$defaults = array(
 			'orderby'       => 'name',
 			'order'         => 'ASC',
@@ -1710,7 +1756,7 @@ class CPT_TAXONOMY {
 			'meta_query'    => '',
 		);
 
-		// Parse arguments with the defaults
+		// Parse arguments with the defaults.
 		$args = wp_parse_args( $args, $defaults );
 
 		/*
@@ -1727,7 +1773,7 @@ class CPT_TAXONOMY {
 			$terms = $new_terms;
 		}
 
-		// I'm not sure why this runs but is pulled from wp_get_object_terms()
+		// I'm not sure why this runs but is pulled from wp_get_object_terms().
 		if ( count( $taxonomies ) > 1 ) {
 
 			foreach ( $taxonomies as $index => $taxonomy ) {
@@ -1745,15 +1791,15 @@ class CPT_TAXONOMY {
 			}
 		}
 
-		// If there are terms to 'exclude', clean up the parameters
+		// If there are terms to 'exclude', clean up the parameters.
 		$exclude = ( isset( $args['exclude'] ) ) ? wp_parse_id_list( $args['exclude'] ) : array();
 
-		// Get the terms
+		// Get the terms.
 		switch ( $args['fields'] ) {
 
 			case 'ids':
 
-				// Get IDs
+				// Get IDs.
 				$cpt_ids = $wpdb->get_col( $wpdb->prepare( "SELECT meta_value 
 					FROM {$wpdb->postmeta} wpmeta 
 					INNER JOIN {$wpdb->posts} wpposts ON
@@ -1762,10 +1808,10 @@ class CPT_TAXONOMY {
 						wpposts.post_status = 'publish'
 					WHERE wpmeta.post_id IN (" . implode( ',', $object_ids ) . ') AND wpmeta.meta_key = %s', CPT_ONOMIES_POSTMETA_KEY ) );
 
-				// Process each ID
+				// Process each ID.
 				foreach ( $cpt_ids as $cpt_id ) {
 
-					// Don't add if already stored OR if set in $exclude
+					// Don't add if already stored OR if set in $exclude.
 					if ( ! in_array( $cpt_id, $terms ) && ! in_array( $cpt_id, $exclude ) ) {
 						$terms[] = $cpt_id;
 					}
@@ -1774,7 +1820,7 @@ class CPT_TAXONOMY {
 
 			case 'names':
 
-				// Get the posts
+				// Get the posts.
 				$cpt_posts = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_title
 					FROM {$wpdb->posts} wpposts 
 					INNER JOIN {$wpdb->postmeta} wpmeta ON
@@ -1783,7 +1829,7 @@ class CPT_TAXONOMY {
 						wpmeta.post_id IN (" . implode( ',', $object_ids ) . ")
 					WHERE wpposts.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "') AND wpposts.post_status = 'publish'", CPT_ONOMIES_POSTMETA_KEY ) );
 
-				// Process each post
+				// Process each post.
 				foreach ( $cpt_posts as $this_post ) {
 
 					$filtered_name = apply_filters( 'the_title', $this_post->post_title, $this_post->ID );
@@ -1795,7 +1841,7 @@ class CPT_TAXONOMY {
 
 			case 'slugs':
 
-				// Get slugs
+				// Get slugs.
 				$cpt_slugs = $wpdb->get_col( $wpdb->prepare( "SELECT post_name
 					FROM {$wpdb->posts} wpposts 
 					INNER JOIN {$wpdb->postmeta} wpmeta ON
@@ -1804,7 +1850,7 @@ class CPT_TAXONOMY {
 						wpmeta.post_id IN (" . implode( ',', $object_ids ) . ")
 					WHERE wpposts.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "') AND wpposts.post_status = 'publish'", CPT_ONOMIES_POSTMETA_KEY ) );
 
-				// Process each slug
+				// Process each slug.
 				foreach ( $cpt_slugs as $cpt_slug ) {
 					if ( ! in_array( $cpt_slug, $terms ) ) {
 						$terms[] = $cpt_slug;
@@ -1820,35 +1866,35 @@ class CPT_TAXONOMY {
 				 *
 				 * Get object ID, term count and post info.
 				 */
-				$cpt_posts_query = "SELECT meta.post_id AS object_id, terms.*
+				$cpt_posts_query = $wpdb->prepare( "SELECT meta.post_id AS object_id, terms.*
 					FROM {$wpdb->postmeta} meta
 					INNER JOIN {$wpdb->posts} terms 
 						ON terms.ID = meta.meta_value 
-						AND terms.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "')
-						AND terms.post_status = 'publish'";
+						AND terms.post_type IN (%s)
+						AND terms.post_status = 'publish'", implode( "','", $cpt_taxonomies ) );
 
-				// Exclude certain "terms"
+				// Exclude certain "terms".
 				if ( ! empty( $exclude ) ) {
 					$cpt_posts_query .= ' AND terms.ID NOT IN ( ' . implode( ',', $exclude ) . ' )';
 				}
 
-				$cpt_posts_query .= ' WHERE meta.meta_key = %s AND meta.post_id IN (' . implode( ',', $object_ids ) . ')';
+				$cpt_posts_query .= $wpdb->prepare( ' WHERE meta.meta_key = %s AND meta.post_id IN (' . implode( ',', $object_ids ) . ')', CPT_ONOMIES_POSTMETA_KEY );
 
-				// Get the posts
-				$cpt_posts = $wpdb->get_results( $wpdb->prepare( $cpt_posts_query, CPT_ONOMIES_POSTMETA_KEY ) );
+				// Get the posts.
+				$cpt_posts = $wpdb->get_results( $cpt_posts_query );
 
 				// If we have posts...
 				if ( ! empty( $cpt_posts ) ) {
 
-					// Get the count for all of the CPT-onomy terms
+					// Get the count for all of the CPT-onomy terms.
 					$cpt_posts_count = $this->get_terms_count( $cpt_taxonomies );
 
-					// Loop through each post and setup the term
+					// Loop through each post and setup the term.
 					foreach ( $cpt_posts as $this_post ) {
 
 						if ( ! empty( $this_post ) ) {
 
-							// Save object ID and remove before conversion
+							// Save object ID and remove before conversion.
 							$object_id = $this_post->object_id;
 							unset( $this_post->object_id );
 
@@ -1859,18 +1905,18 @@ class CPT_TAXONOMY {
 							 */
 							$term = $this->convert_object_to_cpt_onomy_term( $this_post, false );
 
-							// If no term then continue to next post
+							// If no term then continue to next post.
 							if ( ! $term ) {
 								continue;
 							}
 
-							// Add object ID back to the mix
+							// Add object ID back to the mix.
 							$term->object_id = $object_id;
 
-							// Add term count
+							// Add term count.
 							$term->count = isset( $cpt_posts_count[ $this_post->ID ] ) && $cpt_posts_count[ $this_post->ID ] > 0 ? $cpt_posts_count[ $this_post->ID ] : 0;
 
-							// Add to terms
+							// Add to terms.
 							$terms[] = $term;
 
 						}
@@ -1894,14 +1940,14 @@ class CPT_TAXONOMY {
 						wpmeta.meta_key = '" . CPT_ONOMIES_POSTMETA_KEY . "' AND
 						wpmeta.post_id IN (" . implode( ',', $object_ids ) . ')';
 
-				// Exclude certain "terms"
+				// Exclude certain "terms".
 				if ( ! empty( $exclude ) ) {
 					$cpt_posts_query .= ' AND wpposts.ID NOT IN ( ' . implode( ',', $exclude ) . ' )';
 				}
 
 				$cpt_posts_query .= " WHERE wpposts.post_type IN ('" . implode( "','", $cpt_taxonomies ) . "') AND wpposts.post_status = 'publish'";
 
-				// Get the posts
+				// Get the posts.
 				$cpt_posts = $wpdb->get_results( $cpt_posts_query );
 
 				if ( ! empty( $cpt_posts ) ) {
@@ -1910,7 +1956,7 @@ class CPT_TAXONOMY {
 
 						if ( ! empty( $this_post ) ) {
 
-							// Save count and remove before conversion
+							// Save count and remove before conversion.
 							$term_count = $this_post->count;
 							unset( $this_post->count );
 
@@ -1921,15 +1967,15 @@ class CPT_TAXONOMY {
 							 */
 							$term = $this->convert_object_to_cpt_onomy_term( $this_post, false );
 
-							// If no term then continue to next post
+							// If no term then continue to next post.
 							if ( ! $term ) {
 								continue;
 							}
 
-							// Add count back to the mix
+							// Add count back to the mix.
 							$term->count = $term_count;
 
-							// Add to terms
+							// Add to terms.
 							$terms[] = $term;
 
 						}
@@ -1974,7 +2020,7 @@ class CPT_TAXONOMY {
 			}
 		}
 
-		// Sort order
+		// Sort order.
 		if ( 'desc' == strtolower( $args['order'] ) ) {
 			$terms = array_reverse( $terms );
 		}
@@ -2024,7 +2070,7 @@ class CPT_TAXONOMY {
 		}
 
 		if ( ! is_array( $terms ) ) {
-			$comma = _x( ',', 'tag delimiter' );
+			$comma = _x( ',', 'tag delimiter', 'cpt-onomies' );
 			if ( ',' !== $comma ) {
 				$terms = str_replace( $comma, ',', $terms );
 			}
@@ -2106,7 +2152,7 @@ class CPT_TAXONOMY {
 			return new WP_Error( 'taxonomy_relationship', __( 'This post type object and taxonomy are not allowed to have a relationship.', 'cpt-onomies' ) );
 		}
 
-		// Make sure terms is an array
+		// Make sure terms is an array.
 		if ( ! is_array( $terms ) ) {
 			$terms = str_replace( ' ', ',', str_replace( ', ', ',', $terms ) );
 			$terms = explode( ',', $terms );
@@ -2118,7 +2164,7 @@ class CPT_TAXONOMY {
 		 */
 		$include_term_ids = apply_filters( 'custom_post_type_onomies_assigning_cpt_onomy_terms_include_term_ids', array(), $taxonomy, $object_post_type, $object_id );
 
-		// Make sure $include_term_ids is an array
+		// Make sure $include_term_ids is an array.
 		if ( ! is_array( $include_term_ids ) ) {
 			$include_term_ids = str_replace( ' ', ',', str_replace( ', ', ',', $include_term_ids ) );
 			$include_term_ids = explode( ',', $include_term_ids );
@@ -2175,17 +2221,17 @@ class CPT_TAXONOMY {
 				return $term_info;
 			}
 
-			// Only assign included terms
+			// Only assign included terms.
 			if ( $include_term_ids && ! in_array( $term_info->term_id, $include_term_ids ) ) {
 				continue;
 			}
 
-			// Do not assign excluded terms
+			// Do not assign excluded terms.
 			if ( $exclude_term_ids && in_array( $term_info->term_id, $exclude_term_ids ) ) {
 				continue;
 			}
 
-			// Keep track of all the term IDs for $append logic at the end
+			// Keep track of all the term IDs for $append logic at the end.
 			$term_ids[] = $term_info->term_id;
 
 			// Make sure the relationship doesn't already exist.
@@ -2202,7 +2248,7 @@ class CPT_TAXONOMY {
 			}
 		}
 
-		// Delete all pre-existing term relationships
+		// Delete all pre-existing term relationships.
 		if ( ! $append ) {
 
 			/*
@@ -2232,8 +2278,8 @@ class CPT_TAXONOMY {
 	 *
 	 * @since   1.0
 	 * @uses    $wpdb, $cpt_onomies_manager
-	 * @param   int $object_id - the ID of the object
-	 * @param   int $term_id - if wanting to delete a specific relationship, provide the term ID
+	 * @param   int $object_id - the ID of the object.
+	 * @param   int $term_id - if wanting to delete a specific relationship, provide the term ID.
 	 * @return  boolean|WP_Error - true if relationships are deleted, otherwise false
 	 * @filters 'cpt_onomy_deleted_object_term_relationship' - $term_id, $taxonomy, $object_id, $object_post_type
 	 */
@@ -2244,10 +2290,10 @@ class CPT_TAXONOMY {
 		$term_id = (int) $term_id;
 		$taxonomy = get_post_type( $term_id );
 
-		// Make sure this is a CPT-onomy
+		// Make sure this is a CPT-onomy.
 		if ( $object_id && $term_id && $cpt_onomies_manager->is_registered_cpt_onomy( $taxonomy ) ) {
 
-			// Make sure the relationship exists
+			// Make sure the relationship exists.
 			if ( ! $wpdb->get_var( $wpdb->prepare( "SELECT meta_id FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s AND meta_value = %s", $object_id, CPT_ONOMIES_POSTMETA_KEY, $term_id ) ) ) {
 				return false;
 			}
@@ -2276,8 +2322,8 @@ class CPT_TAXONOMY {
 	 *
 	 * @since 1.0
 	 * @uses $wpdb, $cpt_onomies_manager
-	 * @param int $object_id The term Object Id that refers to the term
-	 * @param string|array $taxonomies List of Taxonomy Names or single Taxonomy name. If not set, deletes ALL relationships
+	 * @param int $object_id The term Object Id that refers to the term.
+	 * @param string|array $taxonomies List of Taxonomy Names or single Taxonomy name. If not set, deletes ALL relationships.
 	 * @return boolean|WP_Error - true if relationships are deleted, otherwise false
 	 * @filters 'cpt_onomy_deleted_object_term_relationship' - $term_id, $taxonomy, $object_id, $object_post_type
 	 */
@@ -2317,7 +2363,8 @@ class CPT_TAXONOMY {
 			$taxonomies = implode( ',', $taxonomies );
 
 			// Get IDs of terms being deleted to use for 'cpt_onomy_deleted_object_term_relationship' action.
-			if ( $term_ids_being_deleted = $wpdb->get_col( $wpdb->prepare( "SELECT wpmeta.meta_value FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpp ON wpp.ID = wpmeta.meta_value WHERE wpp.post_type IN (" . $taxonomies . ') AND wpmeta.post_id = %d AND wpmeta.meta_key = %s', $object_id, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
+			$term_ids_being_deleted = $wpdb->get_col( $wpdb->prepare( "SELECT wpmeta.meta_value FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpp ON wpp.ID = wpmeta.meta_value WHERE wpp.post_type IN (" . $taxonomies . ') AND wpmeta.post_id = %d AND wpmeta.meta_key = %s', $object_id, CPT_ONOMIES_POSTMETA_KEY ) );
+			if ( $term_ids_being_deleted ) {
 
 				// Delete object relationships with specific taxonomies.
 				if ( $wpdb->query( $wpdb->prepare( "DELETE wpmeta.* FROM {$wpdb->postmeta} wpmeta INNER JOIN {$wpdb->posts} wpp ON wpp.ID = wpmeta.meta_value WHERE wpp.post_type IN (" . $taxonomies . ') AND wpmeta.post_id = %d AND wpmeta.meta_key = %s', $object_id, CPT_ONOMIES_POSTMETA_KEY ) ) ) {
@@ -2367,7 +2414,8 @@ class CPT_TAXONOMY {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$tags = get_terms( $args['taxonomy'], array_merge( $args, array( 'orderby' => 'count', 'order' => 'DESC' ) ) ); // Always query top tags
+		// Always query top tags.
+		$tags = get_terms( $args['taxonomy'], array_merge( $args, array( 'orderby' => 'count', 'order' => 'DESC' ) ) );
 
 		if ( empty( $tags ) || is_wp_error( $tags ) ) {
 			return;
@@ -2391,7 +2439,8 @@ class CPT_TAXONOMY {
 			$tags[ $key ]->id = $tag->term_id;
 		}
 
-		$return = wp_generate_tag_cloud( $tags, $args ); // Here's where those top tags get sorted according to $args
+		// Here's where those top tags get sorted according to $args.
+		$return = wp_generate_tag_cloud( $tags, $args );
 
 		$return = apply_filters( 'wp_tag_cloud', $return, $args );
 
