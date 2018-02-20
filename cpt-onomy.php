@@ -270,7 +270,7 @@ class CPT_TAXONOMY {
 			$eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array();
 
 			// Find term and term count.
-			$query = $wpdb->prepare( "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN (%s) WHERE wpcountmeta.meta_key = %s AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = %s AND wpposts.post_name = %s and wpposts.post_status = 'publish'", implode( "','", $eligible_post_types, CPT_ONOMIES_POSTMETA_KEY, $taxonomy, $value ) );
+			$query = $wpdb->prepare( "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN (%s) WHERE wpcountmeta.meta_key = %s AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = %s AND wpposts.post_name = %s and wpposts.post_status = 'publish'", implode( "','", $eligible_post_types ), CPT_ONOMIES_POSTMETA_KEY, $taxonomy, $value );
 
 		} elseif ( 'name' == $field ) {
 
@@ -281,7 +281,7 @@ class CPT_TAXONOMY {
 			$eligible_post_types = ( $tax = get_taxonomy( $taxonomy ) ) && isset( $tax->object_type ) ? $tax->object_type : array();
 
 			// Find term and term count.
-			$query = $wpdb->prepare( "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN (%s) WHERE wpcountmeta.meta_key = %s AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = %s AND wpposts.post_title = %s and wpposts.post_status = 'publish'", implode( "','", $eligible_post_types, CPT_ONOMIES_POSTMETA_KEY, $taxonomy, $value ) );
+			$query = $wpdb->prepare( "SELECT (SELECT COUNT(*) FROM {$wpdb->postmeta} wpcountmeta INNER JOIN {$wpdb->posts} wpcountposts ON wpcountposts.ID = wpcountmeta.post_id AND wpcountposts.post_status = 'publish' AND wpcountposts.post_type IN (%s) WHERE wpcountmeta.meta_key = %s AND wpcountmeta.meta_value = wpposts.ID) AS count, wpposts.* FROM {$wpdb->posts} wpposts WHERE wpposts.post_type = %s AND wpposts.post_title = %s and wpposts.post_status = 'publish'", implode( "','", $eligible_post_types ), CPT_ONOMIES_POSTMETA_KEY, $taxonomy, $value );
 
 		} else {
 
